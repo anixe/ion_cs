@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anixe.Ion.UnitTests", "Anixe.Ion.UnitTests\Anixe.Ion.UnitTests.csproj", "{16419B40-9A96-4D11-A2FA-17770D50F995}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anixe.Ion", "Anixe.Ion\Anixe.Ion.csproj", "{0EBBA45D-D172-426D-912F-686FF3B4E159}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anixe.Ion.Tester", "Anixe.Ion.Tester\Anixe.Ion.Tester.csproj", "{3C041AD5-9DF8-4380-AC54-81C56651F8F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EBBA45D-D172-426D-912F-686FF3B4E159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EBBA45D-D172-426D-912F-686FF3B4E159}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EBBA45D-D172-426D-912F-686FF3B4E159}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EBBA45D-D172-426D-912F-686FF3B4E159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16419B40-9A96-4D11-A2FA-17770D50F995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16419B40-9A96-4D11-A2FA-17770D50F995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16419B40-9A96-4D11-A2FA-17770D50F995}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16419B40-9A96-4D11-A2FA-17770D50F995}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C041AD5-9DF8-4380-AC54-81C56651F8F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C041AD5-9DF8-4380-AC54-81C56651F8F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C041AD5-9DF8-4380-AC54-81C56651F8F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C041AD5-9DF8-4380-AC54-81C56651F8F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

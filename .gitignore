@@ -1,0 +1,32 @@
+Bin
+bin
+obj
+TestResults/
+test-results/
+*.suo
+*.zip
+*.vsmdi
+MSBuild_result.txt
+TestResult*.txt
+!packages/
+*/Bin/*.xml
+Binaries
+TempBuild
+*.user
+*.vspscc
+*.userprefs
+*~
+
+### MonoDevelop ###
+#User Specific
+*.userprefs
+*.usertasks
+
+#Mono Project Files
+*.pidb
+*.resources
+test-results/
+:/
+StyleCop.Cache
+
+.DS_Store
