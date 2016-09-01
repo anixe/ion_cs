@@ -35,6 +35,7 @@
     <Compile Include="IIonReader.cs" />
     <Compile Include="IonReader.cs" />
     <Compile Include="IonReaderFactory.cs" />
+    <Compile Include="Consts.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

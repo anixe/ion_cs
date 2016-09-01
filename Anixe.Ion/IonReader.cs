@@ -3,13 +3,15 @@ using System.IO;
 
 namespace Anixe.Ion
 {
-    public class IonReader : IIonReader, IDisposable
+    public class IonReader : IIonReader
     {
         private readonly StreamReader streamReader;
+        private readonly Stream       stream;
 
-        internal IonReader(StreamReader streamReader)
+        internal IonReader(StreamReader streamReader, Stream stream)
         {
             this.streamReader = streamReader;
+            this.stream       = stream;
         }
 
         #region IIonReader members

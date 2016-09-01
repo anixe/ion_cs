@@ -2,7 +2,7 @@
 
 namespace Anixe.Ion
 {
-    public interface IIonReader
+    public interface IIonReader : IDisposable
     {
         bool IsSectionHeader           { get; }
         bool IsProperty                { get; }

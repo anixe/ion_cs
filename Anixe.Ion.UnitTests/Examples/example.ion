@@ -1,0 +1,12 @@
+﻿[CONTRACT.INFO]
+id = "AAA"
+source = "XXX"
+
+city = "YYY"
+
+[DEF.SECTION]
+|  id | 1st_column_description | 2nd_column_description |
+|-----|------------------------|------------------------|
+| 123 | ZZZ                    | VVV                    |
+| abc | XXX                    | UUU                    |
+
