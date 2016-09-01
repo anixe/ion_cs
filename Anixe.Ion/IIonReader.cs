@@ -2,7 +2,7 @@
 
 namespace Anixe.Ion
 {
-    internal interface IIonReader
+    public interface IIonReader
     {
         bool IsSectionHeader           { get; }
         bool IsProperty                { get; }
@@ -11,7 +11,7 @@ namespace Anixe.Ion
         bool IsTableHeaderSeparatorRow { get; }
         bool IsEmptyLine               { get; }
 
-        string Line { get; }
+        string CurrentLine { get; }
 
         bool Read();
     }
