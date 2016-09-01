@@ -43,11 +43,17 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Examples\example.ion">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Anixe.Ion\Anixe.Ion.csproj">
       <Project>{0EBBA45D-D172-426D-912F-686FF3B4E159}</Project>
       <Name>Anixe.Ion</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Examples\" />
   </ItemGroup>
 </Project>
