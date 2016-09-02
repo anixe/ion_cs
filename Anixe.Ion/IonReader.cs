@@ -19,6 +19,7 @@ namespace Anixe.Ion
             this.disposed            = false;
             this.currentLineVerifier = currentLineVerifier;
             this.sectionHeaderReader = sectionHeaderReader;
+            this.CurrentLineNumber   = 0;
         }
 
         #region IIonReader members
@@ -72,6 +73,12 @@ namespace Anixe.Ion
         /// <value>The current section.</value>
         public string CurrentSection { get; private set; }
 
+        /// <summary>
+        /// IonReader current line numer.
+        /// </summary>
+        /// <value>The current line number.</value>
+        public int CurrentLineNumber { get; private set; }
+
         public bool Read()
         {
             if(this.streamReader.EndOfStream)
@@ -81,6 +88,7 @@ namespace Anixe.Ion
             }
 
             CurrentLine = this.streamReader.ReadLine();
+            CurrentLineNumber++;
 
             if(IsSectionHeader)
             {
@@ -97,7 +105,6 @@ namespace Anixe.Ion
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         public void Dispose(bool disposing)

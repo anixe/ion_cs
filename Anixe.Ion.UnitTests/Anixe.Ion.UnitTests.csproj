@@ -41,6 +41,7 @@
     <Compile Include="IonReaderFactoryTests.cs" />
     <Compile Include="CurrentLineVerifierTests.cs" />
     <Compile Include="SectionHeaderReaderTests.cs" />
+    <Compile Include="IntegrationTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
