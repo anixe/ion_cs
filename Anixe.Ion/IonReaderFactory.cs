@@ -6,7 +6,7 @@ namespace Anixe.Ion
     public static class IonReaderFactory
     {
         /// <summary>
-        /// Create instance of IIonReader for specified file path. It opens file with FileMode.Open, FileAccess.Read and FileShare.ReadWrite
+        /// Creates the instance of IIonReader for specified file path. It opens file with FileMode.Open, FileAccess.Read and FileShare.ReadWrite
         /// </summary>
         /// <param name="filePath">File path.</param>
         /// <exception cref="ArgumentException">Undefined file path</exception>
@@ -21,7 +21,7 @@ namespace Anixe.Ion
         }
 
         /// <summary>
-        /// Create instance of IIonReader for specified stream.
+        /// Creates the instance of IIonReader for specified stream.
         /// </summary>
         /// <param name="stream">Stream.</param>
         public static IIonReader Create(Stream stream)

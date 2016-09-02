@@ -3,7 +3,10 @@ using System.IO;
 
 namespace Anixe.Ion
 {
-    public class IonReader : IIonReader
+    /// <summary>
+    /// Represents a reader that provides fast, non-cached, forward-only access to ION data.
+    /// </summary>
+    internal class IonReader : IIonReader
     {
         private bool disposed;
         private StreamReader streamReader;
@@ -11,7 +14,7 @@ namespace Anixe.Ion
         private readonly CurrentLineVerifier currentLineVerifier;
         private readonly SectionHeaderReader sectionHeaderReader;
 
-        internal IonReader(StreamReader streamReader, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader)
+        public IonReader(StreamReader streamReader, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader)
         {
             this.streamReader        = streamReader;
             this.disposed            = false;
@@ -60,23 +63,27 @@ namespace Anixe.Ion
         public bool IsEmptyLine { get { return this.currentLineVerifier.IsEmptyLine(CurrentLine); } }
 
         /// <summary>
-        /// IonReader current line value.
+        /// Gets the current line value.
         /// </summary>
         /// <value>The current line.</value>
         public string CurrentLine { get; private set; }
 
         /// <summary>
-        /// IonReader current section. It is changing only when CurrentLine is on section header.
+        /// Gets the name of current section. It is changing only when CurrentLine is on section header.
         /// </summary>
         /// <value>The current section.</value>
         public string CurrentSection { get; private set; }
 
         /// <summary>
-        /// IonReader current line numer.
+        /// Gets the current line number.
         /// </summary>
         /// <value>The current line number.</value>
         public int CurrentLineNumber { get; private set; }
 
+        /// <summary>
+        /// Read this instance.
+        /// </summary>
+        /// <returns><c>true</c> if the next line was read successfully; otherwise,<c>false</c>.</returns>
         public bool Read()
         {
             if(this.streamReader.EndOfStream)
