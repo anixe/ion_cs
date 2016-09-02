@@ -6,16 +6,14 @@ namespace Anixe.Ion
     public class IonReader : IIonReader
     {
         private bool disposed;
+        private StreamReader streamReader;
 
-        private readonly StreamReader        streamReader;
-        private readonly Stream              stream;
         private readonly CurrentLineVerifier currentLineVerifier;
         private readonly SectionHeaderReader sectionHeaderReader;
 
-        internal IonReader(StreamReader streamReader, Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader)
+        internal IonReader(StreamReader streamReader, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader)
         {
             this.streamReader        = streamReader;
-            this.stream              = stream;
             this.disposed            = false;
             this.currentLineVerifier = currentLineVerifier;
             this.sectionHeaderReader = sectionHeaderReader;
@@ -114,11 +112,7 @@ namespace Anixe.Ion
                 if(this.streamReader != null)
                 {
                     this.streamReader.Dispose();
-                }
-
-                if(this.stream != null)
-                {
-                    this.stream.Dispose();
+                    this.streamReader = null;
                 }
 
                 disposed = true;
