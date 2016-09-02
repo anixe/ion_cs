@@ -41,4 +41,9 @@
       <Name>Anixe.Ion</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="example.ion">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
