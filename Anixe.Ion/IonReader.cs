@@ -5,29 +5,89 @@ namespace Anixe.Ion
 {
     public class IonReader : IIonReader
     {
-        private readonly StreamReader streamReader;
-        private readonly Stream       stream;
+        private bool disposed;
 
-        internal IonReader(StreamReader streamReader, Stream stream)
+        private readonly StreamReader        streamReader;
+        private readonly Stream              stream;
+        private readonly CurrentLineVerifier currentLineVerifier;
+        private readonly SectionHeaderReader sectionHeaderReader;
+
+        internal IonReader(StreamReader streamReader, Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader)
         {
-            this.streamReader = streamReader;
-            this.stream       = stream;
+            this.streamReader        = streamReader;
+            this.stream              = stream;
+            this.disposed            = false;
+            this.currentLineVerifier = currentLineVerifier;
+            this.sectionHeaderReader = sectionHeaderReader;
         }
 
         #region IIonReader members
 
-        public bool IsSectionHeader           { get; }
-        public bool IsProperty                { get; }
-        public bool IsComment                 { get; }
-        public bool IsTableRow                { get; }
-        public bool IsTableHeaderSeparatorRow { get; }
-        public bool IsEmptyLine               { get; }
+        /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on section header.
+        /// </summary>
+        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '['; otherwise, <c>false</c>.</value>
+        public bool IsSectionHeader { get { return this.currentLineVerifier.IsSectionHeader(CurrentLine); } }
 
-        public string CurrentLine { get; }
+        /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on property.
+        /// </summary>
+        /// <value><c>true</c> if other boolean properties are false; otherwise, <c>false</c>.</value>
+        public bool IsProperty { get { return this.currentLineVerifier.IsProperty(CurrentLine); } }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on comment.
+        /// </summary>
+        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '#'; otherwise, <c>false</c>.</value>
+        public bool IsComment { get { return this.currentLineVerifier.IsComment(CurrentLine); } }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on table row.
+        /// </summary>
+        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|'; otherwise, <c>false</c>.</value>
+        public bool IsTableRow { get { return this.currentLineVerifier.IsTableRow(CurrentLine); } }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on table header separator row. IMPORTANT: we recognize this 
+        /// property as a combination of first two characters as "|-". Fill your table rows without '-' character.
+        /// </summary>
+        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|-'; otherwise, <c>false</c>.</value>
+        public bool IsTableHeaderSeparatorRow { get { return this.currentLineVerifier.IsTableHeaderSeparatorRow(CurrentLine); } }
+
+        /// <summary>
+        /// Gets a value indicating whether a IonReader CurrentLine is null, empty, or consists only of white-space characters.
+        /// </summary>
+        /// <value><c>true</c> if string.IsNullOrWhiteSpace(CurrentLine); otherwise, <c>false</c>.</value>
+        public bool IsEmptyLine { get { return this.currentLineVerifier.IsEmptyLine(CurrentLine); } }
+
+        /// <summary>
+        /// IonReader current line value.
+        /// </summary>
+        /// <value>The current line.</value>
+        public string CurrentLine { get; private set; }
+
+        /// <summary>
+        /// IonReader current section. It is changing only when CurrentLine is on section header.
+        /// </summary>
+        /// <value>The current section.</value>
+        public string CurrentSection { get; private set; }
 
         public bool Read()
         {
-            return false;
+            if(this.streamReader.EndOfStream)
+            {
+                ResetFields();
+                return false;
+            }
+
+            CurrentLine = this.streamReader.ReadLine();
+
+            if(IsSectionHeader)
+            {
+                CurrentSection = this.sectionHeaderReader.Read(CurrentLine);
+            }
+
+            return true;
         }
 
         #endregion
@@ -36,6 +96,36 @@ namespace Anixe.Ion
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if(!disposed)
+            {
+                if(this.streamReader != null)
+                {
+                    this.streamReader.Dispose();
+                }
+
+                if(this.stream != null)
+                {
+                    this.stream.Dispose();
+                }
+
+                disposed = true;
+            }
+        }
+
+        #endregion
+
+        #region Private methods
+
+        public void ResetFields()
+        {
+            CurrentLine = string.Empty;
+            CurrentSection = string.Empty;
         }
 
         #endregion

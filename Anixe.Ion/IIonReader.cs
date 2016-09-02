@@ -11,7 +11,8 @@ namespace Anixe.Ion
         bool IsTableHeaderSeparatorRow { get; }
         bool IsEmptyLine               { get; }
 
-        string CurrentLine { get; }
+        string CurrentLine    { get; }
+        string CurrentSection { get; }
 
         bool Read();
     }

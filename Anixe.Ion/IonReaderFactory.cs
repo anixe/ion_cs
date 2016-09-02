@@ -28,7 +28,7 @@ namespace Anixe.Ion
         {
             StreamReader streamReader = new StreamReader(stream);
 
-            return new IonReader(streamReader, stream);
+            return new IonReader(streamReader, stream, new CurrentLineVerifier(), new SectionHeaderReader());
         }
 
         #region Private methods
