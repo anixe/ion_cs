@@ -5,26 +5,28 @@ Anixe.Ion library is a .NET 4.5 library that provides reader with fast, non-cach
 
 ## Features
 #### IonReaderFactory
-Anixe.Ion library provides static factory which can create an instance for **IonReader** interface. Factory enables two ways of creating the **IonReader** instance:
+Anixe.Ion library provides static factory which can create an instance for **IonReader** interface. Factory enables two ways of creation the **IonReader** instance:
 
-1. With path to the file. File is opened with: *FileMode.Open*, *FileAccess.Read*, *FileShare.ReadWrite*. Possible argument exceptions in this case:
-   * *ArgumentException* with message "File path must be defined!" when given file path is null, empty or contains only white spaces.
-   * *ArgumentException* with message "File 'XXX' does not exist!" when given XXX path does not exist on disk.
+1. With path to the file. File is opened with: **FileMode.Open**, **FileAccess.Read**, **FileShare.ReadWrite**. Possible argument exceptions:
+   * **ArgumentException** with message "File path must be defined!" when given file path is null, empty or contains only white spaces.
+   * **ArgumentException** with message "File 'XXX' does not exist!" when given XXX path does not exist on disk.
 2. With Stream.
 
 #### IonReader interface
-Anixe.Ion library defines following properties/methods:
-* **Read** method which reads each *.ion file line and return boolean value indicating whether reading was successful or not
-* **CurrentLine** string property which gets current line value
-* **CurrentLineNumber** integer property which gets current line number
-* **CurrentSection** string property which gets information about current section name. Its value will change only when **CurrentLine** is on line which begins with *'['*
-* **IsSectionHeader** property which gets boolean value indicating whether first character of **CurrentLine** is *'['*
-* **IsComment** property which gets boolean value indicating whether first character of **CurrentLine** is *'#'*
-* **IsTableRow** property which gets boolean value indicating whether first character of **CurrentLine** is *'|'*
-* **IsTableHeaderSeparatorRow** property which gets boolean value indicating whether first character of **CurrentLine** is *'|'* and second character is *'-'*
-* **IsEmptyLine** property which returns boolean value indicating whether first character of **CurrentLine** is empty string or line is filled with empty spaces
-* **IsProperty** property which returns boolean value indicating whether other properties are false
-* **Dispose** which means that you can wrap it with *using* clausule.
+##### Properties
+* **CurrentLine** gets current line value
+* **CurrentLineNumber** gets current line number
+* **CurrentSection** gets information about current section name. Its value will change only when **CurrentLine** is on line which begins with *'['*
+* **IsSectionHeader** gets boolean value indicating whether first character of **CurrentLine** is *'['*
+* **IsComment** gets boolean value indicating whether first character of **CurrentLine** is *'#'*
+* **IsTableRow** gets boolean value indicating whether first character of **CurrentLine** is *'|'*
+* **IsTableHeaderSeparatorRow** gets boolean value indicating whether first character of **CurrentLine** is *'|'* and second character is *'-'*
+* **IsEmptyLine** returns boolean value indicating whether first character of **CurrentLine** is empty string or line is filled with empty spaces
+* **IsProperty** returns boolean value indicating whether other properties are false
+
+##### Methods
+* **Read** reads each *.ion file line and returns boolean value indicating whether reading was successful or not
+* **Dispose** calls **Dispose** method of the underlying stream
  
 ## Example use
 #### With file path
