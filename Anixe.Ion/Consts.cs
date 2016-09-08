@@ -2,7 +2,7 @@
 
 namespace Anixe.Ion
 {
-    public static class Consts
+    internal static class Consts
     {
         public static class ErrorMessages
         {
