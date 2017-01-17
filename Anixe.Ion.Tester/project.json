@@ -5,7 +5,7 @@
     "emitEntryPoint": true
   },
   "dependencies": {
-    "Anixe.Ion" : "1.0.1-*",
+    "Anixe.Ion" : "*",
     "NETStandard.Library": "1.6.0"    
   },
   "frameworks": {

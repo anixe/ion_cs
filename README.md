@@ -1,7 +1,27 @@
 # IonReader
 
 ## Introduction
-Anixe.Ion library is a .NET 4.5 library that provides reader with fast, non-cached, forward only access to *.ion files. 
+Anixe.Ion library is a .NET Standard 1.6 library that provides reader with fast, non-cached, forward only access to *.ion files. 
+
+## How to build
+
+Just use VisualStudio or dotnet core command line interface:
+
+```
+cd <project_dir>
+dotnet restore
+dotnet build Anixe.Ion
+```
+
+## How to test
+
+Just use VisualStudio test view or dotnet core command line interface:
+
+```
+cd <project_dir>
+dotnet restore
+dotnet test Anixe.Ion.UnitTests
+```
 
 ## Features
 #### IonReaderFactory
@@ -75,3 +95,8 @@ class MainClass
 }
 ```
 
+## More examples
+
+Please check tests:
+ * {project_dir}/Anixe.Ion.UnitTests/SectionReaderTest.cs
+ * {project_dir}/Anixe.Ion.UnitTests/TableReaderTest.cs

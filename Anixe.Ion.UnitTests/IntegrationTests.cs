@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Anixe.Ion.UnitTests
 {
@@ -12,7 +13,8 @@ namespace Anixe.Ion.UnitTests
         [TestFixtureSetUp]
         public void Before_All_Test()
         {
-            this.target = IonReaderFactory.Create("Examples/example.ion");
+            var rootPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..");
+            this.target = IonReaderFactory.Create(Path.Combine(rootPath, "Examples", "example.ion"));
 
             this.assertions = new List<Action>
             {
