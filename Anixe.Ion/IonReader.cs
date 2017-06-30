@@ -9,6 +9,7 @@ namespace Anixe.Ion
     internal class IonReader : IIonReader
     {
         private bool disposed;
+        private bool passedCurrentTableHeaderRow;
         private StreamReader streamReader;
 
         private readonly CurrentLineVerifier currentLineVerifier;
@@ -50,11 +51,23 @@ namespace Anixe.Ion
         public bool IsTableRow { get { return this.currentLineVerifier.IsTableRow(CurrentLine); } }
 
         /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on table headers row.
+        /// </summary>
+        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was not already passed; otherwise, <c>false</c>.</value>
+        public bool IsTableHeaderRow { get { return this.currentLineVerifier.IsTableHeaderRow(CurrentLine, passedCurrentTableHeaderRow); } }
+
+        /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on table header separator row. IMPORTANT: we recognize this 
         /// property as a combination of first two characters as "|-". Fill your table rows without '-' character.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|-'; otherwise, <c>false</c>.</value>
         public bool IsTableHeaderSeparatorRow { get { return this.currentLineVerifier.IsTableHeaderSeparatorRow(CurrentLine); } }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on table row with data.
+        /// </summary>
+        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was already passed; otherwise, <c>false</c>.</value>
+        public bool IsTableDataRow { get { return this.currentLineVerifier.IsTableDataRow(CurrentLine, passedCurrentTableHeaderRow); } }
 
         /// <summary>
         /// Gets a value indicating whether a IonReader CurrentLine is null, empty, or consists only of white-space characters.
@@ -100,6 +113,21 @@ namespace Anixe.Ion
                 CurrentSection = this.sectionHeaderReader.Read(CurrentLine);
             }
 
+            if(passedCurrentTableHeaderRow)
+            {
+                if (!IsTableRow)
+                {
+                  passedCurrentTableHeaderRow = false;
+                }
+            }
+            else
+            {
+                if (IsTableHeaderSeparatorRow)
+                {
+                  passedCurrentTableHeaderRow = true;
+                }
+            }
+            
             return true;
         }
 
