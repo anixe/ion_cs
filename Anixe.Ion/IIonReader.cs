@@ -26,6 +26,12 @@ namespace Anixe.Ion
         bool IsComment { get; }
 
         /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on table headers row.
+        /// </summary>
+        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was not already passed; otherwise, <c>false</c>.</value>
+        bool IsTableHeaderRow { get; }
+
+        /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on table row.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|'; otherwise, <c>false</c>.</value>
@@ -37,6 +43,12 @@ namespace Anixe.Ion
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|-'; otherwise, <c>false</c>.</value>
         bool IsTableHeaderSeparatorRow { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance of IonReader is currently on table row with data.
+        /// </summary>
+        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was already passed; otherwise, <c>false</c>.</value>
+        bool IsTableDataRow { get; }
 
         /// <summary>
         /// Gets a value indicating whether a IonReader CurrentLine is null, empty, or consists only of white-space characters.

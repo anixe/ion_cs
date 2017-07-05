@@ -8,6 +8,22 @@
                 && currentLine[0] == Consts.IonSpecialChars.HeaderOpeningCharacter;
         }
 
+        public bool IsTableHeaderRow(string currentLine, bool passedCurrentTableHeaderRow)
+        {
+          return !passedCurrentTableHeaderRow
+              && !IsEmptyLine(currentLine)
+              && currentLine[0] == Consts.IonSpecialChars.TableOpeningCharacter
+              && currentLine[1] != Consts.IonSpecialChars.TableHeaderSeparatorCharacter;
+        }
+
+        public bool IsTableDataRow(string currentLine, bool passedCurrentTableHeaderRow)
+        {
+          return passedCurrentTableHeaderRow
+              && !IsEmptyLine(currentLine)
+              && currentLine[0] == Consts.IonSpecialChars.TableOpeningCharacter
+              && currentLine[1] != Consts.IonSpecialChars.TableHeaderSeparatorCharacter;
+        }
+
         public bool IsProperty(string currentLine)
         {
             return !IsEmptyLine(currentLine)

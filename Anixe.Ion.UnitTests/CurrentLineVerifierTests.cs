@@ -77,6 +77,42 @@ namespace Anixe.Ion.UnitTests
             return this.target.IsTableRow(currentLine);
         }
 
+        [TestCase("",        false, ExpectedResult = false)]
+        [TestCase(" ",       false, ExpectedResult = false)]
+        [TestCase("[NAME]",  false, ExpectedResult = false)]
+        [TestCase("#[NAME]", false, ExpectedResult = false)]
+        [TestCase("|date|",  false, ExpectedResult = true)]
+        [TestCase("|-",      false, ExpectedResult = false)]
+        [TestCase("|-1",     false, ExpectedResult = false)]
+        [TestCase("abc",     false, ExpectedResult = false)]
+        [TestCase(";abc",    false, ExpectedResult = false)]
+        [TestCase("1abc",    false, ExpectedResult = false)]
+        [TestCase("| x",     false, ExpectedResult = true)]
+        [TestCase("| x",     true,  ExpectedResult = false)]
+        [TestCase("|-",      true,  ExpectedResult = false)]
+        public bool IsTableHeaderRow_Tests(string currentLine, bool passedHeader)
+        {
+            return this.target.IsTableHeaderRow(currentLine, passedHeader);
+        }
+
+        [TestCase("",        true,  ExpectedResult = false)]
+        [TestCase(" ",       true,  ExpectedResult = false)]
+        [TestCase("[NAME]",  true,  ExpectedResult = false)]
+        [TestCase("#[NAME]", true,  ExpectedResult = false)]
+        [TestCase("|date|",  true,  ExpectedResult = true)]
+        [TestCase("|-",      true,  ExpectedResult = false)]
+        [TestCase("|-1",     true,  ExpectedResult = false)]
+        [TestCase("abc",     true,  ExpectedResult = false)]
+        [TestCase(";abc",    true,  ExpectedResult = false)]
+        [TestCase("1abc",    true,  ExpectedResult = false)]
+        [TestCase("| x",     false, ExpectedResult = false)]
+        [TestCase("| x",     true,  ExpectedResult = true)]
+        [TestCase("|-",      false, ExpectedResult = false)]
+        public bool IsTableDataRow_Tests(string currentLine, bool passedHeader)
+        {
+            return this.target.IsTableDataRow(currentLine, passedHeader);
+        }
+
         [TestCase("",        ExpectedResult = false)]
         [TestCase(" ",       ExpectedResult = false)]
         [TestCase("[NAME]",  ExpectedResult = false)]
