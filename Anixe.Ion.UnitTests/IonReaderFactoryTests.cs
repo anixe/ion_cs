@@ -1,6 +1,5 @@
 using System;
 using NUnit.Framework;
-using Anixe.Ion;
 using System.IO;
 using System.Text;
 
@@ -22,8 +21,8 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Creates_IonReader_For_Existing_File_Path()
         {
-            var actual = IonReaderFactory.Create("Examples/example.ion");
-
+            var rootPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..");
+            var actual = IonReaderFactory.Create(Path.Combine(rootPath, "Examples", "example.ion"));
             Expect(actual, Is.Not.Null);
             Expect(actual, Is.TypeOf<IonReader>());
         }
@@ -31,7 +30,8 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Creates_IonReader_For_FileStream()
         {
-            using(FileStream fileStream = new FileStream("Examples/example.ion", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            var rootPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..");
+            using(FileStream fileStream = new FileStream(Path.Combine(rootPath, "Examples", "example.ion"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using(var ionReader = IonReaderFactory.Create(fileStream))
                 {
@@ -44,7 +44,8 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Creates_IonReader_For_MemoryStream()
         {
-            var rawFileContent = Encoding.UTF8.GetBytes(File.ReadAllText("Examples/example.ion"));
+            var rootPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..");
+            var rawFileContent = Encoding.UTF8.GetBytes(File.ReadAllText(Path.Combine(rootPath, "Examples", "example.ion")));
 
             using(MemoryStream fileStream = new MemoryStream(rawFileContent))
             {
