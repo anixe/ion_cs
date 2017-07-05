@@ -92,7 +92,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("|-",      true,  ExpectedResult = false)]
         public bool IsTableHeaderRow_Tests(string currentLine, bool passedHeader)
         {
-          return this.target.IsTableHeaderRow(currentLine, passedHeader);
+            return this.target.IsTableHeaderRow(currentLine, passedHeader);
         }
 
         [TestCase("",        true,  ExpectedResult = false)]
@@ -110,7 +110,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("|-",      false, ExpectedResult = false)]
         public bool IsTableDataRow_Tests(string currentLine, bool passedHeader)
         {
-          return this.target.IsTableDataRow(currentLine, passedHeader);
+            return this.target.IsTableDataRow(currentLine, passedHeader);
         }
 
         [TestCase("",        ExpectedResult = false)]
