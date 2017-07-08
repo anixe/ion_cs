@@ -20,7 +20,9 @@ Anixe.Ion library provides static factory which can create an instance for **Ion
 * **IsSectionHeader** gets boolean value indicating whether first character of **CurrentLine** is *'['*
 * **IsComment** gets boolean value indicating whether first character of **CurrentLine** is *'#'*
 * **IsTableRow** gets boolean value indicating whether first character of **CurrentLine** is *'|'*
+* **IsTableHeaderRow** gets boolean value indicating whether first character of **CurrentLine** is *'|'* and current table header was not already passed
 * **IsTableHeaderSeparatorRow** gets boolean value indicating whether first character of **CurrentLine** is *'|'* and second character is *'-'*
+* **IsTableDataRow** gets boolean value indicating whether first character of **CurrentLine** is *'|'* and current table header was already passed
 * **IsEmptyLine** returns boolean value indicating whether first character of **CurrentLine** is empty string or line is filled with empty spaces
 * **IsProperty** returns boolean value indicating whether other properties are false
 
