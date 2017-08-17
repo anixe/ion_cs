@@ -136,7 +136,7 @@ namespace Anixe.Ion
             }
         }
 
-        public void WriteTableHeader(string[] columns, int[] columnsMinSize = null)
+        public void WriteTableHeader(string[] columns)
         {
             ValidateWriteTableHeader(columns);
             ClearState();

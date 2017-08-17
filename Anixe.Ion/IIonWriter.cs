@@ -14,7 +14,7 @@ namespace Anixe.Ion
         void WriteProperty(string name, double value);
         void WriteProperty(string name, float value);
 
-        void WriteTableHeader(string[] columns, int[] columnsMinSize = null);
+        void WriteTableHeader(string[] columns);
         void WriteTableRow(string[] data);
         void WriteEmptyLine();
         void Flush();
