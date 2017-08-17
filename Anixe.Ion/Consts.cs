@@ -4,6 +4,9 @@ namespace Anixe.Ion
 {
     internal static class Consts
     {
+        public const string False = "false";
+        public const string True = "true";
+
         public static class ErrorMessages
         {
             public const string UndefinedFilePath = "File path must be defined!";
@@ -17,6 +20,9 @@ namespace Anixe.Ion
             public const char CommentCharacter              = '#';
             public const char TableOpeningCharacter         = '|';
             public const char TableHeaderSeparatorCharacter = '-';
+            public const char WriteSpaceCharacter = ' ';
+            public const char QuotationCharacter = '"';
+            public const char EqualsCharacter = '=';
         }
     }
 }

@@ -31,3 +31,4 @@ StyleCop.Cache
 
 .DS_Store
 Anixe.Ion.UnitTests/TestResult.xml
+.vs
