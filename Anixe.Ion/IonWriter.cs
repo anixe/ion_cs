@@ -13,7 +13,6 @@ namespace Anixe.Ion
         private TextWriter tw;
         private WriterState state;
         private string[] lastTableColumns;
-        private int[] columnsMinSize;
 
         internal WriterState State
         {
@@ -269,7 +268,6 @@ namespace Anixe.Ion
         private void ClearState()
         {
             this.lastTableColumns = null;
-            this.columnsMinSize = null;
             this.state &= ~WriterState.Property;
             this.state &= ~WriterState.TableHeader;
             this.state &= ~WriterState.TableRow;
