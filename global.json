@@ -1,7 +1,10 @@
 {
-  "projects":[
+  "projects": [
     "Anixe.Ion",
     "Anixe.Ion.Tester",
     "Anixe.Ion.UnitTests"
-  ]
+  ],
+  "sdk": {
+    "version": "1.0.0-preview2-003121"
+  }
 }

@@ -1,11 +1,11 @@
 {
-  "version": "1.0.1-*",
+  "version": "1.0.2-*",
   "buildOptions": {
     "debugType": "portable"
   },
   "dependencies": 
   {
-    "Anixe.Ion" : "1.0.0-*",
+    "Anixe.Ion" : "1.0.2-*",
     "NETStandard.Library": "1.6.0",
     "NSubstitute" : "2.0.0-*",
     "NUnit": "3.4.1"
