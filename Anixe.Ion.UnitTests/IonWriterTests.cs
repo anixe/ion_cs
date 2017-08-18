@@ -107,6 +107,31 @@ namespace Anixe.Ion.UnitTests
         }
 
         [Test]
+        public void Should_Write_Custom_Property()
+        {
+            var sb = new StringBuilder();
+            using (var subject = new IonWriter(new StringWriter(sb)))
+            {
+                subject.WriteSection("META");
+                Assert.AreEqual(WriterState.Section, subject.State);
+                subject.WriteProperty("test", (tw) => 
+                {
+                    tw.Write('[');
+                    tw.Write(23);
+                    tw.Write(',');
+                    tw.Write(23);
+                    tw.Write(',');
+                    tw.Write(23);
+                    tw.Write(',');
+                    tw.Write(23);
+                    tw.Write(']');
+                });
+                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+            }
+            Assert.AreEqual(string.Format("[META]{0}test=[23,23,23,23]{0}", Environment.NewLine), sb.ToString());
+        }
+
+        [Test]
         public void Should_Write_Multiple_Properties()
         {
             var sb = new StringBuilder();

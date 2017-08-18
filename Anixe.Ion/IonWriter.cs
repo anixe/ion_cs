@@ -62,6 +62,21 @@ namespace Anixe.Ion
             this.state |= WriterState.Property;
         }
 
+        public void WriteProperty(string name, Action<TextWriter> writeValueAction)
+        {
+            if (writeValueAction == null)
+            {
+                throw new ArgumentNullException("Provide writeValueAction parameter");
+            }
+            ValidateWriteProperty(name);
+            ClearState();
+            this.tw.Write(name);
+            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            writeValueAction(this.tw);
+            this.tw.WriteLine();
+            this.state |= WriterState.Property;
+        }
+
         public void WriteProperty(string name, bool value)
         {
             ValidateWriteProperty(name);
