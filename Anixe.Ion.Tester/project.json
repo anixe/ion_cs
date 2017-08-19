@@ -1,11 +1,11 @@
 {
-  "version": "1.0.3-*",
+  "version": "1.0.4-*",
   "buildOptions": {
     "debugType": "portable",
     "emitEntryPoint": true
   },
   "dependencies": {
-    "Anixe.Ion" : "1.0.3-*",
+    "Anixe.Ion" : "1.0.4-*",
     "NETStandard.Library": "1.6.0"    
   },
   "frameworks": {

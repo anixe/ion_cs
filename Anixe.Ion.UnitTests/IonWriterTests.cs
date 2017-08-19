@@ -191,6 +191,53 @@ namespace Anixe.Ion.UnitTests
         }
 
         [Test]
+        public void Should_Write_Table_Outside_Section()
+        {
+            var row = new string[] { "unit_type", "miles" };
+            var expected = new string[]
+            {
+                "| unit_type | miles |",
+                "| unit_type | miles |"
+            };
+            var sb = new StringBuilder();
+            using (var subject = new IonWriter(new StringWriter(sb)))
+            {
+                subject.WriteTableRow(row);
+                subject.WriteTableRow(row);
+                Assert.AreEqual(WriterState.TableRow, subject.State);
+            }
+            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
+        }
+
+        [Test]
+        public void Should_Write_Table_Cell_With_Custom_Value()
+        {
+            var expected = new string[]
+            {
+                "| unit_type | miles |",
+                "| unit_type | miles |",
+                string.Empty,
+                "| my custom table |",
+                string.Empty,
+            };
+            var sb = new StringBuilder();
+            using (var subject = new IonWriter(new StringWriter(sb)))
+            {
+                subject.WriteTableCell((tw) => tw.Write("unit_type"));
+                subject.WriteTableCell((tw) => tw.Write("miles"), true);
+                subject.WriteTableCell((tw) => tw.Write("unit_type"));
+                subject.WriteTableCell((tw) => tw.Write("miles"), true);
+                Assert.AreEqual(WriterState.TableRow, subject.State);
+                subject.WriteEmptyLine();
+                Assert.AreEqual(WriterState.None, subject.State);
+                subject.WriteTableCell((tw) => tw.Write("my custom table"), true);
+                Assert.AreEqual(WriterState.TableRow, subject.State);
+            }
+            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+        }
+
+
+        [Test]
         public void Should_Write_Tables()
         {
             var row = new string[] { "unit_type", "miles" };

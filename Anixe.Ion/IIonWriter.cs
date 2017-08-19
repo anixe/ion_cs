@@ -19,6 +19,7 @@ namespace Anixe.Ion
 
         void WriteTableHeader(params string[] columns);
         void WriteTableRow(params string[] data);
+        void WriteTableCell(Action<TextWriter> writeCellAction, bool lastCellInRow = false);
         void WriteEmptyLine();
         void Flush();
     }

@@ -13,6 +13,7 @@ namespace Anixe.Ion
         private TextWriter tw;
         private WriterState state;
         private string[] lastTableColumns;
+        private bool firstTableCell = true;
 
         internal WriterState State
         {
@@ -203,6 +204,36 @@ namespace Anixe.Ion
             }
         }
 
+        public void WriteTableCell(Action<TextWriter> writeCellAction, bool lastCellInRow = false)
+        {
+            ValidateWriteTableCell(writeCellAction);
+            if(this.firstTableCell)
+            {
+                tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+                this.firstTableCell = false;
+            }
+            tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
+            writeCellAction(this.tw);
+            tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
+            tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+            if(lastCellInRow)
+            {
+                this.tw.WriteLine();
+                this.firstTableCell = true;
+            }
+            this.state &= ~WriterState.Property;
+            this.state &= ~WriterState.TableHeader;
+            this.state |= WriterState.TableRow;
+        }
+
+        private void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
+        {
+            if(writeCellAction == null)
+            {
+                throw new ArgumentNullException("Must provide Action<TextWriter>");
+            }
+        }
+
         private void WriteHeaderSeparator(string col)
         {
             for (int j = -1; j <= col.Length; j++)
@@ -264,6 +295,7 @@ namespace Anixe.Ion
         private void ClearState()
         {
             this.lastTableColumns = null;
+            this.firstTableCell = true;
             this.state &= ~WriterState.Property;
             this.state &= ~WriterState.TableHeader;
             this.state &= ~WriterState.TableRow;
