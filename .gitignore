@@ -30,5 +30,6 @@ test-results/
 StyleCop.Cache
 
 .DS_Store
-Anixe.Ion.UnitTests/TestResult.xml
+TestResult.xml
+project.lock.json
 .vs

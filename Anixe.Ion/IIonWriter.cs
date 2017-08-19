@@ -11,13 +11,14 @@ namespace Anixe.Ion
     {
         void WriteSection(string name);
         void WriteProperty(string name, string value);
+        void WriteProperty(string name, char value);
         void WriteProperty(string name, int value);
         void WriteProperty(string name, double value);
         void WriteProperty(string name, float value);
         void WriteProperty(string name, Action<TextWriter> writeValueAction);
 
-        void WriteTableHeader(string[] columns);
-        void WriteTableRow(string[] data);
+        void WriteTableHeader(params string[] columns);
+        void WriteTableRow(params string[] data);
         void WriteEmptyLine();
         void Flush();
     }

@@ -150,7 +150,7 @@ namespace Anixe.Ion
             }
         }
 
-        public void WriteTableHeader(string[] columns)
+        public void WriteTableHeader(params string[] columns)
         {
             ValidateWriteTableHeader(columns);
             ClearState();
@@ -178,7 +178,7 @@ namespace Anixe.Ion
             }
         }
 
-        public void WriteTableRow(string[] data)
+        public void WriteTableRow(params string[] data)
         {
             if (this.lastTableColumns == null && !this.state.HasFlag(WriterState.TableHeader))
             {
@@ -193,10 +193,6 @@ namespace Anixe.Ion
 
         private void ValidateWriteTableRow(string[] columns)
         {
-            if (this.state == WriterState.None)
-            {
-                throw new InvalidOperationException("Only section can be at the top of document");
-            }
             if (columns == null || columns.Length == 0)
             {
                 throw new ArgumentNullException("Cannot create empty table row");
