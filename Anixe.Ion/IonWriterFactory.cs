@@ -21,18 +21,24 @@ namespace Anixe.Ion
         }
 
         /// <summary>
-        /// Creates the instance of IIonReader for specified stream.
+        /// Creates the instance of IIonWriter from specified stream.
         /// </summary>
         /// <param name="stream">Stream.</param>
-        public static IIonWriter Create(Stream stream)
+        /// <param name="leaveOpen">Indicates if the stream will be disposed with IIonWriter.Dispose</param>
+        public static IIonWriter Create(Stream stream, bool leaveOpen = false)
         {
             var writer = new StreamWriter(stream);
-            return Create(writer);
+            return Create(writer, leaveOpen);
         }
 
-        public static IIonWriter Create(TextWriter tw)
+        /// <summary>
+        /// Creates the instance of IIonWriter from specified TextWriter.
+        /// </summary>
+        /// <param name="stream">Stream.</param>
+        /// <param name="leaveOpen">Indicates if the TextWriter instance will be disposed with IIonWriter.Dispose</param>
+        public static IIonWriter Create(TextWriter tw, bool leaveOpen = false)
         {
-            return new IonWriter(tw);
+            return new IonWriter(tw, leaveOpen);
         }
 
         #region Private methods

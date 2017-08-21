@@ -14,15 +14,17 @@ namespace Anixe.Ion
         private WriterState state;
         private string[] lastTableColumns;
         private bool firstTableCell = true;
+        private bool leaveOpen;
 
         internal WriterState State
         {
             get { return this.state; }
         }
 
-        public IonWriter(TextWriter tw)
+        public IonWriter(TextWriter tw, bool leaveOpen = false)
         {
             this.tw = tw;
+            this.leaveOpen = leaveOpen;
         }
 
         #region IIonWriter Members
@@ -284,7 +286,7 @@ namespace Anixe.Ion
 
         public void Dispose()
         {
-            if (this.tw != null)
+            if (this.tw != null && !this.leaveOpen)
             {
                 this.tw.Dispose();
             }
