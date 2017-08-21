@@ -14,4 +14,12 @@ namespace Anixe.Ion
         TableHeader = 4,
         TableRow = 8,
     }
+
+    internal static class WriterStateExtensions
+    {
+        public static bool HasBitFlags(this WriterState that, WriterState flag)
+        {
+            return (that & flag) == flag;
+        }
+    }
 }

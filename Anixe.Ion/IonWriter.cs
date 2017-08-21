@@ -169,7 +169,7 @@ namespace Anixe.Ion
             {
                 throw new InvalidOperationException("Only section can be at the top of document");
             }
-            if (this.state.HasFlag(WriterState.TableHeader))
+            if (this.state.HasBitFlags(WriterState.TableHeader))
             {
                 throw new InvalidOperationException("Table can have ony one header");
             }
@@ -181,7 +181,7 @@ namespace Anixe.Ion
 
         public void WriteTableRow(params string[] data)
         {
-            if (this.lastTableColumns == null && !this.state.HasFlag(WriterState.TableHeader))
+            if (this.lastTableColumns == null && !this.state.HasBitFlags(WriterState.TableHeader))
             {
                 this.lastTableColumns = data;
             }
