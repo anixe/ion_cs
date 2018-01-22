@@ -157,7 +157,6 @@ namespace Anixe.Ion
         {
             ValidateWriteTableHeader(columns);
             ClearState();
-            tw.WriteLine();
             WriteTableRow(columns, WriteCol);
             WriteTableRow(columns, WriteHeaderSeparator, true);
             this.state &= ~WriterState.Property;

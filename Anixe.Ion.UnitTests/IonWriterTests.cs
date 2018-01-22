@@ -155,7 +155,8 @@ namespace Anixe.Ion.UnitTests
             {
                 "[DATA]",
                 "| key | val |",
-                "|-----|-----|"
+                "|-----|-----|",
+                string.Empty
             };
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
@@ -165,7 +166,7 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableHeader(header);
                 Assert.AreEqual(WriterState.Section | WriterState.TableHeader, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[]{ Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
+            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[]{ Environment.NewLine }, StringSplitOptions.None));
         }
 
         [Test]
@@ -176,7 +177,8 @@ namespace Anixe.Ion.UnitTests
             {
                 "[DATA]",
                 "| unit_type | miles |",
-                "| unit_type | miles |"
+                "| unit_type | miles |",
+                string.Empty
             };
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
@@ -187,7 +189,7 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableRow(row);
                 Assert.AreEqual(WriterState.Section | WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
+            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
         }
 
         [Test]
@@ -197,7 +199,8 @@ namespace Anixe.Ion.UnitTests
             var expected = new string[]
             {
                 "| unit_type | miles |",
-                "| unit_type | miles |"
+                "| unit_type | miles |",
+                string.Empty
             };
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
@@ -206,7 +209,7 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableRow(row);
                 Assert.AreEqual(WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
+            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
         }
 
         [Test]
@@ -274,13 +277,14 @@ namespace Anixe.Ion.UnitTests
         {
             var header = new string[] { "key", "val" };
             var row = new string[] { "unit_type", "miles" };
-            var expected = new string[] 
-            {
+      var expected = new string[]
+      {
                 "[DATA]",
                 "| key | val |",
                 "|-----|-----|",
                 "| unit_type | miles |",
-                "| unit_type | miles |"
+                "| unit_type | miles |",
+                string.Empty
             };
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
@@ -292,7 +296,7 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableRow(row);
                 Assert.AreEqual(WriterState.Section | WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
+            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
         }
 
         [Test]
@@ -324,6 +328,7 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteSection("DATA");
                 Assert.AreEqual(WriterState.Section, subject.State);
                 subject.WriteProperty("table_name", "test");
+                subject.WriteEmptyLine();
                 subject.WriteTableHeader(header);
                 subject.WriteTableRow(row);
                 subject.WriteTableRow(row);
