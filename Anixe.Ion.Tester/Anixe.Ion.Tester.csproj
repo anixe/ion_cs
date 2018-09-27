@@ -6,8 +6,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
-<ItemGroup>
-  <ProjectReference Include="..\Anixe.Ion\Anixe.Ion.csproj" />
-</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Anixe.Ion\Anixe.Ion.csproj" />
+  </ItemGroup>
 
 </Project>

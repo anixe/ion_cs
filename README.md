@@ -14,7 +14,8 @@ Anixe.Ion library provides static factory which can create an instance for **Ion
 
 #### IonReader interface
 ##### Properties
-* **CurrentLine** gets current line value
+* **CurrentLine** gets current line value. It causes new string allocation from CurrentRawLine 
+* **CurrentRawLine** gets current line value as ArraySegment<char>. It is allocation free. Data is from rented buffer.
 * **CurrentLineNumber** gets current line number
 * **CurrentSection** gets information about current section name. Its value will change only when **CurrentLine** is on line which begins with *'['*
 * **IsSectionHeader** gets boolean value indicating whether first character of **CurrentLine** is *'['*
@@ -73,5 +74,22 @@ class MainClass
         }
     }
 }
+```
+
+### Benchmarks
+
+To run benchmark use the Anixe.Ion.Benchmark project
+
+```
+cd Anixe.Ion.Benchmark
+dotnet run -c Release
+```
+
+The output of reading stations.ion:
+
+```
+ Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 43.30 ms | 0.8562 ms | 0.8009 ms |   7.26 KB |
 ```
 

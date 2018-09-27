@@ -33,3 +33,4 @@ StyleCop.Cache
 TestResult.xml
 project.lock.json
 .vs
+BenchmarkDotNet.Artifacts
