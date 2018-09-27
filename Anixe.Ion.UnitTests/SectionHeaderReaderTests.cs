@@ -1,9 +1,10 @@
 using NUnit.Framework;
 using Anixe.Ion;
+using static NUnit.StaticExpect.Expectations;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class SectionHeaderReaderTests : AssertionHelper
+    internal class SectionHeaderReaderTests
     {
         private SectionHeaderReader target;
 

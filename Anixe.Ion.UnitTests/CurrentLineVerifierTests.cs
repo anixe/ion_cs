@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using NSubstitute;
 using NUnit.Framework;
 using Anixe.Ion;
+using static NUnit.StaticExpect.Expectations;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class CurrentLineVerifierTests : AssertionHelper
+    internal class CurrentLineVerifierTests
     {
         private CurrentLineVerifier target;
 

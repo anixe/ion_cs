@@ -2,18 +2,20 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
+using static NUnit.StaticExpect.Expectations;
 
 namespace Anixe.Ion.UnitTests
 {
-    public class IntegrationTests : AssertionHelper
+    [TestFixture]
+    public class IntegrationTests
     {
         private IIonReader target;
         private List<Action> assertions;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Before_All_Test()
         {
-            this.target = IonReaderFactory.Create(Path.Combine("Examples","example.ion"));
+            this.target = IonReaderFactory.Create(FileLoader.GetExamplesIonPath());
 
             this.assertions = new List<Action>
             {
@@ -36,7 +38,7 @@ namespace Anixe.Ion.UnitTests
             };
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void After_All_Test()
         {
             this.target.Dispose();
