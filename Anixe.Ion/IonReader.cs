@@ -136,7 +136,7 @@ namespace Anixe.Ion
             }
             try
             {
-                if(!ReadLine())
+                if(!ReadLine() && sb.Length == 0)
                 {
                     ResetFields();
                     return false;

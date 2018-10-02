@@ -10,7 +10,7 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Should_Read_Ins_Ion()
         {
-            bool wasThere = false;
+            int counter = 0;
             using (var stream = File.OpenRead(FileLoader.GetInsIonPath()))
             using (var reader = IonReaderFactory.Create(stream))
             {
@@ -24,15 +24,15 @@ namespace Anixe.Ion.UnitTests
                     {
                         break;
                     }
-                    if (reader.IsTableHeaderRow)
+                    if (reader.IsTableDataRow)
                     {
-                        wasThere = true;
+                        counter++;
                         var columns = reader.CurrentLine.Split('|', StringSplitOptions.RemoveEmptyEntries);
                         Assert.AreEqual(12, columns.Length);
                     }
                 }
             }
-            Assert.True(wasThere);
+            Assert.AreEqual(3, counter);
         }
     }
 }
