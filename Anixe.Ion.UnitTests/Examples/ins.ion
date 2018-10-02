@@ -1,0 +1,9 @@
+[META]
+tenant="ftidrive"
+
+[INSURANCE]
+|        name        | code | geo_path |      query_rules      | product_rules | calc | charge | coverage | curr | src |       profile       | pri |
+|--------------------|------|----------|-----------------------|---------------|------|--------|----------|------|-----|---------------------|-----|
+| Extended liability | EX   | AE       | B20000101+ A20000101+ | S[BU] C[ALL]  | 0.75 | N      |   100000 | EUR  | HM  | ftidrive.ftide.driv |   1 |
+| Extended liability | EX   | AW       | B20000101+ A20000101+ | S[EP] C[ALL]  | 0.75 | N      |   100000 | EUR  | HM  | ftidrive.ftide.driv |   1 |
+| Other insurance    | OI   | AE       | B20000101+ A20000101+ | S[EP] C[ALL]  | %10  | U      |   100000 |      | XX  | ftidrive.ftide.driv |   1 |

@@ -136,38 +136,23 @@ namespace Anixe.Ion
             }
             try
             {
-                ReadLine();
-                if(sb.Length == 0)
+                if(!ReadLine())
                 {
                     ResetFields();
                     return false;
                 }
-
-                PrepareBuffer(sb.Length);
-                sb.CopyTo(0, rentedCharBuffer, 0, sb.Length);
-                CurrentRawLine = new ArraySegment<char>(rentedCharBuffer, 0, sb.Length);
-                CurrentLineNumber++;
-
-                if(IsSectionHeader)
+                if(sb.Length == 0)
                 {
-                    var tmp = this.sectionHeaderReader.Read(CurrentRawLine);
-                    CurrentSection = new String(tmp.Array, tmp.Offset, tmp.Count);
-                }
-
-                if(passedCurrentTableHeaderRow)
-                {
-                    if (!IsTableRow)
-                    {
-                        passedCurrentTableHeaderRow = false;
-                    }
+                    CurrentRawLine = ArraySegment<char>.Empty;
                 }
                 else
                 {
-                    if (IsTableHeaderSeparatorRow)
-                    {
-                        passedCurrentTableHeaderRow = true;
-                    }
+                    PrepareBuffer(sb.Length);
+                    sb.CopyTo(0, rentedCharBuffer, 0, sb.Length);
+                    CurrentRawLine = new ArraySegment<char>(rentedCharBuffer, 0, sb.Length);
                 }
+                CurrentLineNumber++;
+                ExposeData();
             }
             catch (Exception exception)
             {
@@ -176,7 +161,31 @@ namespace Anixe.Ion
             return true;
         }
 
-        private void ReadLine()
+        private void ExposeData()
+        {
+            if(IsSectionHeader)
+            {
+                var tmp = this.sectionHeaderReader.Read(CurrentRawLine);
+                CurrentSection = new String(tmp.Array, tmp.Offset, tmp.Count);
+            }
+
+            if(passedCurrentTableHeaderRow)
+            {
+                if (!IsTableRow)
+                {
+                    passedCurrentTableHeaderRow = false;
+                }
+            }
+            else
+            {
+                if (IsTableHeaderSeparatorRow)
+                {
+                    passedCurrentTableHeaderRow = true;
+                }
+            }
+        }
+
+        private bool ReadLine()
         {
             bool endOfFile = false;
             this.sb.Clear();
@@ -203,6 +212,7 @@ namespace Anixe.Ion
                 }
                 this.sb.Append(character);
             }
+            return !endOfFile;
         }
 
         private bool IsUTFBom(int readByte)
