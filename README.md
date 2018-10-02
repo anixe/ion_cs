@@ -87,9 +87,17 @@ dotnet run -c Release
 
 The output of reading stations.ion:
 
+* baseline
+
 ```
  Method |     Mean |     Error |    StdDev | Allocated |
 ------- |---------:|----------:|----------:|----------:|
    Read | 43.30 ms | 0.8562 ms | 0.8009 ms |   7.26 KB |
 ```
 
+* added UT8 encoding, which requires additional bufffers
+```
+Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 60.19 ms | 0.3408 ms | 0.3188 ms |   9.67 KB |
+```

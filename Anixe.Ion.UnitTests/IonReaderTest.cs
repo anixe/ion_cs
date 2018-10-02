@@ -29,6 +29,14 @@ namespace Anixe.Ion.UnitTests
                         counter++;
                         var columns = reader.CurrentLine.Split('|', StringSplitOptions.RemoveEmptyEntries);
                         Assert.AreEqual(12, columns.Length);
+                        if (counter == 1)
+                        {
+                            Assert.AreEqual("Berlin Mitte Kronenstraße", columns[0].Trim());
+                        }
+                        if (counter == 2)
+                        {
+                            Assert.AreEqual("DANS PARKING AUTOCIT®Õ NIVEAU -2", columns[0].Trim());
+                        }
                     }
                 }
             }

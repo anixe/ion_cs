@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -19,6 +20,14 @@ namespace Anixe.Ion
         private readonly CurrentLineVerifier currentLineVerifier;
         private readonly SectionHeaderReader sectionHeaderReader;
         private char[] rentedCharBuffer;
+        private byte[] byteBuff;
+        private char[] charBuff;
+        private byte[] preamble;
+        private int buffIndex = 0;
+        private int charsRead = 0;
+        private Encoding enc = Encoding.UTF8;
+        private bool checkBOM;
+
 
         /// <summary>
         /// It initialized IonReader
@@ -39,6 +48,10 @@ namespace Anixe.Ion
             this.sb = new StringBuilder();
             this.charPool = charPool ?? System.Buffers.ArrayPool<char>.Shared;
             this.rentedCharBuffer = null;
+            this.byteBuff = new byte[enc.GetMaxByteCount(1)];
+            this.charBuff = new char[enc.GetMaxByteCount(byteBuff.Length)];
+            this.preamble = enc.GetPreamble();
+            this.checkBOM = this.stream.Position == 0;
         }
 
         #region IIonReader members
@@ -189,35 +202,74 @@ namespace Anixe.Ion
         {
             bool endOfFile = false;
             this.sb.Clear();
+            Array.Clear(byteBuff, 0, byteBuff.Length);
+            if(buffIndex > 0)
+            {
+                if(!CopyTillEOL())
+                {
+                    Array.Clear(charBuff, 0, charBuff.Length);
+                    buffIndex = 0;
+                }
+                else
+                {
+                    return !endOfFile;
+                }
+            }
             while (this.stream.CanRead && endOfFile == false)
             {
-                var readByte = this.stream.ReadByte();
-                if (readByte == -1)
+                int bytesRead = this.stream.Read(byteBuff, 0, byteBuff.Length);
+                if (bytesRead == 0)
                 {
                     endOfFile = true;
                     break;
                 }
-                if(IsUTFBom(readByte))
+                var offset = GetIndex();
+                this.charsRead = enc.GetChars(byteBuff, offset, bytesRead - offset, charBuff, 0);
+                if(CopyTillEOL())
                 {
-                    continue;
+                    return !endOfFile;
                 }
-                var character = (char)readByte;
+            }
+            return !endOfFile;
+        }
+
+        private int GetIndex()
+        {
+            var retval = 0;
+            if(!this.checkBOM)
+            {
+                retval = 0;
+            }
+            else
+            {
+                if(this.byteBuff[0] == this.preamble[0] &&
+                this.byteBuff[1] == this.preamble[1] &&
+                this.byteBuff[2] == this.preamble[2])
+                {
+                    retval = this.preamble.Length;
+                }
+            }
+            this.checkBOM = false;
+            return retval;
+        }
+
+        private bool CopyTillEOL()
+        {
+            for (int i = buffIndex; i < this.charsRead; i++)
+            {
+                var character = charBuff[i];
                 if (character == '\r')
                 {
                     continue;
                 }
                 if (character == '\n')
                 {
-                    break;
+                    buffIndex = i + 1;
+                    return true;
                 }
-                this.sb.Append(character);
+                this.sb.Append(character);            
             }
-            return !endOfFile;
-        }
-
-        private bool IsUTFBom(int readByte)
-        {
-            return readByte == 0xEF || readByte == 0xBB || readByte == 0xBF;
+            return false;
         }
 
         private void PrepareBuffer(int length)
