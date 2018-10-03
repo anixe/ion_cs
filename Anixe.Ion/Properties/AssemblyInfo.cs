@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion("2.0.3")]
+[assembly: AssemblyVersion("2.0.4")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("Anixe.Ion.Tester")]
 [assembly: InternalsVisibleTo("Anixe.Ion.UnitTests")]

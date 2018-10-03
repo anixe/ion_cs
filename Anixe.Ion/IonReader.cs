@@ -48,7 +48,7 @@ namespace Anixe.Ion
             this.sb = new StringBuilder();
             this.charPool = charPool ?? System.Buffers.ArrayPool<char>.Shared;
             this.rentedCharBuffer = null;
-            this.byteBuff = new byte[enc.GetMaxByteCount(1)];
+            this.byteBuff = new byte[1024];
             this.charBuff = new char[enc.GetMaxByteCount(byteBuff.Length)];
             this.preamble = enc.GetPreamble();
             this.checkBOM = this.stream.Position == 0;
@@ -255,20 +255,23 @@ namespace Anixe.Ion
 
         private bool CopyTillEOL()
         {
+            var tmp = buffIndex;
             for (int i = buffIndex; i < this.charsRead; i++)
             {
                 var character = charBuff[i];
-                if (character == '\r')
-                {
-                    continue;
-                }
                 if (character == '\n')
                 {
+                    var x = 0;
+                    if(i > buffIndex)
+                    {
+                        x = charBuff[i - 1] == '\r' ? 1 : 0;
+                        this.sb.Append(charBuff, buffIndex - x, i - buffIndex - x);
+                    }
                     buffIndex = i + 1;
                     return true;
                 }
-                this.sb.Append(character);            
             }
+            this.sb.Append(charBuff, tmp, this.charsRead - tmp);
             return false;
         }
 

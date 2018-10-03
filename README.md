@@ -76,7 +76,7 @@ class MainClass
 }
 ```
 
-### Benchmarks
+### Benchmarks history
 
 To run benchmark use the Anixe.Ion.Benchmark project
 
@@ -100,4 +100,18 @@ The output of reading stations.ion:
 Method |     Mean |     Error |    StdDev | Allocated |
 ------- |---------:|----------:|----------:|----------:|
    Read | 60.19 ms | 0.3408 ms | 0.3188 ms |   9.67 KB |
+```
+
+* increase read buffer size to 1024 bytes
+```
+ Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 30.86 ms | 0.4422 ms | 0.3920 ms |  14.35 KB |
+```
+
+* append StringBuilder instance with char array block instead of char by char
+```
+Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 20.84 ms | 0.0839 ms | 0.0744 ms |  14.94 KB |
 ```
