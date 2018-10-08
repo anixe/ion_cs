@@ -39,6 +39,11 @@ namespace Anixe.Ion.UnitTests
             return currDir;
         }
 
+        public static string GetInsGzIonPath()
+        {
+            return Path.Combine(ExamplesFileFolderPath, "ins.ion.gz");
+        }
+
         public static string GetExamplesIonPath()
         {
             return Path.Combine(ExamplesFileFolderPath, "example.ion");

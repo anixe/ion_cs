@@ -51,7 +51,7 @@ namespace Anixe.Ion
             this.byteBuff = new byte[1024];
             this.charBuff = new char[enc.GetMaxByteCount(byteBuff.Length)];
             this.preamble = enc.GetPreamble();
-            this.checkBOM = this.stream.Position == 0;
+            this.checkBOM = this.stream.CanSeek ? this.stream.Position == 0 : true;
         }
 
         #region IIonReader members
