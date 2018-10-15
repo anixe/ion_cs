@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using NUnit.Framework;
 
 namespace Anixe.Ion.UnitTests
@@ -42,6 +44,41 @@ namespace Anixe.Ion.UnitTests
                 }
             }
             Assert.AreEqual(3, counter);
+        }
+
+
+        [Test]
+        public void Should_Read_Ion_With_Windows_Line_Endings()
+        {
+            var props = new List<string>{ };
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(FileLoader.GetIonWithWindowsLineEndings())))
+            using (var reader = IonReaderFactory.Create(stream))
+            {
+                while (reader.Read())
+                {
+                    if (reader.CurrentSection != "DEFAULTS")
+                    {
+                        continue;
+                    }
+                    if (reader.IsEmptyLine)
+                    {
+                        break;
+                    }
+                    if (reader.IsProperty)
+                    {
+                        props.Add(reader.CurrentLine);
+                    }
+                }
+            }
+            Assert.AreEqual(8, props.Count);
+            Assert.AreEqual("currency = \"EUR\"", props[0]);
+            Assert.AreEqual("language = \"de\"", props[1]);
+            Assert.AreEqual("sales_market = \"DE\"", props[2]);
+            Assert.AreEqual("timeout = 5000", props[3]);
+            Assert.AreEqual("sipp = \"ECAR\"", props[4]);
+            Assert.AreEqual("price_margin = %5", props[5]);
+            Assert.AreEqual("disabled_log_urls = [ \"/G\", \"/cars\", \"/cars_group_by\" ]", props[6]);
+            Assert.AreEqual("enabled_log_urls = [ ]", props[7]);
         }
 
 

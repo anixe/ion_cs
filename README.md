@@ -111,7 +111,14 @@ Method |     Mean |     Error |    StdDev | Allocated |
 
 * append StringBuilder instance with char array block instead of char by char
 ```
-Method |     Mean |     Error |    StdDev | Allocated |
+ Method |     Mean |     Error |    StdDev | Allocated |
 ------- |---------:|----------:|----------:|----------:|
    Read | 20.84 ms | 0.0839 ms | 0.0744 ms |  14.94 KB |
+```
+
+* remove Array.Clear which was not required because of using index & count on feeding StringBuilder instance.
+```
+ Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 9.432 ms | 0.0468 ms | 0.0438 ms |  14.92 KB |
 ```

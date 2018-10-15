@@ -202,12 +202,10 @@ namespace Anixe.Ion
         {
             bool endOfFile = false;
             this.sb.Clear();
-            Array.Clear(byteBuff, 0, byteBuff.Length);
             if(buffIndex > 0)
             {
                 if(!CopyTillEOL())
                 {
-                    Array.Clear(charBuff, 0, charBuff.Length);
                     buffIndex = 0;
                 }
                 else
@@ -265,7 +263,7 @@ namespace Anixe.Ion
                     if(i > buffIndex)
                     {
                         x = charBuff[i - 1] == '\r' ? 1 : 0;
-                        this.sb.Append(charBuff, buffIndex - x, i - buffIndex - x);
+                        this.sb.Append(charBuff, buffIndex, i - buffIndex - x);
                     }
                     buffIndex = i + 1;
                     return true;
@@ -281,14 +279,11 @@ namespace Anixe.Ion
             {
                 this.rentedCharBuffer = charPool.Rent(length);
             }
-            else if(this.rentedCharBuffer.Length >= length)
+            else if(this.rentedCharBuffer.Length < length)
             {
-                Array.Clear(this.rentedCharBuffer, 0, length);
-            }
-            else
-            {
-                charPool.Return(this.rentedCharBuffer, true);
+                var tmp = this.rentedCharBuffer;
                 this.rentedCharBuffer = charPool.Rent(length);
+                charPool.Return(tmp, true);
             }
         }
 

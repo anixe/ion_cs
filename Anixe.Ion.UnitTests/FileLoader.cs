@@ -53,5 +53,10 @@ namespace Anixe.Ion.UnitTests
         {
             return Path.Combine(ExamplesFileFolderPath, "ins.ion");
         }
+
+        public static string GetIonWithWindowsLineEndings()
+        {
+            return "[DEFAULTS]\r\ncurrency = \"EUR\"\r\nlanguage = \"de\"\r\nsales_market = \"DE\"\r\ntimeout = 5000\r\nsipp = \"ECAR\"\r\nprice_margin = %5\r\ndisabled_log_urls = [ \"/G\", \"/cars\", \"/cars_group_by\" ]\r\nenabled_log_urls = [ ]";
+        }
     }
 }
