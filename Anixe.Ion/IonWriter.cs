@@ -208,26 +208,86 @@ namespace Anixe.Ion
         public void WriteTableCell(Action<TextWriter> writeCellAction, bool lastCellInRow = false)
         {
             ValidateWriteTableCell(writeCellAction);
-            if(this.firstTableCell)
+            WriteTableCellBefore();
+            writeCellAction(this.tw);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
+        public void WriteTableCell(int value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(value);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
+        public void WriteTableCell(string value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(value);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
+        public void WriteTableCell(double value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(value);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
+
+        public void WriteTableCell(decimal value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(value);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
+        public void WriteTableCell(long value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(value);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
+        public void WriteTableCell(bool value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(value);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
+        public void WriteTableCell(char[] buffer, int index, int count, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(buffer, index, count);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
+        private void WriteTableCellBefore()
+        {
+            if (this.firstTableCell)
             {
-                tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
-                this.firstTableCell = false;
+              tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+              this.firstTableCell = false;
             }
             tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
-            writeCellAction(this.tw);
+        }
+
+        private void WriteTableCellAfter(bool lastCellInRow = false)
+        {
             tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
             tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
-            if(lastCellInRow)
+            if (lastCellInRow)
             {
-                this.tw.WriteLine();
-                this.firstTableCell = true;
+              this.tw.WriteLine();
+              this.firstTableCell = true;
             }
             this.state &= ~WriterState.Property;
             this.state &= ~WriterState.TableHeader;
             this.state |= WriterState.TableRow;
-        }
+    }
 
-        private void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
+    private void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
         {
             if(writeCellAction == null)
             {
