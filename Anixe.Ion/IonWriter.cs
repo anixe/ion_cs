@@ -291,9 +291,9 @@ namespace Anixe.Ion
             this.state &= ~WriterState.Property;
             this.state &= ~WriterState.TableHeader;
             this.state |= WriterState.TableRow;
-    }
+        }
 
-    private void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
+        private void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
         {
             if(writeCellAction == null)
             {
