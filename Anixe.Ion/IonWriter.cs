@@ -234,7 +234,6 @@ namespace Anixe.Ion
             WriteTableCellAfter(lastCellInRow);
         }
 
-
         public void WriteTableCell(decimal value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
