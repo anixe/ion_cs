@@ -228,8 +228,8 @@ namespace Anixe.Ion.UnitTests
             {
                 subject.WriteTableCell((tw) => tw.Write("unit_type"));
                 subject.WriteTableCell((tw) => tw.Write("miles"), true);
-                subject.WriteTableCell((tw) => tw.Write("unit_type"));
-                subject.WriteTableCell((tw) => tw.Write("miles"), true);
+                subject.WriteTableCell("unit_type");
+                subject.WriteTableCell("miles", true);
                 Assert.AreEqual(WriterState.TableRow, subject.State);
                 subject.WriteEmptyLine();
                 Assert.AreEqual(WriterState.None, subject.State);
@@ -239,13 +239,12 @@ namespace Anixe.Ion.UnitTests
             CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
         }
 
-
         [Test]
         public void Should_Write_Tables()
         {
             var row = new string[] { "unit_type", "miles" };
             var row2 = new string[] { "unit_type", "miles", "23" };
-            var expected = new string[] 
+            var expected = new string[]
             {
                 "[DATA]",
                 string.Empty,
@@ -277,8 +276,8 @@ namespace Anixe.Ion.UnitTests
         {
             var header = new string[] { "key", "val" };
             var row = new string[] { "unit_type", "miles" };
-      var expected = new string[]
-      {
+            var expected = new string[]
+            {
                 "[DATA]",
                 "| key | val |",
                 "|-----|-----|",
