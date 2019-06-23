@@ -22,6 +22,7 @@ namespace Anixe.Ion
         void WriteTableCell(Action<TextWriter> writeCellAction, bool lastCellInRow = false);
         void WriteTableCell(int value, bool lastCellInRow = false);
         void WriteTableCell(string value, bool lastCellInRow = false);
+        void WriteTableCell(char value, bool lastCellInRow = false);
         void WriteTableCell(double value, bool lastCellInRow = false);
         void WriteTableCell(decimal value, bool lastCellInRow = false);
         void WriteTableCell(long value, bool lastCellInRow = false);

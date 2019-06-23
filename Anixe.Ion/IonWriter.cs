@@ -227,6 +227,13 @@ namespace Anixe.Ion
             WriteTableCellAfter(lastCellInRow);
         }
 
+        public void WriteTableCell(char value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(value);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
         public void WriteTableCell(double value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
