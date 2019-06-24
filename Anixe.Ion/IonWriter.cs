@@ -227,13 +227,19 @@ namespace Anixe.Ion
             WriteTableCellAfter(lastCellInRow);
         }
 
-        public void WriteTableCell(double value, bool lastCellInRow = false)
+        public void WriteTableCell(char value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
             tw.Write(value);
             WriteTableCellAfter(lastCellInRow);
         }
 
+        public void WriteTableCell(double value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            tw.Write(value);
+            WriteTableCellAfter(lastCellInRow);
+        }
 
         public void WriteTableCell(decimal value, bool lastCellInRow = false)
         {
@@ -285,9 +291,9 @@ namespace Anixe.Ion
             this.state &= ~WriterState.Property;
             this.state &= ~WriterState.TableHeader;
             this.state |= WriterState.TableRow;
-    }
+        }
 
-    private void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
+        private void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
         {
             if(writeCellAction == null)
             {

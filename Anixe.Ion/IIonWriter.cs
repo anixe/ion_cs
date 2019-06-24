@@ -20,6 +20,14 @@ namespace Anixe.Ion
         void WriteTableHeader(params string[] columns);
         void WriteTableRow(params string[] data);
         void WriteTableCell(Action<TextWriter> writeCellAction, bool lastCellInRow = false);
+        void WriteTableCell(int value, bool lastCellInRow = false);
+        void WriteTableCell(string value, bool lastCellInRow = false);
+        void WriteTableCell(char value, bool lastCellInRow = false);
+        void WriteTableCell(double value, bool lastCellInRow = false);
+        void WriteTableCell(decimal value, bool lastCellInRow = false);
+        void WriteTableCell(long value, bool lastCellInRow = false);
+        void WriteTableCell(bool value, bool lastCellInRow = false);
+        void WriteTableCell(char[] buffer, int index, int count, bool lastCellInRow = false);
         void WriteEmptyLine();
         void Flush();
     }
