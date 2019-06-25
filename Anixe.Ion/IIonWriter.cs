@@ -20,6 +20,7 @@ namespace Anixe.Ion
         void WriteTableHeader(params string[] columns);
         void WriteTableRow(params string[] data);
         void WriteTableCell(Action<TextWriter> writeCellAction, bool lastCellInRow = false);
+        void WriteTableCell<TContext>(TContext context, Action<TextWriter, TContext> writeCellAction, bool lastCellInRow = false);
         void WriteTableCell(int value, bool lastCellInRow = false);
         void WriteTableCell(string value, bool lastCellInRow = false);
         void WriteTableCell(char value, bool lastCellInRow = false);
