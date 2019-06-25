@@ -205,6 +205,14 @@ namespace Anixe.Ion
             }
         }
 
+        public void WriteTableCell<TContext>(TContext context, Action<TextWriter, TContext> writeCellAction, bool lastCellInRow = false)
+        {
+            ValidateWriteTableCell(writeCellAction);
+            WriteTableCellBefore();
+            writeCellAction(this.tw, context);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
         public void WriteTableCell(Action<TextWriter> writeCellAction, bool lastCellInRow = false)
         {
             ValidateWriteTableCell(writeCellAction);
@@ -293,11 +301,19 @@ namespace Anixe.Ion
             this.state |= WriterState.TableRow;
         }
 
-        private void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
+        private static void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
         {
             if(writeCellAction == null)
             {
                 throw new ArgumentNullException("Must provide Action<TextWriter>");
+            }
+        }
+
+        private static void ValidateWriteTableCell<TContext>(Action<TextWriter, TContext> writeCellAction)
+        {
+            if (writeCellAction == null)
+            {
+              throw new ArgumentNullException("Must provide Action<TextWriter, TContext>");
             }
         }
 
