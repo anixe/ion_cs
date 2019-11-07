@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -46,10 +45,10 @@ namespace Anixe.Ion
             this.CurrentLineNumber = 0;
             this.leaveOpen = leaveOpen;
             this.sb = new StringBuilder();
-            this.charPool = charPool ?? System.Buffers.ArrayPool<char>.Shared;
+            this.charPool = charPool ?? ArrayPool<char>.Shared;
             this.rentedCharBuffer = null;
-            this.byteBuff = new byte[1024];
-            this.charBuff = new char[enc.GetMaxByteCount(byteBuff.Length)];
+            this.byteBuff = ArrayPool<byte>.Shared.Rent(1024);
+            this.charBuff = ArrayPool<char>.Shared.Rent(enc.GetMaxByteCount(byteBuff.Length));
             this.preamble = enc.GetPreamble();
             this.checkBOM = this.stream.CanSeek ? this.stream.Position == 0 : true;
         }
@@ -259,10 +258,9 @@ namespace Anixe.Ion
                 var character = charBuff[i];
                 if (character == '\n')
                 {
-                    var x = 0;
                     if(i > buffIndex)
                     {
-                        x = charBuff[i - 1] == '\r' ? 1 : 0;
+                        var x = charBuff[i - 1] == '\r' ? 1 : 0;
                         this.sb.Append(charBuff, buffIndex, i - buffIndex - x);
                     }
                     buffIndex = i + 1;
@@ -300,6 +298,9 @@ namespace Anixe.Ion
         {
             if(!disposed)
             {
+                ArrayPool<char>.Shared.Return(this.charBuff);
+                ArrayPool<byte>.Shared.Return(this.byteBuff);
+
                 if(this.rentedCharBuffer != null)
                 {
                     charPool.Return(this.rentedCharBuffer, true);
