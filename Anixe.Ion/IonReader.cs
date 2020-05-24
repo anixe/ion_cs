@@ -13,20 +13,19 @@ namespace Anixe.Ion
         private bool disposed;
         private bool passedCurrentTableHeaderRow;
         private Stream stream;
-        private bool leaveOpen;
-        private StringBuilder sb;
-        private ArrayPool<char> charPool;
+        private readonly bool leaveOpen;
+        private readonly StringBuilder sb;
+        private readonly ArrayPool<char> charPool;
         private readonly CurrentLineVerifier currentLineVerifier;
         private readonly SectionHeaderReader sectionHeaderReader;
-        private char[] rentedCharBuffer;
-        private byte[] byteBuff;
-        private char[] charBuff;
-        private byte[] preamble;
+        private char[]? rentedCharBuffer;
+        private readonly byte[] byteBuff;
+        private readonly char[] charBuff;
+        private readonly byte[] preamble;
         private int buffIndex = 0;
         private int charsRead = 0;
-        private Encoding enc = Encoding.UTF8;
+        private readonly Encoding enc = Encoding.UTF8;
         private bool checkBOM;
-
 
         /// <summary>
         /// It initialized IonReader
@@ -36,7 +35,7 @@ namespace Anixe.Ion
         /// <param name="sectionHeaderReader">Object which reads sections</param>
         /// <param name="leaveOpen">True if the stream should be open after Dispose()</param>
         /// <param name="charPool">Provide own System.Buffers.ArrayPool<char> instance. If null then System.Buffers.ArrayPool<char>.Shared will be used</param>
-        public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char> charPool = null)
+        public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
         {
             this.stream = stream;
             this.disposed = false;
@@ -59,62 +58,56 @@ namespace Anixe.Ion
         /// Gets a value indicating whether this instance of IonReader is currently on section header.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '['; otherwise, <c>false</c>.</value>
-        public bool IsSectionHeader { get { return this.currentLineVerifier.IsSectionHeader(CurrentRawLine); } }
+        public bool IsSectionHeader => this.currentLineVerifier.IsSectionHeader(CurrentRawLine);
 
         /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on property.
         /// </summary>
         /// <value><c>true</c> if other boolean properties are false; otherwise, <c>false</c>.</value>
-        public bool IsProperty { get { return this.currentLineVerifier.IsProperty(CurrentRawLine); } }
+        public bool IsProperty => this.currentLineVerifier.IsProperty(CurrentRawLine);
 
         /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on comment.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '#'; otherwise, <c>false</c>.</value>
-        public bool IsComment { get { return this.currentLineVerifier.IsComment(CurrentRawLine); } }
+        public bool IsComment => this.currentLineVerifier.IsComment(CurrentRawLine);
 
         /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on table row.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|'; otherwise, <c>false</c>.</value>
-        public bool IsTableRow { get { return this.currentLineVerifier.IsTableRow(CurrentRawLine); } }
+        public bool IsTableRow => this.currentLineVerifier.IsTableRow(CurrentRawLine);
 
         /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on table headers row.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was not already passed; otherwise, <c>false</c>.</value>
-        public bool IsTableHeaderRow { get { return this.currentLineVerifier.IsTableHeaderRow(CurrentRawLine, passedCurrentTableHeaderRow); } }
+        public bool IsTableHeaderRow => this.currentLineVerifier.IsTableHeaderRow(CurrentRawLine, passedCurrentTableHeaderRow);
 
         /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table header separator row. IMPORTANT: we recognize this 
+        /// Gets a value indicating whether this instance of IonReader is currently on table header separator row. IMPORTANT: we recognize this
         /// property as a combination of first two characters as "|-". Fill your table rows without '-' character.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|-'; otherwise, <c>false</c>.</value>
-        public bool IsTableHeaderSeparatorRow { get { return this.currentLineVerifier.IsTableHeaderSeparatorRow(CurrentRawLine); } }
+        public bool IsTableHeaderSeparatorRow => this.currentLineVerifier.IsTableHeaderSeparatorRow(CurrentRawLine);
 
         /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on table row with data.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was already passed; otherwise, <c>false</c>.</value>
-        public bool IsTableDataRow { get { return this.currentLineVerifier.IsTableDataRow(CurrentRawLine, passedCurrentTableHeaderRow); } }
+        public bool IsTableDataRow => this.currentLineVerifier.IsTableDataRow(CurrentRawLine, passedCurrentTableHeaderRow);
 
         /// <summary>
         /// Gets a value indicating whether a IonReader CurrentLine is null, empty, or consists only of white-space characters.
         /// </summary>
         /// <value><c>true</c> if string.IsNullOrWhiteSpace(CurrentRawLine); otherwise, <c>false</c>.</value>
-        public bool IsEmptyLine { get { return this.currentLineVerifier.IsEmptyLine(CurrentRawLine); } }
+        public bool IsEmptyLine => this.currentLineVerifier.IsEmptyLine(CurrentRawLine);
 
         /// <summary>
         /// Gets the current line value. It allocates string from CurrentRawLine.
         /// </summary>
         /// <value>The current line.</value>
-        public string CurrentLine
-        {
-            get
-            {
-                return new String(CurrentRawLine.Array, CurrentRawLine.Offset, CurrentRawLine.Count);
-            }
-        }
+        public string CurrentLine => new string(CurrentRawLine.Array, CurrentRawLine.Offset, CurrentRawLine.Count);
 
         /// <summary>
         /// Gets current line as array segment of characters.
@@ -124,10 +117,10 @@ namespace Anixe.Ion
         public ArraySegment<char> CurrentRawLine { get; private set; }
 
         /// <summary>
-        /// Gets the name of current section. It is changing only when CurrentLine is on section header.
+        /// Gets the name of current section. It is changing only when CurrentLine is on section header. Returns null only if Read() was not called yet.
         /// </summary>
         /// <value>The current section.</value>
-        public string CurrentSection { get; private set; }
+        public string? CurrentSection { get; private set; }
 
         /// <summary>
         /// Gets the current line number.
@@ -178,7 +171,7 @@ namespace Anixe.Ion
             if(IsSectionHeader)
             {
                 var tmp = this.sectionHeaderReader.Read(CurrentRawLine);
-                CurrentSection = new String(tmp.Array, tmp.Offset, tmp.Count);
+                CurrentSection = new string(tmp.Array, tmp.Offset, tmp.Count);
             }
 
             if(passedCurrentTableHeaderRow)
@@ -258,9 +251,9 @@ namespace Anixe.Ion
                 var character = charBuff[i];
                 if (character == '\n')
                 {
-                    if(i > buffIndex)
+                    if (i > buffIndex)
                     {
-                        var x = charBuff[i - 1] == '\r' ? 1 : 0;
+                        int x = charBuff[i - 1] == '\r' ? 1 : 0;
                         this.sb.Append(charBuff, buffIndex, i - buffIndex - x);
                     }
                     buffIndex = i + 1;
@@ -310,7 +303,7 @@ namespace Anixe.Ion
                 if(!this.leaveOpen && this.stream != null)
                 {
                     this.stream.Dispose();
-                    this.stream = null;
+                    this.stream = null!;
                 }
 
                 disposed = true;

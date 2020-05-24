@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Anixe.Ion.UnitTests
@@ -114,7 +111,7 @@ namespace Anixe.Ion.UnitTests
             {
                 subject.WriteSection("META");
                 Assert.AreEqual(WriterState.Section, subject.State);
-                subject.WriteProperty("test", (tw) => 
+                subject.WriteProperty("test", (tw) =>
                 {
                     tw.Write('[');
                     tw.Write(23);
@@ -151,7 +148,7 @@ namespace Anixe.Ion.UnitTests
         public void Should_Write_Table_Header()
         {
             var header = new string[] { "key", "val" };
-            var expected = new string[] 
+            var expected = new string[]
             {
                 "[DATA]",
                 "| key | val |",
@@ -166,14 +163,14 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableHeader(header);
                 Assert.AreEqual(WriterState.Section | WriterState.TableHeader, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[]{ Environment.NewLine }, StringSplitOptions.None));
+            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
         }
 
         [Test]
         public void Should_Write_Table_Rows()
         {
             var row = new string[] { "unit_type", "miles" };
-            var expected = new string[] 
+            var expected = new string[]
             {
                 "[DATA]",
                 "| unit_type | miles |",
@@ -303,7 +300,7 @@ namespace Anixe.Ion.UnitTests
         {
             var header = new string[] { "key", "val" };
             var row = new string[] { "unit_type", "miles" };
-            var expected = new string[] 
+            var expected = new string[]
             {
                 "[META]",
                 "test=\"value\"",
@@ -339,14 +336,12 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Should_Validate_Section()
         {
-            TestDelegate action = () =>
+            static void action()
             {
                 var sb = new StringBuilder();
-                using (var subject = new IonWriter(new StringWriter(sb)))
-                {
-                    subject.WriteSection(null);
-                }
-            };
+                using var subject = new IonWriter(new StringWriter(sb));
+                subject.WriteSection(null!);
+            }
 
             Assert.Throws<ArgumentNullException>(action, "Section name must be provided");
         }
@@ -354,14 +349,12 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Should_Validate_Table()
         {
-            TestDelegate action = () =>
+            static void action()
             {
                 var sb = new StringBuilder();
-                using (var subject = new IonWriter(new StringWriter(sb)))
-                {
-                    subject.WriteTableHeader(null);
-                }
-            };
+                using var subject = new IonWriter(new StringWriter(sb));
+                subject.WriteTableHeader(null!);
+            }
 
             Assert.Throws<InvalidOperationException>(action, "Only section can be at the top of document");
         }
@@ -369,15 +362,13 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Should_Validate_Table_Columns()
         {
-            TestDelegate action = () =>
+            static void action()
             {
                 var sb = new StringBuilder();
-                using (var subject = new IonWriter(new StringWriter(sb)))
-                {
-                    subject.WriteSection("TEST");
-                    subject.WriteTableHeader(null);
-                }
-            };
+                using var subject = new IonWriter(new StringWriter(sb));
+                subject.WriteSection("TEST");
+                subject.WriteTableHeader(null!);
+            }
 
             Assert.Throws<ArgumentNullException>(action, "Cannot create empty table header");
         }
@@ -385,17 +376,16 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Should_Validate_Table_Headers()
         {
-            var header = new string[] { "key", "val" };
-            TestDelegate action = () =>
+            static void action()
             {
+                var header = new string[] { "key", "val" };
+
                 var sb = new StringBuilder();
-                using (var subject = new IonWriter(new StringWriter(sb)))
-                {
-                    subject.WriteSection("TEST");
-                    subject.WriteTableHeader(header);
-                    subject.WriteTableHeader(header);
-                }
-            };
+                using var subject = new IonWriter(new StringWriter(sb));
+                subject.WriteSection("TEST");
+                subject.WriteTableHeader(header);
+                subject.WriteTableHeader(header);
+            }
 
             Assert.Throws<InvalidOperationException>(action, "Table can have ony one header");
         }
@@ -403,18 +393,17 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Should_Validate_Table_Row()
         {
-            var header = new string[] { "key", "val" };
-            var row = new string[] { "key" };
-            TestDelegate action = () =>
+            static void action()
             {
+                var header = new string[] { "key", "val" };
+                var row = new string[] { "key" };
+
                 var sb = new StringBuilder();
-                using (var subject = new IonWriter(new StringWriter(sb)))
-                {
-                    subject.WriteSection("TEST");
-                    subject.WriteTableHeader(header);
-                    subject.WriteTableRow(row);
-                }
-            };
+                using var subject = new IonWriter(new StringWriter(sb));
+                subject.WriteSection("TEST");
+                subject.WriteTableHeader(header);
+                subject.WriteTableRow(row);
+            }
 
             Assert.Throws<ArgumentException>(action, "Must provide the same number of columns within the same table");
         }
@@ -422,22 +411,19 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Should_Validate_Table_Rows()
         {
-            var row1 = new string[] { "key", "val" };
-            var row2 = new string[] { "key" };
-            TestDelegate action = () =>
+            static void action()
             {
+                var row1 = new string[] { "key", "val" };
+                var row2 = new string[] { "key" };
+
                 var sb = new StringBuilder();
-                using (var subject = new IonWriter(new StringWriter(sb)))
-                {
-                    subject.WriteSection("TEST");
-                    subject.WriteTableRow(row1);
-                    subject.WriteTableRow(row2);
-                }
-            };
+                using var subject = new IonWriter(new StringWriter(sb));
+                subject.WriteSection("TEST");
+                subject.WriteTableRow(row1);
+                subject.WriteTableRow(row2);
+            }
 
             Assert.Throws<ArgumentException>(action, "Must provide the same number of columns within the same table");
         }
-
-
     }
 }

@@ -1,13 +1,11 @@
 using NUnit.Framework;
-using Anixe.Ion;
-using static NUnit.StaticExpect.Expectations;
 using System;
 
 namespace Anixe.Ion.UnitTests
 {
     internal class SectionHeaderReaderTests
     {
-        private SectionHeaderReader target;
+        private SectionHeaderReader target = null!;
 
         [SetUp]
         public void Before_Each_Test()
@@ -22,7 +20,7 @@ namespace Anixe.Ion.UnitTests
         public string Read_Tests(string currentLine)
         {
             var actual = this.target.Read(currentLine.ToCharArray());
-            return new String(actual.Array, actual.Offset, actual.Count);
+            return new string(actual.Array, actual.Offset, actual.Count);
         }
     }
 }

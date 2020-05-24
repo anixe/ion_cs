@@ -1,16 +1,10 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using NSubstitute;
 using NUnit.Framework;
-using Anixe.Ion;
-using static NUnit.StaticExpect.Expectations;
 
 namespace Anixe.Ion.UnitTests
 {
     internal class CurrentLineVerifierTests
     {
-        private CurrentLineVerifier target;
+        private CurrentLineVerifier target = null!;
 
         [SetUp]
         public void Before_Each_Test()

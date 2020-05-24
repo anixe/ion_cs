@@ -46,11 +46,10 @@ namespace Anixe.Ion.UnitTests
             Assert.AreEqual(3, counter);
         }
 
-
         [Test]
         public void Should_Read_Ion_With_Windows_Line_Endings()
         {
-            var props = new List<string>{ };
+            var props = new List<string>();
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(FileLoader.GetIonWithWindowsLineEndings())))
             using (var reader = IonReaderFactory.Create(stream))
             {
@@ -80,7 +79,6 @@ namespace Anixe.Ion.UnitTests
             Assert.AreEqual("disabled_log_urls = [ \"/G\", \"/cars\", \"/cars_group_by\" ]", props[6]);
             Assert.AreEqual("enabled_log_urls = [ ]", props[7]);
         }
-
 
         [Test]
         public void Should_Read_Gzipped_Ins_Ion()
@@ -118,6 +116,14 @@ namespace Anixe.Ion.UnitTests
             }
             Assert.AreEqual(3, counter);
         }
-        
+
+        [Test]
+        public void CurrentSection_Returns_Null_Before_First_Read()
+        {
+            using var reader = IonReaderFactory.Create(Stream.Null);
+            Assert.Null(reader.CurrentSection);
+            reader.Read();
+            Assert.NotNull(reader.CurrentSection);
+        }
     }
 }

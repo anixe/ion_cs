@@ -1,29 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anixe.Ion
 {
     internal class IonWriter : IIonWriter
     {
-        private TextWriter tw;
+        private readonly TextWriter tw;
         private WriterState state;
-        private string[] lastTableColumns;
+        private string[]? lastTableColumns;
         private bool firstTableCell = true;
-        private bool leaveOpen;
+        private readonly bool leaveOpen;
 
-        internal WriterState State
-        {
-            get { return this.state; }
-        }
+        internal WriterState State => this.state;
 
         public IonWriter(TextWriter tw, bool leaveOpen = false)
         {
-            this.tw = tw;
+            this.tw = tw ?? throw new ArgumentNullException(nameof(tw));
             this.leaveOpen = leaveOpen;
         }
 
@@ -52,7 +45,7 @@ namespace Anixe.Ion
             }
         }
 
-        public void WriteProperty(string name, string value)
+        public void WriteProperty(string name, string? value)
         {
             ValidateWriteProperty(name);
             ClearState();
@@ -68,7 +61,7 @@ namespace Anixe.Ion
         {
             if (writeValueAction == null)
             {
-                throw new ArgumentNullException("Provide writeValueAction parameter");
+                throw new ArgumentNullException($"Provide {nameof(writeValueAction)} parameter");
             }
             ValidateWriteProperty(name);
             ClearState();
@@ -149,7 +142,7 @@ namespace Anixe.Ion
             }
             if (string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException("Property name must be provided");
+                throw new ArgumentNullException($"Property {nameof(name)} must be provided");
             }
         }
 
@@ -158,7 +151,7 @@ namespace Anixe.Ion
             ValidateWriteTableHeader(columns);
             ClearState();
             WriteTableRow(columns, WriteCol);
-            WriteTableRow(columns, WriteHeaderSeparator, true);
+            WriteSqueezedTableRow(columns, WriteHeaderSeparator);
             this.state &= ~WriterState.Property;
             this.state |= WriterState.TableHeader;
             this.lastTableColumns = columns;
@@ -199,7 +192,7 @@ namespace Anixe.Ion
             {
                 throw new ArgumentNullException("Cannot create empty table row");
             }
-            if (columns.Length != this.lastTableColumns.Length)
+            if (columns.Length != this.lastTableColumns!.Length)
             {
                 throw new ArgumentException("Must provide the same number of columns within the same table");
             }
@@ -228,7 +221,7 @@ namespace Anixe.Ion
             WriteTableCellAfter(lastCellInRow);
         }
 
-        public void WriteTableCell(string value, bool lastCellInRow = false)
+        public void WriteTableCell(string? value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
             tw.Write(value);
@@ -330,21 +323,25 @@ namespace Anixe.Ion
             this.tw.Write(col);
         }
 
-        private void WriteTableRow(string[] columns, Action<string> onItemAction, bool squeeze = false)
+        private void WriteTableRow(string[] columns, Action<string> onItemAction)
         {
             tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             for (int i = 0; i < columns.Length; i++)
             {
-                var col = columns[i];
-                if (!squeeze)
-                {
-                    tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
-                }
-                onItemAction(col);
-                if (!squeeze)
-                {
-                    tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
-                }
+                tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
+                onItemAction(columns[i]);
+                tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
+                tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+            }
+            tw.WriteLine();
+        }
+
+        private void WriteSqueezedTableRow(string[] columns, Action<string> onItemAction)
+        {
+            tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+            for (int i = 0; i < columns.Length; i++)
+            {
+                onItemAction(columns[i]);
                 tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             }
             tw.WriteLine();
@@ -367,7 +364,7 @@ namespace Anixe.Ion
 
         public void Dispose()
         {
-            if (this.tw != null && !this.leaveOpen)
+            if (!this.leaveOpen)
             {
                 this.tw.Dispose();
             }

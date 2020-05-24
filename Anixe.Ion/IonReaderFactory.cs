@@ -36,7 +36,7 @@ namespace Anixe.Ion
         /// <param name="stream">Stream.</param>
         /// <param name="leaveOpen">If True: it closes underlying stream in Dispose. If False: The stream will not be disposed.</param>
         /// <param name="charPool">Provide own System.Buffers.ArrayPool<char> instance. If null then System.Buffers.ArrayPool<char>.Shared will be used</param>
-        public static IIonReader Create(Stream stream, bool leaveOpen = false, ArrayPool<char> charPool = null)
+        public static IIonReader Create(Stream stream, bool leaveOpen = false, ArrayPool<char>? charPool = null)
         {
             return new IonReader(stream, new CurrentLineVerifier(), new SectionHeaderReader(), leaveOpen, charPool);
         }
