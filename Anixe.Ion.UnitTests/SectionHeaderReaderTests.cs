@@ -1,9 +1,11 @@
 using NUnit.Framework;
 using Anixe.Ion;
+using static NUnit.StaticExpect.Expectations;
+using System;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class SectionHeaderReaderTests : AssertionHelper
+    internal class SectionHeaderReaderTests
     {
         private SectionHeaderReader target;
 
@@ -19,7 +21,8 @@ namespace Anixe.Ion.UnitTests
         [TestCase("[ABC] ",      ExpectedResult = "ABC")]
         public string Read_Tests(string currentLine)
         {
-            return this.target.Read(currentLine);
+            var actual = this.target.Read(currentLine.ToCharArray());
+            return new String(actual.Array, actual.Offset, actual.Count);
         }
     }
 }

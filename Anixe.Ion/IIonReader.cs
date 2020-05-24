@@ -57,10 +57,16 @@ namespace Anixe.Ion
         bool IsEmptyLine { get; }
 
         /// <summary>
-        /// Gets the current line value.
+        /// Gets the current line value. It allocates string from CurrentRawLine
         /// </summary>
         /// <value>The current line.</value>
         string CurrentLine { get; }
+
+        /// <summary>
+        /// Gets current line as array segment of characters. The value comes from rented buffer, copy it for private use.
+        /// </summary>
+        /// <value>The current line</value>
+        ArraySegment<char> CurrentRawLine { get; }
 
         /// <summary>
         /// Gets the name of current section. It is changing only when CurrentLine is on section header.

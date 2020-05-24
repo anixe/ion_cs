@@ -3,10 +3,11 @@ using NUnit.Framework;
 using Anixe.Ion;
 using System.IO;
 using System.Text;
+using static NUnit.StaticExpect.Expectations;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class IonReaderFactoryTests : AssertionHelper
+    internal class IonReaderFactoryTests
     {
         [TestCase(null,                             "File path must be defined!",                                TestName = "Throws exception when file path is null")]
         [TestCase("",                               "File path must be defined!",                                TestName = "Throws exception when file path is empty text")]
@@ -22,7 +23,7 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Creates_IonReader_For_Existing_File_Path()
         {
-            var actual = IonReaderFactory.Create("Examples/example.ion");
+            var actual = IonReaderFactory.Create(FileLoader.GetExamplesIonPath());
 
             Expect(actual, Is.Not.Null);
             Expect(actual, Is.TypeOf<IonReader>());
@@ -31,7 +32,7 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Creates_IonReader_For_FileStream()
         {
-            using(FileStream fileStream = new FileStream("Examples/example.ion", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using(FileStream fileStream = new FileStream(FileLoader.GetExamplesIonPath(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using(var ionReader = IonReaderFactory.Create(fileStream))
                 {
@@ -44,7 +45,7 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Creates_IonReader_For_MemoryStream()
         {
-            var rawFileContent = Encoding.UTF8.GetBytes(File.ReadAllText("Examples/example.ion"));
+            var rawFileContent = Encoding.UTF8.GetBytes(File.ReadAllText(FileLoader.GetExamplesIonPath()));
 
             using(MemoryStream fileStream = new MemoryStream(rawFileContent))
             {

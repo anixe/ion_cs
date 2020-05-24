@@ -14,7 +14,8 @@ Anixe.Ion library provides static factory which can create an instance for **Ion
 
 #### IonReader interface
 ##### Properties
-* **CurrentLine** gets current line value
+* **CurrentLine** gets current line value. It causes new string allocation from CurrentRawLine 
+* **CurrentRawLine** gets current line value as ArraySegment<char>. It is allocation free. Data is from rented buffer.
 * **CurrentLineNumber** gets current line number
 * **CurrentSection** gets information about current section name. Its value will change only when **CurrentLine** is on line which begins with *'['*
 * **IsSectionHeader** gets boolean value indicating whether first character of **CurrentLine** is *'['*
@@ -75,3 +76,49 @@ class MainClass
 }
 ```
 
+### Benchmarks history
+
+To run benchmark use the Anixe.Ion.Benchmark project
+
+```
+cd Anixe.Ion.Benchmark
+dotnet run -c Release
+```
+
+The output of reading stations.ion:
+
+* baseline
+
+```
+ Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 43.30 ms | 0.8562 ms | 0.8009 ms |   7.26 KB |
+```
+
+* added UT8 encoding, which requires additional bufffers
+```
+Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 60.19 ms | 0.3408 ms | 0.3188 ms |   9.67 KB |
+```
+
+* increase read buffer size to 1024 bytes
+```
+ Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 30.86 ms | 0.4422 ms | 0.3920 ms |  14.35 KB |
+```
+
+* append StringBuilder instance with char array block instead of char by char
+```
+ Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 20.84 ms | 0.0839 ms | 0.0744 ms |  14.94 KB |
+```
+
+* remove Array.Clear which was not required because of using index & count on feeding StringBuilder instance.
+```
+ Method |     Mean |     Error |    StdDev | Allocated |
+------- |---------:|----------:|----------:|----------:|
+   Read | 9.432 ms | 0.0468 ms | 0.0438 ms |  14.92 KB |
+```
