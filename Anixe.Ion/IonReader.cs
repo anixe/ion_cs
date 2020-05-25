@@ -54,84 +54,43 @@ namespace Anixe.Ion
 
         #region IIonReader members
 
-        /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on section header.
-        /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '['; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsSectionHeader => this.currentLineVerifier.IsSectionHeader(CurrentRawLine);
 
-        /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on property.
-        /// </summary>
-        /// <value><c>true</c> if other boolean properties are false; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsProperty => this.currentLineVerifier.IsProperty(CurrentRawLine);
 
-        /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on comment.
-        /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '#'; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsComment => this.currentLineVerifier.IsComment(CurrentRawLine);
 
-        /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table row.
-        /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|'; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsTableRow => this.currentLineVerifier.IsTableRow(CurrentRawLine);
 
-        /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table headers row.
-        /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was not already passed; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsTableHeaderRow => this.currentLineVerifier.IsTableHeaderRow(CurrentRawLine, passedCurrentTableHeaderRow);
 
-        /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table header separator row. IMPORTANT: we recognize this
-        /// property as a combination of first two characters as "|-". Fill your table rows without '-' character.
-        /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|-'; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsTableHeaderSeparatorRow => this.currentLineVerifier.IsTableHeaderSeparatorRow(CurrentRawLine);
 
-        /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table row with data.
-        /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was already passed; otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsTableDataRow => this.currentLineVerifier.IsTableDataRow(CurrentRawLine, passedCurrentTableHeaderRow);
 
-        /// <summary>
-        /// Gets a value indicating whether a IonReader CurrentLine is null, empty, or consists only of white-space characters.
-        /// </summary>
-        /// <value><c>true</c> if string.IsNullOrWhiteSpace(CurrentRawLine); otherwise, <c>false</c>.</value>
+        /// <inheritdoc/>
         public bool IsEmptyLine => this.currentLineVerifier.IsEmptyLine(CurrentRawLine);
 
-        /// <summary>
-        /// Gets the current line value. It allocates string from CurrentRawLine.
-        /// </summary>
-        /// <value>The current line.</value>
+        /// <inheritdoc/>
         public string CurrentLine => new string(CurrentRawLine.Array, CurrentRawLine.Offset, CurrentRawLine.Count);
 
-        /// <summary>
-        /// Gets current line as array segment of characters.
-        /// The value comes from rented buffer, copy it for private use or it will loose the state after next call of 'Read' method.
-        /// </summary>
-        /// <value>The current line</value>
+        /// <inheritdoc/>
         public ArraySegment<char> CurrentRawLine { get; private set; }
 
-        /// <summary>
-        /// Gets the name of current section. It is changing only when CurrentLine is on section header. Returns null only if Read() was not called yet.
-        /// </summary>
-        /// <value>The current section.</value>
+        /// <inheritdoc/>
         public string? CurrentSection { get; private set; }
 
-        /// <summary>
-        /// Gets the current line number.
-        /// </summary>
-        /// <value>The current line number.</value>
+        /// <inheritdoc/>
         public int CurrentLineNumber { get; private set; }
 
-        /// <summary>
-        /// Read line from provide stream.
-        /// </summary>
-        /// <returns><c>true</c> if the next line was read successfully; otherwise,<c>false</c>.</returns>
+        /// <inheritdoc/>
         public bool Read()
         {
             if(!this.stream.CanRead)

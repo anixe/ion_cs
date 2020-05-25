@@ -69,7 +69,7 @@ namespace Anixe.Ion
         ArraySegment<char> CurrentRawLine { get; }
 
         /// <summary>
-        /// Gets the name of current section. It is changing only when CurrentLine is on section header.
+        /// Gets the name of current section. It is changing only when CurrentLine is on section header. Returns null only if Read() was not called yet.
         /// </summary>
         /// <value>The current section.</value>
         string? CurrentSection { get; }
