@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Anixe.Ion.Tester
 {
-    class MainClass
+    public class MainClass
     {
         public static void Main(string[] args)
         {
@@ -42,7 +41,5 @@ namespace Anixe.Ion.Tester
 
             return result;
         }
-
-
     }
 }

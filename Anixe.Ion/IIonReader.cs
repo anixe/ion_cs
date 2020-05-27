@@ -38,7 +38,7 @@ namespace Anixe.Ion
         bool IsTableRow { get;}
 
         /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table header separator row. IMPORTANT: we recognize this 
+        /// Gets a value indicating whether this instance of IonReader is currently on table header separator row. IMPORTANT: we recognize this
         /// property as a combination of first two characters as "|-". Fill your table rows without '-' character.
         /// </summary>
         /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|-'; otherwise, <c>false</c>.</value>
@@ -69,10 +69,10 @@ namespace Anixe.Ion
         ArraySegment<char> CurrentRawLine { get; }
 
         /// <summary>
-        /// Gets the name of current section. It is changing only when CurrentLine is on section header.
+        /// Gets the name of current section. It is changing only when CurrentLine is on section header. Returns null only if Read() was not called yet.
         /// </summary>
         /// <value>The current section.</value>
-        string CurrentSection { get; }
+        string? CurrentSection { get; }
 
         /// <summary>
         /// Gets the current line number.

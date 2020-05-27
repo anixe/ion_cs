@@ -63,7 +63,7 @@ namespace Anixe.Ion
         {
             for (int i = currentLine.Offset; i < currentLine.Count; i++)
             {
-                if(!Char.IsWhiteSpace(currentLine[i]))
+                if(!char.IsWhiteSpace(currentLine[i]))
                 {
                     return false;
                 }

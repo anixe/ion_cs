@@ -1,7 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.IO;
 using static NUnit.StaticExpect.Expectations;
 
 namespace Anixe.Ion.UnitTests
@@ -9,8 +8,8 @@ namespace Anixe.Ion.UnitTests
     [TestFixture]
     public class IntegrationTests
     {
-        private IIonReader target;
-        private List<Action> assertions;
+        private IIonReader target = null!;
+        private List<Action> assertions = null!;
 
         [OneTimeSetUp]
         public void Before_All_Test()
@@ -204,7 +203,6 @@ namespace Anixe.Ion.UnitTests
             Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
             Expect(this.target.CurrentLineNumber, Is.EqualTo(15));
         }
-
 
         #endregion
     }
