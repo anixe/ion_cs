@@ -28,7 +28,14 @@ Anixe.Ion library provides static factory which can create an instance for **Ion
 ##### Methods
 * **Read** reads each *.ion file line and returns boolean value indicating whether reading was successful or not
 * **Dispose** calls **Dispose** method of the underlying stream
- 
+
+#### GenericSectionReader class
+
+##### Events
+* **OnReadSection** the event handler fired for each section with section name in args
+##### Methods
+* **Read** the main method of the class, it reads the stream provided by IonReader and fires an event for each section
+
 ## Example use
 #### With file path
 ```c#
@@ -72,6 +79,33 @@ class MainClass
         {
             Console.WriteLine(reader.CurrentLine);
         }
+    }
+}
+```
+
+#### With SectionReader
+```c#
+class MainClass
+{
+    public static void Main(string[] args)
+    {
+        using(FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        {
+            using(IIonReader reader = IonReaderFactory.Create(fileStream))
+            {
+                ReadIon(reader);
+            }
+        }
+    }
+
+    private static void ReadIon(IIonReader reader)
+    {
+        var sectionReader = new GenericSectionReader(reader);
+        sectionReader.OnReadSection += (sender, args) =>
+        {
+          //TODO: check args.SectionName to determine current section
+        };
+        sectionReader.Read();
     }
 }
 ```
