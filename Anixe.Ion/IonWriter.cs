@@ -30,14 +30,14 @@ namespace Anixe.Ion
         {
             if(state != WriterState.None)
             {
-                this.tw.WriteLine();
+                WriteLine();
                 this.state = WriterState.Section;
             }
             ValidateWriteSection(name);
             ClearState();
             this.tw.Write(Consts.IonSpecialChars.HeaderOpeningCharacter);
             this.tw.Write(name);
-            this.tw.WriteLine(Consts.IonSpecialChars.HeaderClosingCharacter);
+            WriteLine(Consts.IonSpecialChars.HeaderClosingCharacter);
             this.state |= WriterState.Section;
         }
 
@@ -72,7 +72,7 @@ namespace Anixe.Ion
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
             writeValueAction(this.tw);
-            this.tw.WriteLine();
+            WriteLine();
             this.state |= WriterState.Property;
         }
 
@@ -82,7 +82,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value ? Consts.True : Consts.False);
+            WriteLine(value ? Consts.True : Consts.False);
             this.state |= WriterState.Property;
         }
 
@@ -92,7 +92,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value);
+            WriteLine(value);
             this.state |= WriterState.Property;
         }
 
@@ -102,7 +102,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value.ToString(CultureInfo.InvariantCulture));
+            WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
 
@@ -112,7 +112,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value.ToString(CultureInfo.InvariantCulture));
+            WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
 
@@ -134,7 +134,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value.ToString(CultureInfo.InvariantCulture));
+            WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
 
@@ -290,7 +290,7 @@ namespace Anixe.Ion
             tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             if (lastCellInRow)
             {
-              this.tw.WriteLine();
+              WriteLine();
               this.firstTableCell = true;
             }
             this.state &= ~WriterState.Property;
@@ -337,7 +337,7 @@ namespace Anixe.Ion
                 tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
                 tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             }
-            tw.WriteLine();
+            WriteLine();
         }
 
         private void WriteSqueezedTableRow(string[] columns, Action<string> onItemAction)
@@ -348,13 +348,13 @@ namespace Anixe.Ion
                 onItemAction(columns[i]);
                 tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             }
-            tw.WriteLine();
+            WriteLine();
         }
 
         public void WriteEmptyLine()
         {
             ClearState();
-            this.tw.WriteLine();
+            WriteLine();
         }
 
         public void Flush()
@@ -393,12 +393,43 @@ namespace Anixe.Ion
             }
             if(newLine)
             {
-                this.tw.WriteLine(Consts.IonSpecialChars.QuotationCharacter);
+                WriteLine(Consts.IonSpecialChars.QuotationCharacter);
             }
             else
             {
                 this.tw.Write(Consts.IonSpecialChars.QuotationCharacter);
             }
+        }
+
+        private void WriteLine()
+        {
+            if (this.options.EscapeNewLineChars)
+            {
+                this.tw.Write(Consts.IonSpecialChars.NewLineEscaped);
+            }
+            else 
+            {
+                this.tw.WriteLine();
+            }
+        }
+
+        private void WriteLine(string val)
+        {
+            this.tw.Write(val);
+            WriteLine();
+        }
+
+        private void WriteLine(char val)
+        {
+            this.tw.Write(val);
+            WriteLine();
+        }
+
+
+        private void WriteLine(int val)
+        {
+            this.tw.Write(val);
+            WriteLine();
         }
     }
 }

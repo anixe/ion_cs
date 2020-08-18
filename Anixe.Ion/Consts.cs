@@ -15,6 +15,7 @@ namespace Anixe.Ion
 
         public static class IonSpecialChars
         {
+            public readonly static string NewLineEscaped = Environment.NewLine.Length == 1 ? "\\n" : "\\r\\n";
             public const char EscapeCharacter               = '\\';
             public const char HeaderOpeningCharacter        = '[';
             public const char HeaderClosingCharacter        = ']';

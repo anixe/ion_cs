@@ -11,5 +11,10 @@ namespace Anixe.Ion
         /// Use this option if IonWriter serializes ion content as a part of other document in different format.null Eg. ion formatted value is a part of json's property value.
         /// </summary>
         public bool EscapeQuotes { get; set; }
+        /// <summary>
+        /// Use this option if IonWriter serializes ion content as a part of other document in different format.null Eg. ion formatted value is a part of json's property value.
+        /// </summary>
+        /// <value></value>
+        public bool EscapeNewLineChars { get; set; }
     }
 }
