@@ -34,6 +34,20 @@ namespace Anixe.Ion.UnitTests
         }
 
         [Test]
+        public void Should_Write_Escaped_String_Property()
+        {
+            var sb = new StringBuilder();
+            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions{ EscapeQuotes = true}))
+            {
+                subject.WriteSection("META");
+                Assert.AreEqual(WriterState.Section, subject.State);
+                subject.WriteProperty("test", "value");
+                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+            }
+            Assert.AreEqual(string.Format("[META]{0}test=\\\"value\\\"{0}", Environment.NewLine), sb.ToString());
+        }
+
+        [Test]
         public void Should_Write_Char_Property()
         {
             var sb = new StringBuilder();

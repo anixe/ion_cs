@@ -10,14 +10,18 @@ namespace Anixe.Ion
         private WriterState state;
         private string[]? lastTableColumns;
         private bool firstTableCell = true;
-        private readonly bool leaveOpen;
-
         internal WriterState State => this.state;
+        private readonly WriterOptions options;
 
-        public IonWriter(TextWriter tw, bool leaveOpen = false)
+        public IonWriter(TextWriter tw, WriterOptions options)
         {
+            this.options = options;
             this.tw = tw ?? throw new ArgumentNullException(nameof(tw));
-            this.leaveOpen = leaveOpen;
+        }
+
+        public IonWriter(TextWriter tw)
+        : this(tw, new WriterOptions{ })
+        {
         }
 
         #region IIonWriter Members
@@ -51,9 +55,9 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.Write(Consts.IonSpecialChars.QuotationCharacter);
+            WriteQuotationCharacter();
             this.tw.Write(value);
-            this.tw.WriteLine(Consts.IonSpecialChars.QuotationCharacter);
+            WriteQuotationCharacter(newLine: true);
             this.state |= WriterState.Property;
         }
 
@@ -118,9 +122,9 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.Write(Consts.IonSpecialChars.QuotationCharacter);
+            WriteQuotationCharacter();
             this.tw.Write(value);
-            this.tw.WriteLine(Consts.IonSpecialChars.QuotationCharacter);
+            WriteQuotationCharacter(newLine: true);
             this.state |= WriterState.Property;
         }
 
@@ -364,7 +368,7 @@ namespace Anixe.Ion
 
         public void Dispose()
         {
-            if (!this.leaveOpen)
+            if (!this.options.LeaveOpen)
             {
                 this.tw.Dispose();
             }
@@ -379,6 +383,22 @@ namespace Anixe.Ion
             this.state &= ~WriterState.Property;
             this.state &= ~WriterState.TableHeader;
             this.state &= ~WriterState.TableRow;
+        }
+
+        private void WriteQuotationCharacter(bool newLine = false)
+        {
+            if (this.options.EscapeQuotes)
+            {
+                this.tw.Write(Consts.IonSpecialChars.EscapeCharacter);
+            }
+            if(newLine)
+            {
+                this.tw.WriteLine(Consts.IonSpecialChars.QuotationCharacter);
+            }
+            else
+            {
+                this.tw.Write(Consts.IonSpecialChars.QuotationCharacter);
+            }
         }
     }
 }

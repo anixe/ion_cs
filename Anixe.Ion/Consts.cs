@@ -15,6 +15,7 @@ namespace Anixe.Ion
 
         public static class IonSpecialChars
         {
+            public const char EscapeCharacter               = '\\';
             public const char HeaderOpeningCharacter        = '[';
             public const char HeaderClosingCharacter        = ']';
             public const char CommentCharacter              = '#';
