@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Anixe.Ion.Helpers;
+using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Anixe.Ion
 {
@@ -20,7 +22,7 @@ namespace Anixe.Ion
         }
 
         public IonWriter(TextWriter tw)
-        : this(tw, new WriterOptions{ })
+        : this(tw, new WriterOptions { })
         {
         }
 
@@ -28,7 +30,7 @@ namespace Anixe.Ion
 
         public void WriteSection(string name)
         {
-            if(state != WriterState.None)
+            if (state != WriterState.None)
             {
                 WriteLine();
                 this.state = WriterState.Section;
@@ -228,13 +230,17 @@ namespace Anixe.Ion
         public void WriteTableCell(string? value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value);
+            WriteCol(value);
             WriteTableCellAfter(lastCellInRow);
         }
 
         public void WriteTableCell(char value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
+            if (Array.IndexOf(Consts.ProhibitedTableCellCharacters, value) != -1)
+            {
+                ThrowHelper.Throw_InvalidTableCellDataException();
+            }
             tw.Write(value);
             WriteTableCellAfter(lastCellInRow);
         }
@@ -270,6 +276,10 @@ namespace Anixe.Ion
         public void WriteTableCell(char[] buffer, int index, int count, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
+            if (buffer != null)
+            {
+                Validate(buffer, index, count);
+            }
             tw.Write(buffer, index, count);
             WriteTableCellAfter(lastCellInRow);
         }
@@ -278,8 +288,8 @@ namespace Anixe.Ion
         {
             if (this.firstTableCell)
             {
-              tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
-              this.firstTableCell = false;
+                tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+                this.firstTableCell = false;
             }
             tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
         }
@@ -290,8 +300,8 @@ namespace Anixe.Ion
             tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             if (lastCellInRow)
             {
-              WriteLine();
-              this.firstTableCell = true;
+                WriteLine();
+                this.firstTableCell = true;
             }
             this.state &= ~WriterState.Property;
             this.state &= ~WriterState.TableHeader;
@@ -300,7 +310,7 @@ namespace Anixe.Ion
 
         private static void ValidateWriteTableCell(Action<TextWriter> writeCellAction)
         {
-            if(writeCellAction == null)
+            if (writeCellAction == null)
             {
                 throw new ArgumentNullException("Must provide Action<TextWriter>");
             }
@@ -310,7 +320,7 @@ namespace Anixe.Ion
         {
             if (writeCellAction == null)
             {
-              throw new ArgumentNullException("Must provide Action<TextWriter, TContext>");
+                throw new ArgumentNullException("Must provide Action<TextWriter, TContext>");
             }
         }
 
@@ -322,8 +332,12 @@ namespace Anixe.Ion
             }
         }
 
-        private void WriteCol(string col)
+        private void WriteCol(string? col)
         {
+            if (col != null && col.IndexOfAny(Consts.ProhibitedTableCellCharacters) != -1)
+            {
+                ThrowHelper.Throw_InvalidTableCellDataException();
+            }
             this.tw.Write(col);
         }
 
@@ -349,6 +363,19 @@ namespace Anixe.Ion
                 tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             }
             WriteLine();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Validate(char[] buffer, int index, int count)
+        {
+            var end = index + count;
+            for (int i = index; i < end; i++)
+            {
+                if (Array.IndexOf(Consts.ProhibitedTableCellCharacters, buffer[i]) != -1)
+                {
+                    ThrowHelper.Throw_InvalidTableCellDataException();
+                }
+            }
         }
 
         public void WriteEmptyLine()
@@ -391,7 +418,7 @@ namespace Anixe.Ion
             {
                 this.tw.Write(Consts.IonSpecialChars.EscapeCharacter);
             }
-            if(newLine)
+            if (newLine)
             {
                 WriteLine(Consts.IonSpecialChars.QuotationCharacter);
             }
@@ -407,7 +434,7 @@ namespace Anixe.Ion
             {
                 this.tw.Write(Consts.IonSpecialChars.NewLineEscaped);
             }
-            else 
+            else
             {
                 this.tw.WriteLine();
             }

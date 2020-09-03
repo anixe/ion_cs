@@ -20,7 +20,7 @@ namespace Anixe.Ion.UnitTests
         public string Read_Tests(string currentLine)
         {
             var actual = this.target.Read(currentLine.ToCharArray());
-            return new string(actual.Array, actual.Offset, actual.Count);
+            return new string(actual.Array!, actual.Offset, actual.Count);
         }
     }
 }

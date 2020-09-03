@@ -6,6 +6,7 @@ namespace Anixe.Ion
     {
         public const string False = "false";
         public const string True = "true";
+        public static readonly char[] ProhibitedTableCellCharacters = new[] { '\n', '|' };
 
         public static class ErrorMessages
         {
