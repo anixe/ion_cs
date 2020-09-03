@@ -1,6 +1,5 @@
 using System;
 using NUnit.Framework;
-using Anixe.Ion;
 using System.IO;
 using System.Text;
 using static NUnit.StaticExpect.Expectations;
@@ -15,7 +14,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("Examples/not_existing_file.ion", "File '\"Examples/not_existing_file.ion\"' does not exist!", TestName = "Throws exception when file does not exist")]
         public void Throws_Exception_When_FilePath_Does_Not_Exists(string filePath, string expectedExceptionMessage)
         {
-            TestDelegate subject = () => IonReaderFactory.Create(filePath);
+            void subject() => IonReaderFactory.Create(filePath);
 
             Assert.Throws<ArgumentException>(subject, expectedExceptionMessage);
         }
@@ -32,14 +31,10 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Creates_IonReader_For_FileStream()
         {
-            using(FileStream fileStream = new FileStream(FileLoader.GetExamplesIonPath(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                using(var ionReader = IonReaderFactory.Create(fileStream))
-                {
-                    Expect(ionReader, Is.Not.Null);
-                    Expect(ionReader, Is.TypeOf<IonReader>());
-                }
-            }
+            using FileStream fileStream = new FileStream(FileLoader.GetExamplesIonPath(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var ionReader = IonReaderFactory.Create(fileStream);
+            Expect(ionReader, Is.Not.Null);
+            Expect(ionReader, Is.TypeOf<IonReader>());
         }
 
         [Test]
@@ -47,14 +42,10 @@ namespace Anixe.Ion.UnitTests
         {
             var rawFileContent = Encoding.UTF8.GetBytes(File.ReadAllText(FileLoader.GetExamplesIonPath()));
 
-            using(MemoryStream fileStream = new MemoryStream(rawFileContent))
-            {
-                using(var ionReader = IonReaderFactory.Create(fileStream))
-                {
-                    Expect(ionReader, Is.Not.Null);
-                    Expect(ionReader, Is.TypeOf<IonReader>());
-                }
-            }
+            using MemoryStream fileStream = new MemoryStream(rawFileContent);
+            using var ionReader = IonReaderFactory.Create(fileStream);
+            Expect(ionReader, Is.Not.Null);
+            Expect(ionReader, Is.TypeOf<IonReader>());
         }
     }
 }

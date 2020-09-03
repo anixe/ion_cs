@@ -28,7 +28,7 @@ namespace Anixe.Ion
         public static IIonWriter Create(Stream stream, bool leaveOpen = false)
         {
             var writer = new StreamWriter(stream);
-            return Create(writer, leaveOpen);
+            return Create(writer, new WriterOptions { LeaveOpen = leaveOpen });
         }
 
         /// <summary>
@@ -38,7 +38,28 @@ namespace Anixe.Ion
         /// <param name="leaveOpen">Indicates if the TextWriter instance will be disposed with IIonWriter.Dispose</param>
         public static IIonWriter Create(TextWriter tw, bool leaveOpen = false)
         {
-            return new IonWriter(tw, leaveOpen);
+            return new IonWriter(tw, new WriterOptions { LeaveOpen = leaveOpen });
+        }
+
+        /// <summary>
+        /// Creates the instance of IIonWriter from specified stream.
+        /// </summary>
+        /// <param name="stream">Stream.</param>
+        /// <param name="leaveOpen">Indicates if the stream will be disposed with IIonWriter.Dispose</param>
+        public static IIonWriter Create(Stream stream, WriterOptions options)
+        {
+            var writer = new StreamWriter(stream);
+            return Create(writer, options);
+        }
+
+        /// <summary>
+        /// Creates the instance of IIonWriter from specified TextWriter.
+        /// </summary>
+        /// <param name="stream">Stream.</param>
+        /// <param name="leaveOpen">Indicates if the TextWriter instance will be disposed with IIonWriter.Dispose</param>
+        public static IIonWriter Create(TextWriter tw, WriterOptions options)
+        {
+            return new IonWriter(tw, options);
         }
 
         #region Private methods

@@ -1,30 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anixe.Ion
 {
     internal class IonWriter : IIonWriter
     {
-        private TextWriter tw;
+        private readonly TextWriter tw;
         private WriterState state;
-        private string[] lastTableColumns;
+        private string[]? lastTableColumns;
         private bool firstTableCell = true;
-        private bool leaveOpen;
+        internal WriterState State => this.state;
+        private readonly WriterOptions options;
 
-        internal WriterState State
+        public IonWriter(TextWriter tw, WriterOptions options)
         {
-            get { return this.state; }
+            this.options = options;
+            this.tw = tw ?? throw new ArgumentNullException(nameof(tw));
         }
 
-        public IonWriter(TextWriter tw, bool leaveOpen = false)
+        public IonWriter(TextWriter tw)
+        : this(tw, new WriterOptions{ })
         {
-            this.tw = tw;
-            this.leaveOpen = leaveOpen;
         }
 
         #region IIonWriter Members
@@ -33,14 +30,14 @@ namespace Anixe.Ion
         {
             if(state != WriterState.None)
             {
-                this.tw.WriteLine();
+                WriteLine();
                 this.state = WriterState.Section;
             }
             ValidateWriteSection(name);
             ClearState();
             this.tw.Write(Consts.IonSpecialChars.HeaderOpeningCharacter);
             this.tw.Write(name);
-            this.tw.WriteLine(Consts.IonSpecialChars.HeaderClosingCharacter);
+            WriteLine(Consts.IonSpecialChars.HeaderClosingCharacter);
             this.state |= WriterState.Section;
         }
 
@@ -52,15 +49,15 @@ namespace Anixe.Ion
             }
         }
 
-        public void WriteProperty(string name, string value)
+        public void WriteProperty(string name, string? value)
         {
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.Write(Consts.IonSpecialChars.QuotationCharacter);
+            WriteQuotationCharacter();
             this.tw.Write(value);
-            this.tw.WriteLine(Consts.IonSpecialChars.QuotationCharacter);
+            WriteQuotationCharacter(newLine: true);
             this.state |= WriterState.Property;
         }
 
@@ -68,14 +65,14 @@ namespace Anixe.Ion
         {
             if (writeValueAction == null)
             {
-                throw new ArgumentNullException("Provide writeValueAction parameter");
+                throw new ArgumentNullException($"Provide {nameof(writeValueAction)} parameter");
             }
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
             writeValueAction(this.tw);
-            this.tw.WriteLine();
+            WriteLine();
             this.state |= WriterState.Property;
         }
 
@@ -85,7 +82,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value ? Consts.True : Consts.False);
+            WriteLine(value ? Consts.True : Consts.False);
             this.state |= WriterState.Property;
         }
 
@@ -95,7 +92,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value);
+            WriteLine(value);
             this.state |= WriterState.Property;
         }
 
@@ -105,7 +102,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value.ToString(CultureInfo.InvariantCulture));
+            WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
 
@@ -115,7 +112,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value.ToString(CultureInfo.InvariantCulture));
+            WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
 
@@ -125,9 +122,9 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.Write(Consts.IonSpecialChars.QuotationCharacter);
+            WriteQuotationCharacter();
             this.tw.Write(value);
-            this.tw.WriteLine(Consts.IonSpecialChars.QuotationCharacter);
+            WriteQuotationCharacter(newLine: true);
             this.state |= WriterState.Property;
         }
 
@@ -137,7 +134,7 @@ namespace Anixe.Ion
             ClearState();
             this.tw.Write(name);
             this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
-            this.tw.WriteLine(value.ToString(CultureInfo.InvariantCulture));
+            WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
 
@@ -149,7 +146,7 @@ namespace Anixe.Ion
             }
             if (string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException("Property name must be provided");
+                throw new ArgumentNullException($"Property {nameof(name)} must be provided");
             }
         }
 
@@ -158,7 +155,7 @@ namespace Anixe.Ion
             ValidateWriteTableHeader(columns);
             ClearState();
             WriteTableRow(columns, WriteCol);
-            WriteTableRow(columns, WriteHeaderSeparator, true);
+            WriteSqueezedTableRow(columns, WriteHeaderSeparator);
             this.state &= ~WriterState.Property;
             this.state |= WriterState.TableHeader;
             this.lastTableColumns = columns;
@@ -199,7 +196,7 @@ namespace Anixe.Ion
             {
                 throw new ArgumentNullException("Cannot create empty table row");
             }
-            if (columns.Length != this.lastTableColumns.Length)
+            if (columns.Length != this.lastTableColumns!.Length)
             {
                 throw new ArgumentException("Must provide the same number of columns within the same table");
             }
@@ -228,7 +225,7 @@ namespace Anixe.Ion
             WriteTableCellAfter(lastCellInRow);
         }
 
-        public void WriteTableCell(string value, bool lastCellInRow = false)
+        public void WriteTableCell(string? value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
             tw.Write(value);
@@ -293,7 +290,7 @@ namespace Anixe.Ion
             tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             if (lastCellInRow)
             {
-              this.tw.WriteLine();
+              WriteLine();
               this.firstTableCell = true;
             }
             this.state &= ~WriterState.Property;
@@ -330,30 +327,34 @@ namespace Anixe.Ion
             this.tw.Write(col);
         }
 
-        private void WriteTableRow(string[] columns, Action<string> onItemAction, bool squeeze = false)
+        private void WriteTableRow(string[] columns, Action<string> onItemAction)
         {
             tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             for (int i = 0; i < columns.Length; i++)
             {
-                var col = columns[i];
-                if (!squeeze)
-                {
-                    tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
-                }
-                onItemAction(col);
-                if (!squeeze)
-                {
-                    tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
-                }
+                tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
+                onItemAction(columns[i]);
+                tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
                 tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
             }
-            tw.WriteLine();
+            WriteLine();
+        }
+
+        private void WriteSqueezedTableRow(string[] columns, Action<string> onItemAction)
+        {
+            tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+            for (int i = 0; i < columns.Length; i++)
+            {
+                onItemAction(columns[i]);
+                tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+            }
+            WriteLine();
         }
 
         public void WriteEmptyLine()
         {
             ClearState();
-            this.tw.WriteLine();
+            WriteLine();
         }
 
         public void Flush()
@@ -367,7 +368,7 @@ namespace Anixe.Ion
 
         public void Dispose()
         {
-            if (this.tw != null && !this.leaveOpen)
+            if (!this.options.LeaveOpen)
             {
                 this.tw.Dispose();
             }
@@ -382,6 +383,53 @@ namespace Anixe.Ion
             this.state &= ~WriterState.Property;
             this.state &= ~WriterState.TableHeader;
             this.state &= ~WriterState.TableRow;
+        }
+
+        private void WriteQuotationCharacter(bool newLine = false)
+        {
+            if (this.options.EscapeQuotes)
+            {
+                this.tw.Write(Consts.IonSpecialChars.EscapeCharacter);
+            }
+            if(newLine)
+            {
+                WriteLine(Consts.IonSpecialChars.QuotationCharacter);
+            }
+            else
+            {
+                this.tw.Write(Consts.IonSpecialChars.QuotationCharacter);
+            }
+        }
+
+        private void WriteLine()
+        {
+            if (this.options.EscapeNewLineChars)
+            {
+                this.tw.Write(Consts.IonSpecialChars.NewLineEscaped);
+            }
+            else 
+            {
+                this.tw.WriteLine();
+            }
+        }
+
+        private void WriteLine(string val)
+        {
+            this.tw.Write(val);
+            WriteLine();
+        }
+
+        private void WriteLine(char val)
+        {
+            this.tw.Write(val);
+            WriteLine();
+        }
+
+
+        private void WriteLine(int val)
+        {
+            this.tw.Write(val);
+            WriteLine();
         }
     }
 }
