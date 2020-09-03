@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Anixe.Ion.Exceptions;
 using NUnit.Framework;
 
 namespace Anixe.Ion.UnitTests
@@ -215,6 +216,31 @@ namespace Anixe.Ion.UnitTests
                 Assert.AreEqual(WriterState.Section | WriterState.TableRow, subject.State);
             }
             CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+        }
+
+        [Test]
+        public void IIonWriter_WriteTableCell_Throws_InvalidTableCellDataException()
+        {
+            var sb = new StringBuilder();
+            using (var subject = new IonWriter(new StringWriter(sb)))
+            {
+                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableCell("\n"));
+                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableCell("|"));
+
+                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableCell("\n".ToCharArray(), 0, 1));
+                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableCell("|".ToCharArray(), 0, 1));
+            }
+        }
+
+        [Test]
+        public void IIonWriter_WriteTableRow_Throws_InvalidTableCellDataException()
+        {
+            var sb = new StringBuilder();
+            using (var subject = new IonWriter(new StringWriter(sb)))
+            {
+                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableRow(new[] { "\n" }));
+                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableRow(new[] { "|" }));
+            }
         }
 
         [Test]
