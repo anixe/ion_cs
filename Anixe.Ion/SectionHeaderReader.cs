@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Anixe.Ion
 {
@@ -14,14 +15,7 @@ namespace Anixe.Ion
 
         private int IndexOf(ArraySegment<char> arr, char ch)
         {
-            for (int i = arr.Offset; i < arr.Count; i++)
-            {
-                if(arr[i] == ch)
-                {
-                    return i;
-                }
-            }
-            return -1;
+            return ((IList<char>)arr).IndexOf(ch);
         }
     }
 }
