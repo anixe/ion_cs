@@ -1,14 +1,16 @@
-﻿namespace Anixe.Ion
+﻿using System;
+
+namespace Anixe.Ion
 {
     internal class CurrentLineVerifier
     {
-        public bool IsSectionHeader(string currentLine)
+        public bool IsSectionHeader(ArraySegment<char> currentLine)
         {
             return !IsEmptyLine(currentLine)
                 && currentLine[0] == Consts.IonSpecialChars.HeaderOpeningCharacter;
         }
 
-        public bool IsTableHeaderRow(string currentLine, bool passedCurrentTableHeaderRow)
+        public bool IsTableHeaderRow(ArraySegment<char> currentLine, bool passedCurrentTableHeaderRow)
         {
           return !passedCurrentTableHeaderRow
               && !IsEmptyLine(currentLine)
@@ -16,7 +18,7 @@
               && currentLine[1] != Consts.IonSpecialChars.TableHeaderSeparatorCharacter;
         }
 
-        public bool IsTableDataRow(string currentLine, bool passedCurrentTableHeaderRow)
+        public bool IsTableDataRow(ArraySegment<char> currentLine, bool passedCurrentTableHeaderRow)
         {
           return passedCurrentTableHeaderRow
               && !IsEmptyLine(currentLine)
@@ -24,7 +26,7 @@
               && currentLine[1] != Consts.IonSpecialChars.TableHeaderSeparatorCharacter;
         }
 
-        public bool IsProperty(string currentLine)
+        public bool IsProperty(ArraySegment<char> currentLine)
         {
             return !IsEmptyLine(currentLine)
                 && !IsSectionHeader(currentLine)
@@ -33,29 +35,40 @@
                 && !IsTableHeaderSeparatorRow(currentLine);
         }
 
-        public bool IsComment(string currentLine)
+        public bool IsComment(ArraySegment<char> currentLine)
         {
             return !IsEmptyLine(currentLine)
                 && currentLine[0] == Consts.IonSpecialChars.CommentCharacter;
         }
 
-        public bool IsTableRow(string currentLine)
+        public bool IsTableRow(ArraySegment<char> currentLine)
         {
             return !IsEmptyLine(currentLine)
                 && currentLine[0] == Consts.IonSpecialChars.TableOpeningCharacter;
         }
 
-        public bool IsTableHeaderSeparatorRow(string currentLine)
+        public bool IsTableHeaderSeparatorRow(ArraySegment<char> currentLine)
         {
             return !IsEmptyLine(currentLine)
                 && currentLine[0] == Consts.IonSpecialChars.TableOpeningCharacter
                 && currentLine[1] == Consts.IonSpecialChars.TableHeaderSeparatorCharacter;
         }
 
-        public bool IsEmptyLine(string currentLine)
+        public bool IsEmptyLine(ArraySegment<char> currentLine)
         {
-            return string.IsNullOrWhiteSpace(currentLine);
+            return currentLine == default(ArraySegment<char>) || currentLine.Count == 0 || IsWhiteSpace(currentLine);
+        }
+
+        private bool IsWhiteSpace(ArraySegment<char> currentLine)
+        {
+            for (int i = currentLine.Offset; i < currentLine.Count; i++)
+            {
+                if(!char.IsWhiteSpace(currentLine[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
-

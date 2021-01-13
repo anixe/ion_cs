@@ -1,18 +1,20 @@
 ﻿using System;
 using NUnit.Framework;
 using System.Collections.Generic;
+using static NUnit.StaticExpect.Expectations;
 
 namespace Anixe.Ion.UnitTests
 {
-    public class IntegrationTests : AssertionHelper
+    [TestFixture]
+    public class IntegrationTests
     {
-        private IIonReader target;
-        private List<Action> assertions;
+        private IIonReader target = null!;
+        private List<Action> assertions = null!;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Before_All_Test()
         {
-            this.target = IonReaderFactory.Create("Examples/example.ion");
+            this.target = IonReaderFactory.Create(FileLoader.GetExamplesIonPath());
 
             this.assertions = new List<Action>
             {
@@ -30,12 +32,14 @@ namespace Anixe.Ion.UnitTests
                 IsEmptyLine_InTwelfthLine,
                 IsEmptyLine_InThirteenthLine,
                 IsEmptyLine_InFourteenthLine,
-                IsTableHeaderSeparatorRow_InFiveteenthLine,
-                IsTableRow_InSixeenthLine
+                IsSectionHeader_InFiftheenthLine,
+                IsTableRow_InSixteenthLine,
+                IsTableHeaderSeparatorRow_InSeventeenthLine,
+                IsTableRow_InEighteenthLine,
             };
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void After_All_Test()
         {
             this.target.Dispose();
@@ -153,37 +157,51 @@ namespace Anixe.Ion.UnitTests
 
         private void IsEmptyLine_InThirteenthLine()
         {
-            Expect(this.target.IsSectionHeader);
-            Expect(this.target.CurrentLine, Is.EqualTo("[DEF.SECTION2]"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
+            Expect(this.target.IsEmptyLine);
+            Expect(this.target.CurrentLine, Is.EqualTo(string.Empty));
+            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
             Expect(this.target.CurrentLineNumber, Is.EqualTo(13));
         }
 
         private void IsEmptyLine_InFourteenthLine()
         {
-            Expect(this.target.IsTableRow);
-            Expect(this.target.IsTableHeaderRow);
-            Expect(this.target.CurrentLine, Is.EqualTo("|  id | 1st_column_description | 2nd_column_description |"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
+            Expect(this.target.IsEmptyLine);
+            Expect(this.target.CurrentLine, Is.EqualTo(string.Empty));
+            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
             Expect(this.target.CurrentLineNumber, Is.EqualTo(14));
         }
 
-        private void IsTableHeaderSeparatorRow_InFiveteenthLine()
+        private void IsTableRow_InEighteenthLine()
+        {
+            Expect(this.target.IsTableRow);
+            Expect(this.target.CurrentLine, Is.EqualTo("| 123 | ZZZ                    | VVV                    |"));
+            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
+            Expect(this.target.CurrentLineNumber, Is.EqualTo(18));
+        }
+
+        private void IsTableHeaderSeparatorRow_InSeventeenthLine()
         {
             Expect(this.target.IsTableHeaderSeparatorRow);
             Expect(this.target.IsTableHeaderRow, Is.False);
             Expect(this.target.CurrentLine, Is.EqualTo("|-----|------------------------|------------------------|"));
             Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(15));
+            Expect(this.target.CurrentLineNumber, Is.EqualTo(17));
         }
 
-        private void IsTableRow_InSixeenthLine()
+        private void IsTableRow_InSixteenthLine()
         {
             Expect(this.target.IsTableRow);
-            Expect(this.target.IsTableDataRow);
-            Expect(this.target.CurrentLine, Is.EqualTo("| 123 | ZZZ                    | VVV                    |"));
+            Expect(this.target.CurrentLine, Is.EqualTo("|  id | 1st_column_description | 2nd_column_description |"));
             Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
             Expect(this.target.CurrentLineNumber, Is.EqualTo(16));
+        }
+
+        private void IsSectionHeader_InFiftheenthLine()
+        {
+            Expect(this.target.IsSectionHeader);
+            Expect(this.target.CurrentLine, Is.EqualTo("[DEF.SECTION2]"));
+            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
+            Expect(this.target.CurrentLineNumber, Is.EqualTo(15));
         }
 
         #endregion

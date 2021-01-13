@@ -1,13 +1,21 @@
-﻿namespace Anixe.Ion
+﻿using System;
+using System.Collections.Generic;
+
+namespace Anixe.Ion
 {
     internal class SectionHeaderReader
     {
-        public string Read(string currentLine)
+        public ArraySegment<char> Read(ArraySegment<char> currentLine)
         {
-            int indexOfOpeningCharacter = currentLine.IndexOf(Consts.IonSpecialChars.HeaderOpeningCharacter);
-            int indexOfClosingCharacter = currentLine.IndexOf(Consts.IonSpecialChars.HeaderClosingCharacter);
+            var indexOfOpeningCharacter = IndexOf(currentLine, Consts.IonSpecialChars.HeaderOpeningCharacter);
+            var indexOfClosingCharacter = IndexOf(currentLine, Consts.IonSpecialChars.HeaderClosingCharacter);
 
-            return currentLine.Substring(indexOfOpeningCharacter + 1, indexOfClosingCharacter - 1);
+            return currentLine.Slice(indexOfOpeningCharacter + 1, indexOfClosingCharacter - 1);
+        }
+
+        private int IndexOf(ArraySegment<char> arr, char ch)
+        {
+            return ((IList<char>)arr).IndexOf(ch);
         }
     }
 }

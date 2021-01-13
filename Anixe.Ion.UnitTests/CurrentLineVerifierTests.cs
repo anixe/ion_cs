@@ -1,15 +1,10 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using NSubstitute;
 using NUnit.Framework;
-using Anixe.Ion;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class CurrentLineVerifierTests : AssertionHelper
+    internal class CurrentLineVerifierTests
     {
-        private CurrentLineVerifier target;
+        private CurrentLineVerifier target = null!;
 
         [SetUp]
         public void Before_Each_Test()
@@ -29,7 +24,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsSectionHeader_Tests(string currentLine)
         {
-            return this.target.IsSectionHeader(currentLine);
+            return this.target.IsSectionHeader(currentLine.ToCharArray());
         }
 
         [TestCase("",        ExpectedResult = false)]
@@ -44,7 +39,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = true)]
         public bool IsProperty_Tests(string currentLine)
         {
-            return this.target.IsProperty(currentLine);
+            return this.target.IsProperty(currentLine.ToCharArray());
         }
 
         [TestCase("",        ExpectedResult = false)]
@@ -59,7 +54,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsComment_Tests(string currentLine)
         {
-            return this.target.IsComment(currentLine);
+            return this.target.IsComment(currentLine.ToCharArray());
         }
 
         [TestCase("",        ExpectedResult = false)]
@@ -74,7 +69,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsTableRow_Tests(string currentLine)
         {
-            return this.target.IsTableRow(currentLine);
+            return this.target.IsTableRow(currentLine.ToCharArray());
         }
 
         [TestCase("",        false, ExpectedResult = false)]
@@ -92,7 +87,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("|-",      true,  ExpectedResult = false)]
         public bool IsTableHeaderRow_Tests(string currentLine, bool passedHeader)
         {
-            return this.target.IsTableHeaderRow(currentLine, passedHeader);
+            return this.target.IsTableHeaderRow(currentLine.ToCharArray(), passedHeader);
         }
 
         [TestCase("",        true,  ExpectedResult = false)]
@@ -110,7 +105,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("|-",      false, ExpectedResult = false)]
         public bool IsTableDataRow_Tests(string currentLine, bool passedHeader)
         {
-            return this.target.IsTableDataRow(currentLine, passedHeader);
+            return this.target.IsTableDataRow(currentLine.ToCharArray(), passedHeader);
         }
 
         [TestCase("",        ExpectedResult = false)]
@@ -125,7 +120,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsTableHeaderSeparatorRow_Tests(string currentLine)
         {
-            return this.target.IsTableHeaderSeparatorRow(currentLine);
+            return this.target.IsTableHeaderSeparatorRow(currentLine.ToCharArray());
         }
 
         [TestCase("",        ExpectedResult = true)]
@@ -140,7 +135,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsEmptyLine_Tests(string currentLine)
         {
-            return this.target.IsEmptyLine(currentLine);
+            return this.target.IsEmptyLine(currentLine.ToCharArray());
         }
     }
 }
