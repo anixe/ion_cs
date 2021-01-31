@@ -2,7 +2,7 @@
 
 namespace Anixe.Ion
 {
-    internal class CurrentLineVerifier
+    internal sealed class CurrentLineVerifier
     {
         public bool IsSectionHeader(ArraySegment<char> currentLine)
         {
@@ -59,7 +59,7 @@ namespace Anixe.Ion
             return currentLine == default(ArraySegment<char>) || currentLine.Count == 0 || IsWhiteSpace(currentLine);
         }
 
-        private bool IsWhiteSpace(ArraySegment<char> currentLine)
+        private static bool IsWhiteSpace(ArraySegment<char> currentLine)
         {
             for (int i = currentLine.Offset; i < currentLine.Count; i++)
             {

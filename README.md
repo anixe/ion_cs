@@ -156,3 +156,10 @@ Method |     Mean |     Error |    StdDev | Allocated |
 ------- |---------:|----------:|----------:|----------:|
    Read | 9.432 ms | 0.0468 ms | 0.0438 ms |  14.92 KB |
 ```
+
+Use custom struct BufferWriter instaed of StringBuilder
+```
+| Method |     Mean |     Error |    StdDev | Allocated |
+|------- |---------:|----------:|----------:|----------:|
+|   Read | 5.867 ms | 0.0281 ms | 0.0235 ms |   4.59 KB |
+```
