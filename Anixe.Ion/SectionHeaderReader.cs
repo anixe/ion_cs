@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Anixe.Ion
 {
-    internal class SectionHeaderReader
+    internal sealed class SectionHeaderReader
     {
         public ArraySegment<char> Read(ArraySegment<char> currentLine)
         {
@@ -13,7 +13,7 @@ namespace Anixe.Ion
             return currentLine.Slice(indexOfOpeningCharacter + 1, indexOfClosingCharacter - 1);
         }
 
-        private int IndexOf(ArraySegment<char> arr, char ch)
+        private static int IndexOf(ArraySegment<char> arr, char ch)
         {
             return ((IList<char>)arr).IndexOf(ch);
         }

@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace Anixe.Ion
 {
-    internal class IonWriter : IIonWriter
+    internal sealed class IonWriter : IIonWriter
     {
         private readonly TextWriter tw;
         private WriterState state;
@@ -22,7 +22,7 @@ namespace Anixe.Ion
         }
 
         public IonWriter(TextWriter tw)
-        : this(tw, new WriterOptions { })
+        : this(tw, new WriterOptions())
         {
         }
 
@@ -43,7 +43,7 @@ namespace Anixe.Ion
             this.state |= WriterState.Section;
         }
 
-        private void ValidateWriteSection(string name)
+        private static void ValidateWriteSection(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -451,7 +451,6 @@ namespace Anixe.Ion
             this.tw.Write(val);
             WriteLine();
         }
-
 
         private void WriteLine(int val)
         {
