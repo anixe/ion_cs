@@ -8,52 +8,52 @@ namespace Anixe.Ion
     public interface IIonReader : IDisposable
     {
         /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on section header.
+        /// Gets a value indicating whether this instance of <see cref="IIonReader"/> is currently on section header.
         /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '['; otherwise, <c>false</c>.</value>
+        /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '['; otherwise, <see langword="false"/>.</value>
         bool IsSectionHeader { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on property.
         /// </summary>
-        /// <value><c>true</c> if other boolean properties are false; otherwise, <c>false</c>.</value>
+        /// <value><see langword="true"/> if other boolean properties are false; otherwise, <see langword="false"/>.</value>
         bool IsProperty { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on comment.
         /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '#'; otherwise, <c>false</c>.</value>
+        /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '#'; otherwise, <see langword="false"/>.</value>
         bool IsComment { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance of IonReader is currently on table headers row.
         /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was not already passed; otherwise, <c>false</c>.</value>
+        /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '|' and current table header was not already passed; otherwise, <see langword="false"/>.</value>
         bool IsTableHeaderRow { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table row.
+        /// Gets a value indicating whether this instance of <see cref="IIonReader"/> is currently on table row.
         /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|'; otherwise, <c>false</c>.</value>
+        /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '|'; otherwise, <see langword="false"/>.</value>
         bool IsTableRow { get;}
 
         /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table header separator row. IMPORTANT: we recognize this
+        /// Gets a value indicating whether this instance of <see cref="IIonReader"/> is currently on table header separator row. IMPORTANT: we recognize this
         /// property as a combination of first two characters as "|-". Fill your table rows without '-' character.
         /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|-'; otherwise, <c>false</c>.</value>
+        /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '|-'; otherwise, <see langword="false"/>.</value>
         bool IsTableHeaderSeparatorRow { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance of IonReader is currently on table row with data.
+        /// Gets a value indicating whether this instance of <see cref="IIonReader"/> is currently on table row with data.
         /// </summary>
-        /// <value><c>true</c> if IonReader CurrentLine first character is equal to '|' and current table header was already passed; otherwise, <c>false</c>.</value>
+        /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '|' and current table header was already passed; otherwise, <see langword="false"/>.</value>
         bool IsTableDataRow { get; }
 
         /// <summary>
-        /// Gets a value indicating whether a IonReader CurrentLine is null, empty, or consists only of white-space characters.
+        /// Gets a value indicating whether a <see cref="IIonReader.CurrentLine"/> is <see langword="null"/>, empty, or consists only of white-space characters.
         /// </summary>
-        /// <value><c>true</c> if string.IsNullOrWhiteSpace(CurrentLine); otherwise, <c>false</c>.</value>
+        /// <value><see langword="true"/> if string.IsNullOrWhiteSpace(CurrentLine); otherwise, <see langword="false"/>.</value>
         bool IsEmptyLine { get; }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Anixe.Ion
         ArraySegment<char> CurrentRawLine { get; }
 
         /// <summary>
-        /// Gets the name of current section. It is changing only when CurrentLine is on section header. Returns null only if Read() was not called yet.
+        /// Gets the name of current section. It is changing only when <see cref="IIonReader.CurrentLine"/> is on section header. Returns <see langword="null"/> only if <see cref="IIonReader.Read"/> was not called yet.
         /// </summary>
         /// <value>The current section.</value>
         string? CurrentSection { get; }
@@ -83,7 +83,7 @@ namespace Anixe.Ion
         /// <summary>
         /// Read this instance.
         /// </summary>
-        /// <returns><c>true</c> if the next line was read successfully; otherwise,<c>false</c>.</returns>
+        /// <returns><see langword="true"/> if the next line was read successfully; otherwise,<see langword="false"/>.</returns>
         bool Read();
     }
 }

@@ -14,7 +14,7 @@ namespace Anixe.Ion
     /// Creates a new instance of <see cref="IonProperty"/>.
     /// </summary>
     /// <param name="reader">Instance of <see cref="IIonReader"/> with current state <see cref="IIonReader.IsProperty"/>=<see langword="true"/>.</param>
-    /// <param name="propertySeparator">Character that separates key from value. By default it is used =.</param>
+    /// <param name="propertySeparator">Character that separates key from value. By default it is used = character.</param>
     /// <exception cref="InvalidOperationException">Reader is in not correct state. That means <see cref="IIonReader.IsProperty"/> is <see langword="false"/>.</exception>
     public IonProperty(IIonReader reader, char propertySeparator = '=')
     {
