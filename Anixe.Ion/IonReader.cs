@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Anixe.Ion.Helpers;
+using System;
 using System.Buffers;
 using System.IO;
 using System.Text;
@@ -8,17 +9,15 @@ namespace Anixe.Ion
     /// <summary>
     /// Represents a reader that provides fast, non-cached, forward-only access to ION data.
     /// </summary>
-    internal class IonReader : IIonReader
+    internal sealed class IonReader : IIonReader
     {
         private bool disposed;
         private bool passedCurrentTableHeaderRow;
         private Stream stream;
         private readonly bool leaveOpen;
-        private readonly StringBuilder sb;
-        private readonly ArrayPool<char> charPool;
         private readonly CurrentLineVerifier currentLineVerifier;
         private readonly SectionHeaderReader sectionHeaderReader;
-        private char[]? rentedCharBuffer;
+        private BufferWriter lineBufferWriter;
         private readonly byte[] byteBuff;
         private readonly char[] charBuff;
         private readonly byte[] preamble;
@@ -27,15 +26,15 @@ namespace Anixe.Ion
         private readonly Encoding enc = Encoding.UTF8;
         private bool checkBOM;
 
-        /// <summary>
-        /// It initialized IonReader
-        /// </summary>
-        /// <param name="stream">Stream to read from</param>
-        /// <param name="currentLineVerifier">Object which verifies state based on current line</param>
-        /// <param name="sectionHeaderReader">Object which reads sections</param>
-        /// <param name="leaveOpen">True if the stream should be open after Dispose()</param>
-        /// <param name="charPool">Provide own System.Buffers.ArrayPool<char> instance. If null then System.Buffers.ArrayPool<char>.Shared will be used</param>
-        public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
+    /// <summary>
+    /// Initializes a new instance of <see cref="IonReader"/>.
+    /// </summary>
+    /// <param name="stream">Stream to read from</param>
+    /// <param name="currentLineVerifier">Object which verifies state based on current line.</param>
+    /// <param name="sectionHeaderReader">Object which reads sections.</param>
+    /// <param name="leaveOpen"><see langword="true"/> if the stream should be open after <see cref="Dispose()"/>.</param>
+    /// <param name="charPool">Provide own <see cref="ArrayPool{T}.Shared"/> instance. If <see langword="null"/> then <see cref="ArrayPool{T}.Shared"/> is used.</param>
+    public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
         {
             this.stream = stream;
             this.disposed = false;
@@ -43,9 +42,7 @@ namespace Anixe.Ion
             this.sectionHeaderReader = sectionHeaderReader;
             this.CurrentLineNumber = 0;
             this.leaveOpen = leaveOpen;
-            this.sb = new StringBuilder();
-            this.charPool = charPool ?? ArrayPool<char>.Shared;
-            this.rentedCharBuffer = null;
+            this.lineBufferWriter = new BufferWriter(charPool ?? ArrayPool<char>.Shared);
             this.byteBuff = ArrayPool<byte>.Shared.Rent(1024);
             this.charBuff = ArrayPool<char>.Shared.Rent(enc.GetMaxByteCount(byteBuff.Length));
             this.preamble = enc.GetPreamble();
@@ -54,43 +51,30 @@ namespace Anixe.Ion
 
         #region IIonReader members
 
-        /// <inheritdoc/>
         public bool IsSectionHeader => this.currentLineVerifier.IsSectionHeader(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsProperty => this.currentLineVerifier.IsProperty(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsComment => this.currentLineVerifier.IsComment(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsTableRow => this.currentLineVerifier.IsTableRow(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsTableHeaderRow => this.currentLineVerifier.IsTableHeaderRow(CurrentRawLine, passedCurrentTableHeaderRow);
 
-        /// <inheritdoc/>
         public bool IsTableHeaderSeparatorRow => this.currentLineVerifier.IsTableHeaderSeparatorRow(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsTableDataRow => this.currentLineVerifier.IsTableDataRow(CurrentRawLine, passedCurrentTableHeaderRow);
 
-        /// <inheritdoc/>
         public bool IsEmptyLine => this.currentLineVerifier.IsEmptyLine(CurrentRawLine);
 
-        /// <inheritdoc/>
         public string CurrentLine => new string(CurrentRawLine.Array, CurrentRawLine.Offset, CurrentRawLine.Count);
 
-        /// <inheritdoc/>
         public ArraySegment<char> CurrentRawLine { get; private set; }
 
-        /// <inheritdoc/>
         public string? CurrentSection { get; private set; }
 
-        /// <inheritdoc/>
         public int CurrentLineNumber { get; private set; }
 
-        /// <inheritdoc/>
         public bool Read()
         {
             if(!this.stream.CanRead)
@@ -100,21 +84,12 @@ namespace Anixe.Ion
             }
             try
             {
-                if(!ReadLine() && sb.Length == 0)
+                if(!ReadLine() && lineBufferWriter.Count == 0)
                 {
                     ResetFields();
                     return false;
                 }
-                if(sb.Length == 0)
-                {
-                    CurrentRawLine = ArraySegment<char>.Empty;
-                }
-                else
-                {
-                    PrepareBuffer(sb.Length);
-                    sb.CopyTo(0, rentedCharBuffer, 0, sb.Length);
-                    CurrentRawLine = new ArraySegment<char>(rentedCharBuffer, 0, sb.Length);
-                }
+                CurrentRawLine = this.lineBufferWriter.WrittenSegment;
                 CurrentLineNumber++;
                 ExposeData();
             }
@@ -129,8 +104,8 @@ namespace Anixe.Ion
         {
             if(IsSectionHeader)
             {
-                var tmp = this.sectionHeaderReader.Read(CurrentRawLine);
-                CurrentSection = new string(tmp.Array, tmp.Offset, tmp.Count);
+                ArraySegment<char> headerSegment = this.sectionHeaderReader.Read(CurrentRawLine);
+                CurrentSection = new string(headerSegment.Array, headerSegment.Offset, headerSegment.Count);
             }
 
             if(passedCurrentTableHeaderRow)
@@ -152,7 +127,7 @@ namespace Anixe.Ion
         private bool ReadLine()
         {
             bool endOfFile = false;
-            this.sb.Clear();
+            this.lineBufferWriter.Clear();
             if(buffIndex > 0)
             {
                 if(!CopyTillEOL())
@@ -204,7 +179,7 @@ namespace Anixe.Ion
 
         private bool CopyTillEOL()
         {
-            var tmp = buffIndex;
+            var startIdx = buffIndex;
             for (int i = buffIndex; i < this.charsRead; i++)
             {
                 var character = charBuff[i];
@@ -212,29 +187,15 @@ namespace Anixe.Ion
                 {
                     if (i > buffIndex)
                     {
-                        int x = charBuff[i - 1] == '\r' ? 1 : 0;
-                        this.sb.Append(charBuff, buffIndex, i - buffIndex - x);
+                        int carriageReturnLength = charBuff[i - 1] == '\r' ? 1 : 0;
+                        this.lineBufferWriter.Write(charBuff, buffIndex, i - buffIndex - carriageReturnLength);
                     }
                     buffIndex = i + 1;
                     return true;
                 }
             }
-            this.sb.Append(charBuff, tmp, this.charsRead - tmp);
+            this.lineBufferWriter.Write(this.charBuff, startIdx, this.charsRead - startIdx);
             return false;
-        }
-
-        private void PrepareBuffer(int length)
-        {
-            if(this.rentedCharBuffer == null)
-            {
-                this.rentedCharBuffer = charPool.Rent(length);
-            }
-            else if(this.rentedCharBuffer.Length < length)
-            {
-                var tmp = this.rentedCharBuffer;
-                this.rentedCharBuffer = charPool.Rent(length);
-                charPool.Return(tmp, true);
-            }
         }
 
         #endregion
@@ -253,11 +214,7 @@ namespace Anixe.Ion
                 ArrayPool<char>.Shared.Return(this.charBuff);
                 ArrayPool<byte>.Shared.Return(this.byteBuff);
 
-                if(this.rentedCharBuffer != null)
-                {
-                    charPool.Return(this.rentedCharBuffer, true);
-                    this.rentedCharBuffer = null;
-                }
+                this.lineBufferWriter.Dispose();
 
                 if(!this.leaveOpen && this.stream != null)
                 {
