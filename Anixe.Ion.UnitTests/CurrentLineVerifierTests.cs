@@ -34,6 +34,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("|date|",  ExpectedResult = false)]
         [TestCase("|-",      ExpectedResult = false)]
         [TestCase("|-1",     ExpectedResult = false)]
+        [TestCase(" abc",     ExpectedResult = true)]
         [TestCase("abc",     ExpectedResult = true)]
         [TestCase(";abc",    ExpectedResult = true)]
         [TestCase("1abc",    ExpectedResult = true)]
