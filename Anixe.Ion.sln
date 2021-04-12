@@ -1,15 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anixe.Ion", "Anixe.Ion\Anixe.Ion.csproj", "{679149D4-BF21-46BE-96DE-A162DA69AE02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anixe.Ion", "Anixe.Ion\Anixe.Ion.csproj", "{679149D4-BF21-46BE-96DE-A162DA69AE02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anixe.Ion.Tester", "Anixe.Ion.Tester\Anixe.Ion.Tester.csproj", "{AB397655-CCF5-4C0E-9882-2501B72F6877}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anixe.Ion.Tester", "Anixe.Ion.Tester\Anixe.Ion.Tester.csproj", "{AB397655-CCF5-4C0E-9882-2501B72F6877}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anixe.Ion.UnitTests", "Anixe.Ion.UnitTests\Anixe.Ion.UnitTests.csproj", "{AF76EBA1-9529-435E-A56D-BF6C2E2EE57E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anixe.Ion.UnitTests", "Anixe.Ion.UnitTests\Anixe.Ion.UnitTests.csproj", "{AF76EBA1-9529-435E-A56D-BF6C2E2EE57E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anixe.Ion.Benchmark", "Anixe.Ion.Benchmark\Anixe.Ion.Benchmark.csproj", "{736DC7C4-B1DE-46C5-9EB3-A7F15C7B3B7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anixe.Ion.Benchmark", "Anixe.Ion.Benchmark\Anixe.Ion.Benchmark.csproj", "{736DC7C4-B1DE-46C5-9EB3-A7F15C7B3B7E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{420DF218-D3B0-4079-8D1B-8A3337F98D15}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,9 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{679149D4-BF21-46BE-96DE-A162DA69AE02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -72,5 +75,11 @@ Global
 		{736DC7C4-B1DE-46C5-9EB3-A7F15C7B3B7E}.Release|x64.Build.0 = Release|Any CPU
 		{736DC7C4-B1DE-46C5-9EB3-A7F15C7B3B7E}.Release|x86.ActiveCfg = Release|Any CPU
 		{736DC7C4-B1DE-46C5-9EB3-A7F15C7B3B7E}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F4EB8F5F-264B-4467-8C89-91846EB6B494}
 	EndGlobalSection
 EndGlobal
