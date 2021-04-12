@@ -26,15 +26,15 @@ namespace Anixe.Ion
         private readonly Encoding enc = Encoding.UTF8;
         private bool checkBOM;
 
-        /// <summary>
-        /// It initialized IonReader
-        /// </summary>
-        /// <param name="stream">Stream to read from</param>
-        /// <param name="currentLineVerifier">Object which verifies state based on current line</param>
-        /// <param name="sectionHeaderReader">Object which reads sections</param>
-        /// <param name="leaveOpen">True if the stream should be open after Dispose()</param>
-        /// <param name="charPool">Provide own System.Buffers.ArrayPool<char> instance. If null then System.Buffers.ArrayPool<char>.Shared will be used</param>
-        public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
+    /// <summary>
+    /// Initializes a new instance of <see cref="IonReader"/>.
+    /// </summary>
+    /// <param name="stream">Stream to read from</param>
+    /// <param name="currentLineVerifier">Object which verifies state based on current line.</param>
+    /// <param name="sectionHeaderReader">Object which reads sections.</param>
+    /// <param name="leaveOpen"><see langword="true"/> if the stream should be open after <see cref="Dispose()"/>.</param>
+    /// <param name="charPool">Provide own <see cref="ArrayPool{T}.Shared"/> instance. If <see langword="null"/> then <see cref="ArrayPool{T}.Shared"/> is used.</param>
+    public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
         {
             this.stream = stream;
             this.disposed = false;
@@ -51,43 +51,30 @@ namespace Anixe.Ion
 
         #region IIonReader members
 
-        /// <inheritdoc/>
         public bool IsSectionHeader => this.currentLineVerifier.IsSectionHeader(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsProperty => this.currentLineVerifier.IsProperty(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsComment => this.currentLineVerifier.IsComment(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsTableRow => this.currentLineVerifier.IsTableRow(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsTableHeaderRow => this.currentLineVerifier.IsTableHeaderRow(CurrentRawLine, passedCurrentTableHeaderRow);
 
-        /// <inheritdoc/>
         public bool IsTableHeaderSeparatorRow => this.currentLineVerifier.IsTableHeaderSeparatorRow(CurrentRawLine);
 
-        /// <inheritdoc/>
         public bool IsTableDataRow => this.currentLineVerifier.IsTableDataRow(CurrentRawLine, passedCurrentTableHeaderRow);
 
-        /// <inheritdoc/>
         public bool IsEmptyLine => this.currentLineVerifier.IsEmptyLine(CurrentRawLine);
 
-        /// <inheritdoc/>
         public string CurrentLine => new string(CurrentRawLine.Array, CurrentRawLine.Offset, CurrentRawLine.Count);
 
-        /// <inheritdoc/>
         public ArraySegment<char> CurrentRawLine { get; private set; }
 
-        /// <inheritdoc/>
         public string? CurrentSection { get; private set; }
 
-        /// <inheritdoc/>
         public int CurrentLineNumber { get; private set; }
 
-        /// <inheritdoc/>
         public bool Read()
         {
             if(!this.stream.CanRead)
