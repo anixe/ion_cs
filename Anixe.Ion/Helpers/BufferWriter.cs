@@ -10,7 +10,11 @@ namespace Anixe.Ion.Helpers
 
         public int Count { get; private set; }
         public ArraySegment<char> WrittenSegment => this.Count == 0
+#if NETSTANDARD2_0
+            ? new ArraySegment<char>(Array.Empty<char>())
+#else
             ? ArraySegment<char>.Empty
+#endif
             : new ArraySegment<char>(this.buffer, 0, this.Count);
 
         public BufferWriter(ArrayPool<char> pool)

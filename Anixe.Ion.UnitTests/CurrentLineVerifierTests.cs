@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 
 namespace Anixe.Ion.UnitTests
 {
@@ -24,7 +25,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsSectionHeader_Tests(string currentLine)
         {
-            return this.target.IsSectionHeader(currentLine.ToCharArray());
+            return this.target.IsSectionHeader(new ArraySegment<char>(currentLine.ToCharArray()));
         }
 
         [TestCase("",        ExpectedResult = false)]
@@ -40,7 +41,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = true)]
         public bool IsProperty_Tests(string currentLine)
         {
-            return this.target.IsProperty(currentLine.ToCharArray());
+            return this.target.IsProperty(new ArraySegment<char>(currentLine.ToCharArray()));
         }
 
         [TestCase("",        ExpectedResult = false)]
@@ -55,7 +56,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsComment_Tests(string currentLine)
         {
-            return this.target.IsComment(currentLine.ToCharArray());
+            return this.target.IsComment(new ArraySegment<char>(currentLine.ToCharArray()));
         }
 
         [TestCase("",        ExpectedResult = false)]
@@ -70,7 +71,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsTableRow_Tests(string currentLine)
         {
-            return this.target.IsTableRow(currentLine.ToCharArray());
+            return this.target.IsTableRow(new ArraySegment<char>(currentLine.ToCharArray()));
         }
 
         [TestCase("",        false, ExpectedResult = false)]
@@ -88,7 +89,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("|-",      true,  ExpectedResult = false)]
         public bool IsTableHeaderRow_Tests(string currentLine, bool passedHeader)
         {
-            return this.target.IsTableHeaderRow(currentLine.ToCharArray(), passedHeader);
+            return this.target.IsTableHeaderRow(new ArraySegment<char>(currentLine.ToCharArray()), passedHeader);
         }
 
         [TestCase("",        true,  ExpectedResult = false)]
@@ -106,7 +107,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("|-",      false, ExpectedResult = false)]
         public bool IsTableDataRow_Tests(string currentLine, bool passedHeader)
         {
-            return this.target.IsTableDataRow(currentLine.ToCharArray(), passedHeader);
+            return this.target.IsTableDataRow(new ArraySegment<char>(currentLine.ToCharArray()), passedHeader);
         }
 
         [TestCase("",        ExpectedResult = false)]
@@ -121,7 +122,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsTableHeaderSeparatorRow_Tests(string currentLine)
         {
-            return this.target.IsTableHeaderSeparatorRow(currentLine.ToCharArray());
+            return this.target.IsTableHeaderSeparatorRow(new ArraySegment<char>(currentLine.ToCharArray()));
         }
 
         [TestCase("",        ExpectedResult = true)]
@@ -136,7 +137,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("1abc",    ExpectedResult = false)]
         public bool IsEmptyLine_Tests(string currentLine)
         {
-            return this.target.IsEmptyLine(currentLine.ToCharArray());
+            return this.target.IsEmptyLine(new ArraySegment<char>(currentLine.ToCharArray()));
         }
     }
 }

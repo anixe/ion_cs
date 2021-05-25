@@ -30,7 +30,7 @@ namespace Anixe.Ion.UnitTests
                     if (reader.IsTableDataRow)
                     {
                         counter++;
-                        var columns = reader.CurrentLine.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                        var columns = reader.CurrentLine.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                         Assert.AreEqual(12, columns.Length);
                         if (counter == 1)
                         {
@@ -101,7 +101,7 @@ namespace Anixe.Ion.UnitTests
                     if (reader.IsTableDataRow)
                     {
                         counter++;
-                        var columns = reader.CurrentLine.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                        var columns = reader.CurrentLine.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                         Assert.AreEqual(12, columns.Length);
                         if (counter == 1)
                         {
