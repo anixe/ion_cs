@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using System;
 
 namespace Anixe.Ion.UnitTests
 {
@@ -19,7 +18,7 @@ namespace Anixe.Ion.UnitTests
         [TestCase("[ABC] ",      ExpectedResult = "ABC")]
         public string Read_Tests(string currentLine)
         {
-            var actual = this.target.Read(currentLine.ToCharArray());
+            var actual = this.target.Read(new System.ArraySegment<char>(currentLine.ToCharArray()));
             return new string(actual.Array!, actual.Offset, actual.Count);
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Anixe.Ion
 {
@@ -7,15 +6,10 @@ namespace Anixe.Ion
     {
         public ArraySegment<char> Read(ArraySegment<char> currentLine)
         {
-            var indexOfOpeningCharacter = IndexOf(currentLine, Consts.IonSpecialChars.HeaderOpeningCharacter);
-            var indexOfClosingCharacter = IndexOf(currentLine, Consts.IonSpecialChars.HeaderClosingCharacter);
+            var indexOfOpeningCharacter = Array.IndexOf(currentLine.Array, Consts.IonSpecialChars.HeaderOpeningCharacter, currentLine.Offset);
+            var indexOfClosingCharacter = Array.IndexOf(currentLine.Array, Consts.IonSpecialChars.HeaderClosingCharacter, indexOfOpeningCharacter + 1);
 
-            return currentLine.Slice(indexOfOpeningCharacter + 1, indexOfClosingCharacter - 1);
-        }
-
-        private static int IndexOf(ArraySegment<char> arr, char ch)
-        {
-            return ((IList<char>)arr).IndexOf(ch);
+            return new ArraySegment<char>(currentLine.Array, indexOfOpeningCharacter + 1, indexOfClosingCharacter - indexOfOpeningCharacter - 1);
         }
     }
 }

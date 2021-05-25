@@ -27,7 +27,11 @@ namespace Anixe.Ion.UnitTests
 
         private static string GetSlnDir()
         {
+#if NET462
+            var currDir = AppDomain.CurrentDomain.BaseDirectory;
+#else
             var currDir = Environment.CurrentDirectory;
+#endif
             if (Directory.EnumerateFiles(currDir, "*.sln").Any())
             {
                 return currDir;
