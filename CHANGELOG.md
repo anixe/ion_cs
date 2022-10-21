@@ -1,5 +1,9 @@
 # Anixe.Ion CHANGELOG
 
+## 2.1.2
+- added build for .NET 6
+- mark IonReader.CurrentSection as not null if IsSectionHeader was checked before
+ 
 ## 2.1.1
 - added build for .NET Standard 2.0
 
