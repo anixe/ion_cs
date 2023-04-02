@@ -17,15 +17,15 @@ namespace Anixe.Ion
         public static class IonSpecialChars
         {
             public readonly static string NewLineEscaped = Environment.NewLine.Length == 1 ? "\\n" : "\\r\\n";
-            public const char EscapeCharacter               = '\\';
-            public const char HeaderOpeningCharacter        = '[';
-            public const char HeaderClosingCharacter        = ']';
-            public const char CommentCharacter              = '#';
-            public const char TableOpeningCharacter         = '|';
-            public const char TableHeaderSeparatorCharacter = '-';
-            public const char WriteSpaceCharacter = ' ';
-            public const char QuotationCharacter = '"';
-            public const char EqualsCharacter = '=';
+            public const char EscapeCharacter      = '\\';
+            public const char SectionHeaderOpening = '[';
+            public const char SectionHeaderClosing = ']';
+            public const char BeginCommentLine     = '#';
+            public const char TableColumnSeparator = '|';
+            public const char TableHeaderSeparator = '-';
+            public const char TableCellPadding     = ' ';
+            public const char PropertyQuotation    = '"';
+            public const char PropertyAssignment   = '=';
         }
     }
 }
