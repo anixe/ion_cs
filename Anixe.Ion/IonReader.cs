@@ -26,15 +26,15 @@ namespace Anixe.Ion
         private readonly Encoding enc = Encoding.UTF8;
         private bool checkBOM;
 
-    /// <summary>
-    /// Initializes a new instance of <see cref="IonReader"/>.
-    /// </summary>
-    /// <param name="stream">Stream to read from</param>
-    /// <param name="currentLineVerifier">Object which verifies state based on current line.</param>
-    /// <param name="sectionHeaderReader">Object which reads sections.</param>
-    /// <param name="leaveOpen"><see langword="true"/> if the stream should be open after <see cref="Dispose()"/>.</param>
-    /// <param name="charPool">Provide own <see cref="ArrayPool{T}.Shared"/> instance. If <see langword="null"/> then <see cref="ArrayPool{T}.Shared"/> is used.</param>
-    public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
+        /// <summary>
+        /// Initializes a new instance of <see cref="IonReader"/>.
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <param name="currentLineVerifier">Object which verifies state based on current line.</param>
+        /// <param name="sectionHeaderReader">Object which reads sections.</param>
+        /// <param name="leaveOpen"><see langword="true"/> if the stream should be open after <see cref="Dispose()"/>.</param>
+        /// <param name="charPool">Provide own <see cref="ArrayPool{T}.Shared"/> instance. If <see langword="null"/> then <see cref="ArrayPool{T}.Shared"/> is used.</param>
+        public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
         {
             this.stream = stream;
             this.disposed = false;
