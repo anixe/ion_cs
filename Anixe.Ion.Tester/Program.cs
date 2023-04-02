@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Anixe.Ion.Tester
 {
-    public class MainClass
+    public static class MainClass
     {
         public static void Main(string[] args)
         {
@@ -12,7 +12,7 @@ namespace Anixe.Ion.Tester
             int linesCount = 0;
             double fileSizeInMb = GetFileSizeInMB("example.ion");
 
-            using(IIonReader reader = IonReaderFactory.Create("example.ion"))
+            using (IIonReader reader = IonReaderFactory.Create("example.ion"))
             {
                 stopwatch.Start();
                 linesCount = ReadIonLines(reader);
@@ -34,7 +34,7 @@ namespace Anixe.Ion.Tester
         {
             int result = 0;
 
-            while(reader.Read())
+            while (reader.Read())
             {
                 result++;
             }

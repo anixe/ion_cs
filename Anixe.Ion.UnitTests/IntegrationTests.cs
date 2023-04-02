@@ -1,5 +1,5 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using static NUnit.StaticExpect.Expectations;
 
@@ -48,7 +48,7 @@ namespace Anixe.Ion.UnitTests
         [Test]
         public void Verifies_Each_Ion_File_Line()
         {
-            while(target.Read())
+            while (target.Read())
             {
                 this.assertions[this.target.CurrentLineNumber - 1].Invoke();
             }

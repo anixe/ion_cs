@@ -67,12 +67,12 @@ namespace Anixe.Ion
 
         private static void ValidateFilePath(string filePath)
         {
-            if(string.IsNullOrWhiteSpace(filePath))
+            if (string.IsNullOrWhiteSpace(filePath))
             {
                 throw new ArgumentException(Consts.ErrorMessages.UndefinedFilePath);
             }
 
-            if(!File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
                 throw new ArgumentException(string.Format(Consts.ErrorMessages.FileDoesNotExist, filePath));
             }
@@ -81,4 +81,3 @@ namespace Anixe.Ion
         #endregion
     }
 }
-

@@ -9,11 +9,10 @@ namespace Anixe.Ion
     internal sealed class IonWriter : IIonWriter
     {
         private readonly TextWriter tw;
+        private readonly WriterOptions options;
         private WriterState state;
         private string[]? lastTableColumns;
         private bool firstTableCell = true;
-        internal WriterState State => this.state;
-        private readonly WriterOptions options;
 
         public IonWriter(TextWriter tw, WriterOptions options)
         {
@@ -25,6 +24,7 @@ namespace Anixe.Ion
         : this(tw, new WriterOptions())
         {
         }
+        internal WriterState State => this.state;
 
         #region IIonWriter Members
 
@@ -171,7 +171,7 @@ namespace Anixe.Ion
             }
             if (this.state.HasBitFlags(WriterState.TableHeader))
             {
-                throw new InvalidOperationException("Table can have ony one header");
+                throw new InvalidOperationException("Table can have only one header");
             }
             if (columns == null || columns.Length == 0)
             {

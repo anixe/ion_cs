@@ -1,5 +1,5 @@
-using System;
 using BenchmarkDotNet.Attributes;
+using System;
 
 namespace Anixe.Ion.Benchmark
 {
