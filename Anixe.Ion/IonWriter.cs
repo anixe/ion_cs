@@ -37,9 +37,9 @@ namespace Anixe.Ion
             }
             ValidateWriteSection(name);
             ClearState();
-            this.tw.Write(Consts.IonSpecialChars.HeaderOpeningCharacter);
+            this.tw.Write(Consts.IonSpecialChars.SectionHeaderOpening);
             this.tw.Write(name);
-            WriteLine(Consts.IonSpecialChars.HeaderClosingCharacter);
+            WriteLine(Consts.IonSpecialChars.SectionHeaderClosing);
             this.state |= WriterState.Section;
         }
 
@@ -56,7 +56,7 @@ namespace Anixe.Ion
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
-            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            this.tw.Write(Consts.IonSpecialChars.PropertyAssignment);
             WriteQuotationCharacter();
             this.tw.Write(value);
             WriteQuotationCharacter(newLine: true);
@@ -72,7 +72,7 @@ namespace Anixe.Ion
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
-            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            this.tw.Write(Consts.IonSpecialChars.PropertyAssignment);
             writeValueAction(this.tw);
             WriteLine();
             this.state |= WriterState.Property;
@@ -83,7 +83,7 @@ namespace Anixe.Ion
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
-            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            this.tw.Write(Consts.IonSpecialChars.PropertyAssignment);
             WriteLine(value ? Consts.True : Consts.False);
             this.state |= WriterState.Property;
         }
@@ -93,7 +93,7 @@ namespace Anixe.Ion
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
-            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            this.tw.Write(Consts.IonSpecialChars.PropertyAssignment);
             WriteLine(value);
             this.state |= WriterState.Property;
         }
@@ -103,7 +103,7 @@ namespace Anixe.Ion
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
-            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            this.tw.Write(Consts.IonSpecialChars.PropertyAssignment);
             WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
@@ -113,7 +113,7 @@ namespace Anixe.Ion
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
-            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            this.tw.Write(Consts.IonSpecialChars.PropertyAssignment);
             WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
@@ -123,7 +123,7 @@ namespace Anixe.Ion
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
-            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            this.tw.Write(Consts.IonSpecialChars.PropertyAssignment);
             WriteQuotationCharacter();
             this.tw.Write(value);
             WriteQuotationCharacter(newLine: true);
@@ -135,7 +135,7 @@ namespace Anixe.Ion
             ValidateWriteProperty(name);
             ClearState();
             this.tw.Write(name);
-            this.tw.Write(Consts.IonSpecialChars.EqualsCharacter);
+            this.tw.Write(Consts.IonSpecialChars.PropertyAssignment);
             WriteLine(value.ToString(CultureInfo.InvariantCulture));
             this.state |= WriterState.Property;
         }
@@ -288,16 +288,16 @@ namespace Anixe.Ion
         {
             if (this.firstTableCell)
             {
-                tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+                tw.Write(Consts.IonSpecialChars.TableColumnSeparator);
                 this.firstTableCell = false;
             }
-            tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
+            tw.Write(Consts.IonSpecialChars.TableCellPadding);
         }
 
         private void WriteTableCellAfter(bool lastCellInRow = false)
         {
-            tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
-            tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+            tw.Write(Consts.IonSpecialChars.TableCellPadding);
+            tw.Write(Consts.IonSpecialChars.TableColumnSeparator);
             if (lastCellInRow)
             {
                 WriteLine();
@@ -328,7 +328,7 @@ namespace Anixe.Ion
         {
             for (int j = -1; j <= col.Length; j++)
             {
-                tw.Write(Consts.IonSpecialChars.TableHeaderSeparatorCharacter);
+                tw.Write(Consts.IonSpecialChars.TableHeaderSeparator);
             }
         }
 
@@ -343,24 +343,24 @@ namespace Anixe.Ion
 
         private void WriteTableRow(string[] columns, Action<string> onItemAction)
         {
-            tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+            tw.Write(Consts.IonSpecialChars.TableColumnSeparator);
             for (int i = 0; i < columns.Length; i++)
             {
-                tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
+                tw.Write(Consts.IonSpecialChars.TableCellPadding);
                 onItemAction(columns[i]);
-                tw.Write(Consts.IonSpecialChars.WriteSpaceCharacter);
-                tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+                tw.Write(Consts.IonSpecialChars.TableCellPadding);
+                tw.Write(Consts.IonSpecialChars.TableColumnSeparator);
             }
             WriteLine();
         }
 
         private void WriteSqueezedTableRow(string[] columns, Action<string> onItemAction)
         {
-            tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+            tw.Write(Consts.IonSpecialChars.TableColumnSeparator);
             for (int i = 0; i < columns.Length; i++)
             {
                 onItemAction(columns[i]);
-                tw.Write(Consts.IonSpecialChars.TableOpeningCharacter);
+                tw.Write(Consts.IonSpecialChars.TableColumnSeparator);
             }
             WriteLine();
         }
@@ -420,11 +420,11 @@ namespace Anixe.Ion
             }
             if (newLine)
             {
-                WriteLine(Consts.IonSpecialChars.QuotationCharacter);
+                WriteLine(Consts.IonSpecialChars.PropertyQuotation);
             }
             else
             {
-                this.tw.Write(Consts.IonSpecialChars.QuotationCharacter);
+                this.tw.Write(Consts.IonSpecialChars.PropertyQuotation);
             }
         }
 

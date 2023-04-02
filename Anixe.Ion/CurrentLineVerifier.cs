@@ -9,9 +9,9 @@ namespace Anixe.Ion
         {
             return currentLine.Count != 0
 #if NETSTANDARD2_0
-                && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.HeaderOpeningCharacter;
+                && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.SectionHeaderOpening;
 #else
-                && currentLine[0] == Consts.IonSpecialChars.HeaderOpeningCharacter;
+                && currentLine[0] == Consts.IonSpecialChars.SectionHeaderOpening;
 #endif
         }
 
@@ -20,11 +20,11 @@ namespace Anixe.Ion
           return !passedCurrentTableHeaderRow
               && currentLine.Count > 1
 #if NETSTANDARD2_0
-              && ((IList<char>)currentLine)[1] != Consts.IonSpecialChars.TableHeaderSeparatorCharacter
-              && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.TableOpeningCharacter;
+              && ((IList<char>)currentLine)[1] != Consts.IonSpecialChars.TableHeaderSeparator
+              && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.TableColumnSeparator;
 #else
-              && currentLine[1] != Consts.IonSpecialChars.TableHeaderSeparatorCharacter
-              && currentLine[0] == Consts.IonSpecialChars.TableOpeningCharacter;
+              && currentLine[1] != Consts.IonSpecialChars.TableHeaderSeparator
+              && currentLine[0] == Consts.IonSpecialChars.TableColumnSeparator;
 #endif
         }
 
@@ -33,11 +33,11 @@ namespace Anixe.Ion
           return passedCurrentTableHeaderRow
               && currentLine.Count > 1
 #if NETSTANDARD2_0
-              && ((IList<char>)currentLine)[1] != Consts.IonSpecialChars.TableHeaderSeparatorCharacter
-              && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.TableOpeningCharacter;
+              && ((IList<char>)currentLine)[1] != Consts.IonSpecialChars.TableHeaderSeparator
+              && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.TableColumnSeparator;
 #else
-              && currentLine[1] != Consts.IonSpecialChars.TableHeaderSeparatorCharacter
-              && currentLine[0] == Consts.IonSpecialChars.TableOpeningCharacter;
+              && currentLine[1] != Consts.IonSpecialChars.TableHeaderSeparator
+              && currentLine[0] == Consts.IonSpecialChars.TableColumnSeparator;
 #endif
         }
 
@@ -53,9 +53,9 @@ namespace Anixe.Ion
 #else
             char firstChar = currentLine[0];
 #endif
-            return firstChar != Consts.IonSpecialChars.TableOpeningCharacter
-                && firstChar != Consts.IonSpecialChars.HeaderOpeningCharacter
-                && firstChar != Consts.IonSpecialChars.CommentCharacter
+            return firstChar != Consts.IonSpecialChars.TableColumnSeparator
+                && firstChar != Consts.IonSpecialChars.SectionHeaderOpening
+                && firstChar != Consts.IonSpecialChars.BeginCommentLine
                 && !IsWhiteSpace(currentLine);
         }
 
@@ -63,9 +63,9 @@ namespace Anixe.Ion
         {
             return currentLine.Count != 0
 #if NETSTANDARD2_0
-                && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.CommentCharacter;
+                && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.BeginCommentLine;
 #else
-                && currentLine[0] == Consts.IonSpecialChars.CommentCharacter;
+                && currentLine[0] == Consts.IonSpecialChars.BeginCommentLine;
 #endif
         }
 
@@ -73,9 +73,9 @@ namespace Anixe.Ion
         {
             return currentLine.Count != 0
 #if NETSTANDARD2_0
-                && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.TableOpeningCharacter;
+                && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.TableColumnSeparator;
 #else
-                && currentLine[0] == Consts.IonSpecialChars.TableOpeningCharacter;
+                && currentLine[0] == Consts.IonSpecialChars.TableColumnSeparator;
 #endif
         }
 
@@ -83,11 +83,11 @@ namespace Anixe.Ion
         {
             return currentLine.Count > 1
 #if NETSTANDARD2_0
-                && ((IList<char>)currentLine)[1] == Consts.IonSpecialChars.TableHeaderSeparatorCharacter
-                && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.TableOpeningCharacter;
+                && ((IList<char>)currentLine)[1] == Consts.IonSpecialChars.TableHeaderSeparator
+                && ((IList<char>)currentLine)[0] == Consts.IonSpecialChars.TableColumnSeparator;
 #else
-                && currentLine[1] == Consts.IonSpecialChars.TableHeaderSeparatorCharacter
-                && currentLine[0] == Consts.IonSpecialChars.TableOpeningCharacter;
+                && currentLine[1] == Consts.IonSpecialChars.TableHeaderSeparator
+                && currentLine[0] == Consts.IonSpecialChars.TableColumnSeparator;
 #endif
         }
 
