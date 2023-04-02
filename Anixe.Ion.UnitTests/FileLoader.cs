@@ -38,7 +38,7 @@ namespace Anixe.Ion.UnitTests
             }
             while (Directory.GetParent(currDir) != null && !Directory.EnumerateFiles(currDir, "*.sln").Any())
             {
-                currDir = Directory.GetParent(currDir).FullName;
+                currDir = Directory.GetParent(currDir)!.FullName;
             }
             return currDir;
         }

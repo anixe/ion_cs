@@ -30,12 +30,12 @@ namespace Anixe.Ion.UnitTests.Helpers
         [Test]
         public void BufferWriter_Writing_text()
         {
-            var pool = new TestPool();
             var writer = new BufferWriter(ArrayPool<char>.Shared);
             writer.Write("text1".ToCharArray(), 0, "text1".Length);
             writer.Write("something".ToCharArray(), 2, 3);
             Assert.AreEqual(8, writer.Count);
-            Assert.AreEqual("text1met", new string(writer.WrittenSegment.Array, writer.WrittenSegment.Offset, writer.WrittenSegment.Count));
+            Assert.NotNull(writer.WrittenSegment.Array);
+            Assert.AreEqual("text1met", new string(writer.WrittenSegment.Array!, writer.WrittenSegment.Offset, writer.WrittenSegment.Count));
             writer.Dispose();
         }
 
@@ -50,7 +50,8 @@ namespace Anixe.Ion.UnitTests.Helpers
             public override char[] Rent(int minimumLength)
             {
                 var buffer = buffers[++currentBufferIndex];
-                Assert.LessOrEqual(buffer.Length, minimumLength);
+                Assert.NotNull(buffer);
+                Assert.LessOrEqual(buffer!.Length, minimumLength);
                 return buffer;
             }
 
