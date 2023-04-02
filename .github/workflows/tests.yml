@@ -31,14 +31,14 @@ jobs:
           msbuild.exe Anixe.Ion.UnitTests.sln /p:platform="Any CPU" /p:configuration="Release"
 
       - name: Run Tests
-        run: vstest.console.exe .\tests\Anixe.Ion.UnitTests\bin\Release\Anixe.Ion.UnitTests.dll
+        run: vstest.console.exe .\Anixe.Ion.UnitTests\bin\Release\Anixe.Ion.UnitTests.dll
         
   build:
 
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [ '4.6.2', '3.1.x', '6.0.x' ]
+        dotnet-version: [ '3.1.x', '6.0.x' ]
 
     steps:
       - uses: actions/checkout@v3
