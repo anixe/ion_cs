@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Anixe.Ion.Exceptions;
+using NUnit.Framework;
+using System;
 using System.IO;
 using System.Text;
-using Anixe.Ion.Exceptions;
-using NUnit.Framework;
 
 namespace Anixe.Ion.UnitTests
 {
@@ -38,7 +38,7 @@ namespace Anixe.Ion.UnitTests
         public void Should_Write_Escaped_String_Property()
         {
             var sb = new StringBuilder();
-            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions{ EscapeQuotes = true}))
+            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions { EscapeQuotes = true }))
             {
                 subject.WriteSection("META");
                 Assert.AreEqual(WriterState.Section, subject.State);
@@ -52,7 +52,7 @@ namespace Anixe.Ion.UnitTests
         public void Should_Write_Escaped_Newlines_String_Property()
         {
             var sb = new StringBuilder();
-            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions{ EscapeQuotes = true, EscapeNewLineChars = true}))
+            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions { EscapeQuotes = true, EscapeNewLineChars = true }))
             {
                 subject.WriteSection("META");
                 Assert.AreEqual(WriterState.Section, subject.State);

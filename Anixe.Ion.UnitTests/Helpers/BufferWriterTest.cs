@@ -1,7 +1,7 @@
 ﻿using Anixe.Ion.Helpers;
+using NUnit.Framework;
 using System;
 using System.Buffers;
-using NUnit.Framework;
 
 namespace Anixe.Ion.UnitTests.Helpers
 {
