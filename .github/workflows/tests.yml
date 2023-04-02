@@ -24,11 +24,11 @@ jobs:
         run: cd $GITHUB_WORKSPACE
 
       - name: Restore Packages
-        run: nuget restore Anixe.Ion.UnitTests.sln
+        run: nuget restore Anixe.Ion.sln
 
       - name: Build Solution
         run: |
-          msbuild.exe Anixe.Ion.UnitTests.sln /p:platform="Any CPU" /p:configuration="Release"
+          msbuild.exe Anixe.Ion.sln /p:platform="Any CPU" /p:configuration="Release"
 
       - name: Run Tests
         run: vstest.console.exe .\Anixe.Ion.UnitTests\bin\Release\Anixe.Ion.UnitTests.dll
