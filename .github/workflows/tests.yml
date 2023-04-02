@@ -5,7 +5,7 @@ on: [push, pull_request]
 
 jobs:
 
-  build_legacy:
+  test_net462:
     runs-on: windows-latest
 
     steps:
@@ -31,9 +31,9 @@ jobs:
           msbuild.exe Anixe.Ion.sln /p:platform="Any CPU" /p:configuration="Release"
 
       - name: Run Tests
-        run: vstest.console.exe .\Anixe.Ion.UnitTests\bin\Release\Anixe.Ion.UnitTests.dll
+        run: vstest.console.exe .\Anixe.Ion.UnitTests\bin\Release\net462\Anixe.Ion.UnitTests.dll
         
-  build:
+  tests:
 
     runs-on: ubuntu-latest
 
