@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Anixe.Ion.Helpers
 {
@@ -15,7 +16,7 @@ namespace Anixe.Ion.Helpers
 #else
             ? ArraySegment<char>.Empty
 #endif
-            : new ArraySegment<char>(this.buffer, 0, this.Count);
+            : new ArraySegment<char>(this.buffer ?? Array.Empty<char>(), 0, this.Count);
 
         public BufferWriter(ArrayPool<char> pool)
         {
@@ -31,6 +32,9 @@ namespace Anixe.Ion.Helpers
           this.Count += charCount;
         }
 
+#if NET6_0_OR_GREATER
+        [MemberNotNull(nameof(this.buffer))]
+#endif
         private void EnsureCapacity(int length)
         {
             if (this.buffer != null)

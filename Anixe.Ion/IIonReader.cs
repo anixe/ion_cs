@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Anixe.Ion
 {
@@ -11,6 +12,9 @@ namespace Anixe.Ion
         /// Gets a value indicating whether this instance of <see cref="IIonReader"/> is currently on section header.
         /// </summary>
         /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '['; otherwise, <see langword="false"/>.</value>
+#if NET6_0_OR_GREATER
+        [MemberNotNullWhen(true, nameof(CurrentSection))]
+#endif
         bool IsSectionHeader { get; }
 
         /// <summary>

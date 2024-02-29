@@ -1,6 +1,7 @@
 ﻿using Anixe.Ion.Helpers;
 using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 
@@ -51,6 +52,9 @@ namespace Anixe.Ion
 
         #region IIonReader members
 
+#if NET6_0_OR_GREATER
+        [MemberNotNullWhen(true, nameof(CurrentSection))]
+#endif
         public bool IsSectionHeader => this.currentLineVerifier.IsSectionHeader(CurrentRawLine);
 
         public bool IsProperty => this.currentLineVerifier.IsProperty(CurrentRawLine);
@@ -67,7 +71,7 @@ namespace Anixe.Ion
 
         public bool IsEmptyLine => this.currentLineVerifier.IsEmptyLine(CurrentRawLine);
 
-        public string CurrentLine => new string(CurrentRawLine.Array, CurrentRawLine.Offset, CurrentRawLine.Count);
+        public string CurrentLine => new string(CurrentRawLine.Array!, CurrentRawLine.Offset, CurrentRawLine.Count);
 
         public ArraySegment<char> CurrentRawLine { get; private set; }
 
@@ -105,7 +109,7 @@ namespace Anixe.Ion
             if(IsSectionHeader)
             {
                 ArraySegment<char> headerSegment = this.sectionHeaderReader.Read(CurrentRawLine);
-                CurrentSection = new string(headerSegment.Array, headerSegment.Offset, headerSegment.Count);
+                CurrentSection = new string(headerSegment.Array!, headerSegment.Offset, headerSegment.Count);
             }
 
             if(passedCurrentTableHeaderRow)

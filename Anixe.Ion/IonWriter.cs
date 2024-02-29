@@ -275,11 +275,16 @@ namespace Anixe.Ion
 
         public void WriteTableCell(char[] buffer, int index, int count, bool lastCellInRow = false)
         {
-            WriteTableCellBefore();
-            if (buffer != null)
+            if (buffer == null)
             {
-                Validate(buffer, index, count);
+                ThrowHelper.Throw_ArgumentNullException(nameof(buffer));
+#if NETSTANDARD2_0
+                return; // needed only for correct null analysis
+#endif
             }
+
+            WriteTableCellBefore();
+            Validate(buffer, index, count);
             tw.Write(buffer, index, count);
             WriteTableCellAfter(lastCellInRow);
         }
