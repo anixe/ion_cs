@@ -27,15 +27,13 @@ namespace Anixe.Ion.UnitTests
       Assert.AreEqual("some_key", newIonProperty.Key.ToString());
     }
 
-    [Test]
-    public void ReadProperty_Empty_Property_Test()
+    [TestCase(" = ")]
+    [TestCase("\"\" = \"\"")]
+    public void ReadProperty_Empty_Property_Test(string input)
     {
-      var reader = CreateReaderForInput("\"\" = \"\"");
+      var reader = CreateReaderForInput(input);
       var ionProperty = reader.ReadProperty();
-      Assert.AreEqual("", ionProperty.Key.ToString());
-      Assert.AreEqual("", ionProperty.Value.ToString());
 
-      var secondReader = CreateReaderForInput(" = ");
       Assert.AreEqual("", ionProperty.Key.ToString());
       Assert.AreEqual("", ionProperty.Value.ToString());
     }
