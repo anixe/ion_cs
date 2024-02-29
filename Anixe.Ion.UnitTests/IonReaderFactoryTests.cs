@@ -2,7 +2,8 @@ using System;
 using NUnit.Framework;
 using System.IO;
 using System.Text;
-using static NUnit.StaticExpect.Expectations;
+using static NExpect.Expectations;
+using NExpect;
 
 namespace Anixe.Ion.UnitTests
 {
@@ -24,8 +25,8 @@ namespace Anixe.Ion.UnitTests
         {
             var actual = IonReaderFactory.Create(FileLoader.GetExamplesIonPath());
 
-            Expect(actual, Is.Not.Null);
-            Expect(actual, Is.TypeOf<IonReader>());
+            Expect(actual).Not.To.Be.Null();
+            Expect(actual).To.Be.An.Instance.Of<IonReader>();
         }
 
         [Test]
@@ -33,8 +34,8 @@ namespace Anixe.Ion.UnitTests
         {
             using FileStream fileStream = new FileStream(FileLoader.GetExamplesIonPath(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var ionReader = IonReaderFactory.Create(fileStream);
-            Expect(ionReader, Is.Not.Null);
-            Expect(ionReader, Is.TypeOf<IonReader>());
+            Expect(ionReader).Not.To.Be.Null();
+            Expect(ionReader).To.Be.An.Instance.Of<IonReader>();
         }
 
         [Test]
@@ -44,8 +45,8 @@ namespace Anixe.Ion.UnitTests
 
             using MemoryStream fileStream = new MemoryStream(rawFileContent);
             using var ionReader = IonReaderFactory.Create(fileStream);
-            Expect(ionReader, Is.Not.Null);
-            Expect(ionReader, Is.TypeOf<IonReader>());
+            Expect(ionReader).Not.To.Be.Null();
+            Expect(ionReader).To.Be.An.Instance.Of<IonReader>();
         }
     }
 }
