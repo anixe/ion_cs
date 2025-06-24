@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Anixe.Ion
 {
@@ -11,6 +12,7 @@ namespace Anixe.Ion
         /// Gets a value indicating whether this instance of <see cref="IIonReader"/> is currently on section header.
         /// </summary>
         /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '['; otherwise, <see langword="false"/>.</value>
+        [MemberNotNullWhen(true, nameof(CurrentSection))]
         bool IsSectionHeader { get; }
 
         /// <summary>
@@ -35,7 +37,7 @@ namespace Anixe.Ion
         /// Gets a value indicating whether this instance of <see cref="IIonReader"/> is currently on table row.
         /// </summary>
         /// <value><see langword="true"/> if <see cref="IIonReader.CurrentLine"/> first character is equal to '|'; otherwise, <see langword="false"/>.</value>
-        bool IsTableRow { get;}
+        bool IsTableRow { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance of <see cref="IIonReader"/> is currently on table header separator row. IMPORTANT: we recognize this
@@ -87,4 +89,3 @@ namespace Anixe.Ion
         bool Read();
     }
 }
-

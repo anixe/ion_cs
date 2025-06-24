@@ -1,143 +1,158 @@
-using NUnit.Framework;
 using System;
+using Xunit;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class CurrentLineVerifierTests
+    public class CurrentLineVerifierTests
     {
-        private CurrentLineVerifier target = null!;
+        private readonly CurrentLineVerifier target;
 
-        [SetUp]
-        public void Before_Each_Test()
+        public CurrentLineVerifierTests()
         {
             this.target = new CurrentLineVerifier();
         }
 
-        [TestCase("",        ExpectedResult = false)]
-        [TestCase(" ",       ExpectedResult = false)]
-        [TestCase("[NAME]",  ExpectedResult = true)]
-        [TestCase("#[NAME]", ExpectedResult = false)]
-        [TestCase("|date|",  ExpectedResult = false)]
-        [TestCase("|-",      ExpectedResult = false)]
-        [TestCase("|-1",     ExpectedResult = false)]
-        [TestCase("abc",     ExpectedResult = false)]
-        [TestCase(";abc",    ExpectedResult = false)]
-        [TestCase("1abc",    ExpectedResult = false)]
-        public bool IsSectionHeader_Tests(string currentLine)
+        [Theory]
+        [InlineData("",        false)]
+        [InlineData(" ",       false)]
+        [InlineData("[NAME]",  true)]
+        [InlineData("#[NAME]", false)]
+        [InlineData("|date|",  false)]
+        [InlineData("|-",      false)]
+        [InlineData("|-1",     false)]
+        [InlineData("abc",     false)]
+        [InlineData(";abc",    false)]
+        [InlineData("1abc",    false)]
+        public void IsSectionHeader_Tests(string currentLine, bool expectedResult)
         {
-            return this.target.IsSectionHeader(new ArraySegment<char>(currentLine.ToCharArray()));
+            var result = this.target.IsSectionHeader(new ArraySegment<char>(currentLine.ToCharArray()));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCase("",        ExpectedResult = false)]
-        [TestCase(" ",       ExpectedResult = false)]
-        [TestCase("[NAME]",  ExpectedResult = false)]
-        [TestCase("#[NAME]", ExpectedResult = false)]
-        [TestCase("|date|",  ExpectedResult = false)]
-        [TestCase("|-",      ExpectedResult = false)]
-        [TestCase("|-1",     ExpectedResult = false)]
-        [TestCase(" abc",     ExpectedResult = true)]
-        [TestCase("abc",     ExpectedResult = true)]
-        [TestCase(";abc",    ExpectedResult = true)]
-        [TestCase("1abc",    ExpectedResult = true)]
-        public bool IsProperty_Tests(string currentLine)
+        [Theory]
+        [InlineData("",        false)]
+        [InlineData(" ",       false)]
+        [InlineData("[NAME]",  false)]
+        [InlineData("#[NAME]", false)]
+        [InlineData("|date|",  false)]
+        [InlineData("|-",      false)]
+        [InlineData("|-1",     false)]
+        [InlineData(" abc",    true)]
+        [InlineData("abc",     true)]
+        [InlineData(";abc",    true)]
+        [InlineData("1abc",    true)]
+        public void IsProperty_Tests(string currentLine, bool expectedResult)
         {
-            return this.target.IsProperty(new ArraySegment<char>(currentLine.ToCharArray()));
+            var result = this.target.IsProperty(new ArraySegment<char>(currentLine.ToCharArray()));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCase("",        ExpectedResult = false)]
-        [TestCase(" ",       ExpectedResult = false)]
-        [TestCase("[NAME]",  ExpectedResult = false)]
-        [TestCase("#[NAME]", ExpectedResult = true)]
-        [TestCase("|date|",  ExpectedResult = false)]
-        [TestCase("|-",      ExpectedResult = false)]
-        [TestCase("|-1",     ExpectedResult = false)]
-        [TestCase("abc",     ExpectedResult = false)]
-        [TestCase(";abc",    ExpectedResult = false)]
-        [TestCase("1abc",    ExpectedResult = false)]
-        public bool IsComment_Tests(string currentLine)
+        [Theory]
+        [InlineData("",        false)]
+        [InlineData(" ",       false)]
+        [InlineData("[NAME]",  false)]
+        [InlineData("#[NAME]", true)]
+        [InlineData("|date|",  false)]
+        [InlineData("|-",      false)]
+        [InlineData("|-1",     false)]
+        [InlineData("abc",     false)]
+        [InlineData(";abc",    false)]
+        [InlineData("1abc",    false)]
+        public void IsComment_Tests(string currentLine, bool expectedResult)
         {
-            return this.target.IsComment(new ArraySegment<char>(currentLine.ToCharArray()));
+            var result = this.target.IsComment(new ArraySegment<char>(currentLine.ToCharArray()));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCase("",        ExpectedResult = false)]
-        [TestCase(" ",       ExpectedResult = false)]
-        [TestCase("[NAME]",  ExpectedResult = false)]
-        [TestCase("#[NAME]", ExpectedResult = false)]
-        [TestCase("|date|",  ExpectedResult = true)]
-        [TestCase("|-",      ExpectedResult = true)]
-        [TestCase("|-1",     ExpectedResult = true)]
-        [TestCase("abc",     ExpectedResult = false)]
-        [TestCase(";abc",    ExpectedResult = false)]
-        [TestCase("1abc",    ExpectedResult = false)]
-        public bool IsTableRow_Tests(string currentLine)
+        [Theory]
+        [InlineData("",        false)]
+        [InlineData(" ",       false)]
+        [InlineData("[NAME]",  false)]
+        [InlineData("#[NAME]", false)]
+        [InlineData("|date|",  true)]
+        [InlineData("|-",      true)]
+        [InlineData("|-1",     true)]
+        [InlineData("abc",     false)]
+        [InlineData(";abc",    false)]
+        [InlineData("1abc",    false)]
+        public void IsTableRow_Tests(string currentLine, bool expectedResult)
         {
-            return this.target.IsTableRow(new ArraySegment<char>(currentLine.ToCharArray()));
+            var result = this.target.IsTableRow(new ArraySegment<char>(currentLine.ToCharArray()));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCase("",        false, ExpectedResult = false)]
-        [TestCase(" ",       false, ExpectedResult = false)]
-        [TestCase("[NAME]",  false, ExpectedResult = false)]
-        [TestCase("#[NAME]", false, ExpectedResult = false)]
-        [TestCase("|date|",  false, ExpectedResult = true)]
-        [TestCase("|-",      false, ExpectedResult = false)]
-        [TestCase("|-1",     false, ExpectedResult = false)]
-        [TestCase("abc",     false, ExpectedResult = false)]
-        [TestCase(";abc",    false, ExpectedResult = false)]
-        [TestCase("1abc",    false, ExpectedResult = false)]
-        [TestCase("| x",     false, ExpectedResult = true)]
-        [TestCase("| x",     true,  ExpectedResult = false)]
-        [TestCase("|-",      true,  ExpectedResult = false)]
-        public bool IsTableHeaderRow_Tests(string currentLine, bool passedHeader)
+        [Theory]
+        [InlineData("",        false, false)]
+        [InlineData(" ",       false, false)]
+        [InlineData("[NAME]",  false, false)]
+        [InlineData("#[NAME]", false, false)]
+        [InlineData("|date|",  false, true)]
+        [InlineData("|-",      false, false)]
+        [InlineData("|-1",     false, false)]
+        [InlineData("abc",     false, false)]
+        [InlineData(";abc",    false, false)]
+        [InlineData("1abc",    false, false)]
+        [InlineData("| x",     false, true)]
+        [InlineData("| x",     true,  false)]
+        [InlineData("|-",      true,  false)]
+        public void IsTableHeaderRow_Tests(string currentLine, bool passedHeader, bool expectedResult)
         {
-            return this.target.IsTableHeaderRow(new ArraySegment<char>(currentLine.ToCharArray()), passedHeader);
+            var result = this.target.IsTableHeaderRow(new ArraySegment<char>(currentLine.ToCharArray()), passedHeader);
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCase("",        true,  ExpectedResult = false)]
-        [TestCase(" ",       true,  ExpectedResult = false)]
-        [TestCase("[NAME]",  true,  ExpectedResult = false)]
-        [TestCase("#[NAME]", true,  ExpectedResult = false)]
-        [TestCase("|date|",  true,  ExpectedResult = true)]
-        [TestCase("|-",      true,  ExpectedResult = false)]
-        [TestCase("|-1",     true,  ExpectedResult = false)]
-        [TestCase("abc",     true,  ExpectedResult = false)]
-        [TestCase(";abc",    true,  ExpectedResult = false)]
-        [TestCase("1abc",    true,  ExpectedResult = false)]
-        [TestCase("| x",     false, ExpectedResult = false)]
-        [TestCase("| x",     true,  ExpectedResult = true)]
-        [TestCase("|-",      false, ExpectedResult = false)]
-        public bool IsTableDataRow_Tests(string currentLine, bool passedHeader)
+        [Theory]
+        [InlineData("",        true,  false)]
+        [InlineData(" ",       true,  false)]
+        [InlineData("[NAME]",  true,  false)]
+        [InlineData("#[NAME]", true,  false)]
+        [InlineData("|date|",  true,  true)]
+        [InlineData("|-",      true,  false)]
+        [InlineData("|-1",     true,  false)]
+        [InlineData("abc",     true,  false)]
+        [InlineData(";abc",    true,  false)]
+        [InlineData("1abc",    true,  false)]
+        [InlineData("| x",     false, false)]
+        [InlineData("| x",     true,  true)]
+        [InlineData("|-",      false, false)]
+        public void IsTableDataRow_Tests(string currentLine, bool passedHeader, bool expectedResult)
         {
-            return this.target.IsTableDataRow(new ArraySegment<char>(currentLine.ToCharArray()), passedHeader);
+            var result = this.target.IsTableDataRow(new ArraySegment<char>(currentLine.ToCharArray()), passedHeader);
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCase("",        ExpectedResult = false)]
-        [TestCase(" ",       ExpectedResult = false)]
-        [TestCase("[NAME]",  ExpectedResult = false)]
-        [TestCase("#[NAME]", ExpectedResult = false)]
-        [TestCase("|date|",  ExpectedResult = false)]
-        [TestCase("|-",      ExpectedResult = true)]
-        [TestCase("|-1",     ExpectedResult = true)]
-        [TestCase("abc",     ExpectedResult = false)]
-        [TestCase(";abc",    ExpectedResult = false)]
-        [TestCase("1abc",    ExpectedResult = false)]
-        public bool IsTableHeaderSeparatorRow_Tests(string currentLine)
+        [Theory]
+        [InlineData("",        false)]
+        [InlineData(" ",       false)]
+        [InlineData("[NAME]",  false)]
+        [InlineData("#[NAME]", false)]
+        [InlineData("|date|",  false)]
+        [InlineData("|-",      true)]
+        [InlineData("|-1",     true)]
+        [InlineData("abc",     false)]
+        [InlineData(";abc",    false)]
+        [InlineData("1abc",    false)]
+        public void IsTableHeaderSeparatorRow_Tests(string currentLine, bool expectedResult)
         {
-            return this.target.IsTableHeaderSeparatorRow(new ArraySegment<char>(currentLine.ToCharArray()));
+            var result = this.target.IsTableHeaderSeparatorRow(new ArraySegment<char>(currentLine.ToCharArray()));
+            Assert.Equal(expectedResult, result);
         }
 
-        [TestCase("",        ExpectedResult = true)]
-        [TestCase(" ",       ExpectedResult = true)]
-        [TestCase("[NAME]",  ExpectedResult = false)]
-        [TestCase("#[NAME]", ExpectedResult = false)]
-        [TestCase("|date|",  ExpectedResult = false)]
-        [TestCase("|-",      ExpectedResult = false)]
-        [TestCase("|-1",     ExpectedResult = false)]
-        [TestCase("abc",     ExpectedResult = false)]
-        [TestCase(";abc",    ExpectedResult = false)]
-        [TestCase("1abc",    ExpectedResult = false)]
-        public bool IsEmptyLine_Tests(string currentLine)
+        [Theory]
+        [InlineData("",        true)]
+        [InlineData(" ",       true)]
+        [InlineData("[NAME]",  false)]
+        [InlineData("#[NAME]", false)]
+        [InlineData("|date|",  false)]
+        [InlineData("|-",      false)]
+        [InlineData("|-1",     false)]
+        [InlineData("abc",     false)]
+        [InlineData(";abc",    false)]
+        [InlineData("1abc",    false)]
+        public void IsEmptyLine_Tests(string currentLine, bool expectedResult)
         {
-            return this.target.IsEmptyLine(new ArraySegment<char>(currentLine.ToCharArray()));
+            var result = this.target.IsEmptyLine(new ArraySegment<char>(currentLine.ToCharArray()));
+            Assert.Equal(expectedResult, result);
         }
     }
 }

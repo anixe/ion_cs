@@ -1,25 +1,26 @@
-using NUnit.Framework;
+using Xunit;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class SectionHeaderReaderTests
+    public class SectionHeaderReaderTests
     {
-        private SectionHeaderReader target = null!;
+        private readonly SectionHeaderReader target;
 
-        [SetUp]
-        public void Before_Each_Test()
+        public SectionHeaderReaderTests()
         {
             this.target = new SectionHeaderReader();
         }
 
-        [TestCase("[ABC]",       ExpectedResult = "ABC")]
-        [TestCase("[ABC]xyz",    ExpectedResult = "ABC")]
-        [TestCase("[ABC][1]xyz", ExpectedResult = "ABC")]
-        [TestCase("[ABC] ",      ExpectedResult = "ABC")]
-        public string Read_Tests(string currentLine)
+        [Theory]
+        [InlineData("[ABC]",       "ABC")]
+        [InlineData("[ABC]xyz",    "ABC")]
+        [InlineData("[ABC][1]xyz", "ABC")]
+        [InlineData("[ABC] ",      "ABC")]
+        public void Read_Tests(string currentLine, string expected)
         {
             var actual = this.target.Read(new System.ArraySegment<char>(currentLine.ToCharArray()));
-            return new string(actual.Array!, actual.Offset, actual.Count);
+            var result = new string(actual.Array!, actual.Offset, actual.Count);
+            Assert.Equal(expected, result);
         }
     }
 }

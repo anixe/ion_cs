@@ -1,145 +1,145 @@
-﻿using System;
+﻿using Anixe.Ion.Exceptions;
+using System;
 using System.IO;
 using System.Text;
-using Anixe.Ion.Exceptions;
-using NUnit.Framework;
+using Xunit;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class IonWriterTests
+    public class IonWriterTests
     {
-        [Test]
+        [Fact]
         public void Should_Write_Section()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_String_Property()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", "value");
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=\"value\"{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=\"value\"{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Escaped_String_Property()
         {
             var sb = new StringBuilder();
-            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions{ EscapeQuotes = true}))
+            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions { EscapeQuotes = true }))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", "value");
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=\\\"value\\\"{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=\\\"value\\\"{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Escaped_Newlines_String_Property()
         {
             var sb = new StringBuilder();
-            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions{ EscapeQuotes = true, EscapeNewLineChars = true}))
+            using (var subject = new IonWriter(new StringWriter(sb), new WriterOptions { EscapeQuotes = true, EscapeNewLineChars = true }))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", "value");
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=\\\"value\\\"{0}", Consts.IonSpecialChars.NewLineEscaped), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=\\\"value\\\"{0}", Consts.IonSpecialChars.NewLineEscaped), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Char_Property()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", 'x');
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=\"x\"{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=\"x\"{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Integer_Property()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", 1000);
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=1000{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=1000{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Double_Property()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", 25.22d);
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=25.22{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=25.22{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Decimal_Property()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", 25.22m);
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=25.22{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=25.22{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Float_Property()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", 24.3f);
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=24.3{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=24.3{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Custom_Property()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", (tw) =>
                 {
                     tw.Write('[');
@@ -152,28 +152,28 @@ namespace Anixe.Ion.UnitTests
                     tw.Write(23);
                     tw.Write(']');
                 });
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=[23,23,23,23]{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=[23,23,23,23]{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Multiple_Properties()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", 24.3f);
                 subject.WriteProperty("test1", "test1val");
                 subject.WriteProperty("test2", true);
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
             }
-            Assert.AreEqual(string.Format("[META]{0}test=24.3{0}test1=\"test1val\"{0}test2=true{0}", Environment.NewLine), sb.ToString());
+            Assert.Equal(string.Format("[META]{0}test=24.3{0}test1=\"test1val\"{0}test2=true{0}", Environment.NewLine), sb.ToString());
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Table_Header()
         {
             var header = new string[] { "key", "val" };
@@ -188,14 +188,14 @@ namespace Anixe.Ion.UnitTests
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("DATA");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteTableHeader(header);
-                Assert.AreEqual(WriterState.Section | WriterState.TableHeader, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.TableHeader, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+            Assert.Equivalent(expected, sb.ToString().Split(Environment.NewLine, StringSplitOptions.None));
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Table_Rows()
         {
             var row = new string[] { "unit_type", "miles" };
@@ -210,40 +210,49 @@ namespace Anixe.Ion.UnitTests
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("DATA");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteTableRow(row);
                 subject.WriteTableRow(row);
-                Assert.AreEqual(WriterState.Section | WriterState.TableRow, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+            Assert.Equivalent(expected, sb.ToString().Split(Environment.NewLine, StringSplitOptions.None));
         }
 
-        [Test]
-        public void IIonWriter_WriteTableCell_Throws_InvalidTableCellDataException()
+        [Fact]
+        public void IIonWriter_WriteTableCell_Escapes()
+        {
+            Assert.Equal("""| \n |""", WriteTableCell(tw => tw.WriteTableCell("\n")));
+            Assert.Equal("""| \| |""", WriteTableCell(tw => tw.WriteTableCell("|")));
+            Assert.Equal("""| \n |""", WriteTableCell(tw => tw.WriteTableCell('\n')));
+            Assert.Equal("""| \| |""", WriteTableCell(tw => tw.WriteTableCell('|')));
+            Assert.Equal("""| \n |""", WriteTableCell(tw => tw.WriteTableCell("\n".ToCharArray(), 0, 1)));
+            Assert.Equal("""| \| |""", WriteTableCell(tw => tw.WriteTableCell("|".ToCharArray(), 0, 1)));
+            Assert.Equal("""| \n |""", WriteTableCell(tw => tw.WriteTableCell("\n".AsSpan())));
+            Assert.Equal("""| \| |""", WriteTableCell(tw => tw.WriteTableCell("|".AsSpan())));
+
+            static string WriteTableCell(Action<IIonWriter> action)
+            {
+                var sb = new StringBuilder();
+                using (var subject = new IonWriter(new StringWriter(sb)))
+                {
+                    action(subject);
+                }
+                return sb.ToString();
+            }
+        }
+
+        [Fact]
+        public void IIonWriter_WriteTableRow_Escapes()
         {
             var sb = new StringBuilder();
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
-                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableCell("\n"));
-                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableCell("|"));
-
-                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableCell("\n".ToCharArray(), 0, 1));
-                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableCell("|".ToCharArray(), 0, 1));
+                subject.WriteTableRow("\n", "|", "other");
             }
+            Assert.Equal("""| \n | \| | other |""", sb.ToString().TrimEnd());
         }
 
-        [Test]
-        public void IIonWriter_WriteTableRow_Throws_InvalidTableCellDataException()
-        {
-            var sb = new StringBuilder();
-            using (var subject = new IonWriter(new StringWriter(sb)))
-            {
-                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableRow(new[] { "\n" }));
-                Assert.Throws<InvalidTableCellDataException>(() => subject.WriteTableRow(new[] { "|" }));
-            }
-        }
-
-        [Test]
+        [Fact]
         public void Should_Write_Table_Outside_Section()
         {
             var row = new string[] { "unit_type", "miles" };
@@ -258,12 +267,12 @@ namespace Anixe.Ion.UnitTests
             {
                 subject.WriteTableRow(row);
                 subject.WriteTableRow(row);
-                Assert.AreEqual(WriterState.TableRow, subject.State);
+                Assert.Equal(WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+            Assert.Equivalent(expected, sb.ToString().Split(Environment.NewLine, StringSplitOptions.None));
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Table_Cell_With_Custom_Value()
         {
             var expected = new string[]
@@ -281,16 +290,16 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableCell((tw) => tw.Write("miles"), true);
                 subject.WriteTableCell("unit_type");
                 subject.WriteTableCell("miles", true);
-                Assert.AreEqual(WriterState.TableRow, subject.State);
+                Assert.Equal(WriterState.TableRow, subject.State);
                 subject.WriteEmptyLine();
-                Assert.AreEqual(WriterState.None, subject.State);
+                Assert.Equal(WriterState.None, subject.State);
                 subject.WriteTableCell((tw) => tw.Write("my custom table"), true);
-                Assert.AreEqual(WriterState.TableRow, subject.State);
+                Assert.Equal(WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+            Assert.Equivalent(expected, sb.ToString().Split(Environment.NewLine, StringSplitOptions.None));
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Tables()
         {
             var row = new string[] { "unit_type", "miles" };
@@ -309,20 +318,20 @@ namespace Anixe.Ion.UnitTests
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("DATA");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteTableRow(row);
                 subject.WriteTableRow(row);
-                Assert.AreEqual(WriterState.Section | WriterState.TableRow, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.TableRow, subject.State);
                 subject.WriteEmptyLine();
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteTableRow(row2);
                 subject.WriteTableRow(row2);
-                Assert.AreEqual(WriterState.Section | WriterState.TableRow, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+            Assert.Equivalent(expected, sb.ToString().Split(Environment.NewLine, StringSplitOptions.None));
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Whole_Table()
         {
             var header = new string[] { "key", "val" };
@@ -340,16 +349,16 @@ namespace Anixe.Ion.UnitTests
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("DATA");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteTableHeader(header);
                 subject.WriteTableRow(row);
                 subject.WriteTableRow(row);
-                Assert.AreEqual(WriterState.Section | WriterState.TableRow, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+            Assert.Equivalent(expected, sb.ToString().Split(Environment.NewLine, StringSplitOptions.None));
         }
 
-        [Test]
+        [Fact]
         public void Should_Write_Multiple_Sections()
         {
             var header = new string[] { "key", "val" };
@@ -372,22 +381,22 @@ namespace Anixe.Ion.UnitTests
             using (var subject = new IonWriter(new StringWriter(sb)))
             {
                 subject.WriteSection("META");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("test", "value");
-                Assert.AreEqual(WriterState.Section | WriterState.Property, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.Property, subject.State);
                 subject.WriteSection("DATA");
-                Assert.AreEqual(WriterState.Section, subject.State);
+                Assert.Equal(WriterState.Section, subject.State);
                 subject.WriteProperty("table_name", "test");
                 subject.WriteEmptyLine();
                 subject.WriteTableHeader(header);
                 subject.WriteTableRow(row);
                 subject.WriteTableRow(row);
-                Assert.AreEqual(WriterState.Section | WriterState.TableRow, subject.State);
+                Assert.Equal(WriterState.Section | WriterState.TableRow, subject.State);
             }
-            CollectionAssert.AreEquivalent(expected, sb.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+            Assert.Equivalent(expected, sb.ToString().Split(Environment.NewLine, StringSplitOptions.None));
         }
 
-        [Test]
+        [Fact]
         public void Should_Validate_Section()
         {
             static void action()
@@ -397,23 +406,24 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteSection(null!);
             }
 
-            Assert.Throws<ArgumentNullException>(action, "Section name must be provided");
+            Assert.Throws<ArgumentNullException>("name", action);
         }
 
-        [Test]
+        [Fact]
         public void Should_Validate_Table()
         {
             static void action()
             {
                 var sb = new StringBuilder();
                 using var subject = new IonWriter(new StringWriter(sb));
-                subject.WriteTableHeader(null!);
+                subject.WriteTableHeader([]);
             }
 
-            Assert.Throws<InvalidOperationException>(action, "Only section can be at the top of document");
+            var ex = Assert.Throws<InvalidOperationException>(action);
+            Assert.Equal("Only section can be at the top of document", ex.Message);
         }
 
-        [Test]
+        [Fact]
         public void Should_Validate_Table_Columns()
         {
             static void action()
@@ -424,10 +434,10 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableHeader(null!);
             }
 
-            Assert.Throws<ArgumentNullException>(action, "Cannot create empty table header");
+            var ex = Assert.Throws<ArgumentNullException>("columns", action);
         }
 
-        [Test]
+        [Fact]
         public void Should_Validate_Table_Headers()
         {
             static void action()
@@ -441,10 +451,11 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableHeader(header);
             }
 
-            Assert.Throws<InvalidOperationException>(action, "Table can have ony one header");
+            var ex = Assert.Throws<InvalidOperationException>(action);
+            Assert.Equal("Table can have only one header", ex.Message);
         }
 
-        [Test]
+        [Fact]
         public void Should_Validate_Table_Row()
         {
             static void action()
@@ -459,10 +470,11 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableRow(row);
             }
 
-            Assert.Throws<ArgumentException>(action, "Must provide the same number of columns within the same table");
+            var ex = Assert.Throws<ArgumentException>(action);
+            Assert.Equal("Must provide the same number of columns within the same table (Parameter 'columns')", ex.Message);
         }
 
-        [Test]
+        [Fact]
         public void Should_Validate_Table_Rows()
         {
             static void action()
@@ -477,7 +489,8 @@ namespace Anixe.Ion.UnitTests
                 subject.WriteTableRow(row2);
             }
 
-            Assert.Throws<ArgumentException>(action, "Must provide the same number of columns within the same table");
+            var ex = Assert.Throws<ArgumentException>(action);
+            Assert.Equal("Must provide the same number of columns within the same table (Parameter 'columns')", ex.Message);
         }
     }
 }

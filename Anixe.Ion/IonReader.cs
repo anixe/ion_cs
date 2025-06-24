@@ -1,6 +1,7 @@
 ﻿using Anixe.Ion.Helpers;
 using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 
@@ -26,15 +27,15 @@ namespace Anixe.Ion
         private readonly Encoding enc = Encoding.UTF8;
         private bool checkBOM;
 
-    /// <summary>
-    /// Initializes a new instance of <see cref="IonReader"/>.
-    /// </summary>
-    /// <param name="stream">Stream to read from</param>
-    /// <param name="currentLineVerifier">Object which verifies state based on current line.</param>
-    /// <param name="sectionHeaderReader">Object which reads sections.</param>
-    /// <param name="leaveOpen"><see langword="true"/> if the stream should be open after <see cref="Dispose()"/>.</param>
-    /// <param name="charPool">Provide own <see cref="ArrayPool{T}.Shared"/> instance. If <see langword="null"/> then <see cref="ArrayPool{T}.Shared"/> is used.</param>
-    public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
+        /// <summary>
+        /// Initializes a new instance of <see cref="IonReader"/>.
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <param name="currentLineVerifier">Object which verifies state based on current line.</param>
+        /// <param name="sectionHeaderReader">Object which reads sections.</param>
+        /// <param name="leaveOpen"><see langword="true"/> if the stream should be open after <see cref="Dispose()"/>.</param>
+        /// <param name="charPool">Provide own <see cref="ArrayPool{T}.Shared"/> instance. If <see langword="null"/> then <see cref="ArrayPool{T}.Shared"/> is used.</param>
+        public IonReader(Stream stream, CurrentLineVerifier currentLineVerifier, SectionHeaderReader sectionHeaderReader, bool leaveOpen, ArrayPool<char>? charPool = null)
         {
             this.stream = stream;
             this.disposed = false;
@@ -51,6 +52,7 @@ namespace Anixe.Ion
 
         #region IIonReader members
 
+        [MemberNotNullWhen(true, nameof(CurrentSection))]
         public bool IsSectionHeader => this.currentLineVerifier.IsSectionHeader(CurrentRawLine);
 
         public bool IsProperty => this.currentLineVerifier.IsProperty(CurrentRawLine);
@@ -67,7 +69,7 @@ namespace Anixe.Ion
 
         public bool IsEmptyLine => this.currentLineVerifier.IsEmptyLine(CurrentRawLine);
 
-        public string CurrentLine => new string(CurrentRawLine.Array, CurrentRawLine.Offset, CurrentRawLine.Count);
+        public string CurrentLine => new string(CurrentRawLine.Array!, CurrentRawLine.Offset, CurrentRawLine.Count);
 
         public ArraySegment<char> CurrentRawLine { get; private set; }
 
@@ -105,7 +107,7 @@ namespace Anixe.Ion
             if(IsSectionHeader)
             {
                 ArraySegment<char> headerSegment = this.sectionHeaderReader.Read(CurrentRawLine);
-                CurrentSection = new string(headerSegment.Array, headerSegment.Offset, headerSegment.Count);
+                CurrentSection = new string(headerSegment.Array!, headerSegment.Offset, headerSegment.Count);
             }
 
             if(passedCurrentTableHeaderRow)

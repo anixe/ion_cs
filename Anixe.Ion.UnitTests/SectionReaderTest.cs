@@ -1,11 +1,11 @@
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 
 namespace Anixe.Ion.UnitTests
 {
   public class SectionReaderTest
   {
-    [Test]
+    [Fact]
     public void Should_Read_Multiple_Sections()
     {
       var counter = 0;
@@ -15,12 +15,12 @@ namespace Anixe.Ion.UnitTests
         var sectionReader = new GenericSectionReader(reader);
         sectionReader.OnReadSection += (sender, args) =>
         {
-          Assert.That(args.SectionName, Is.AnyOf("META", "INSURANCE"));
+          Assert.Contains(args.SectionName, new[] { "META", "INSURANCE" });
           counter++;
         };
         sectionReader.Read();
       }
-      Assert.AreEqual(2, counter);
+      Assert.Equal(2, counter);
     }
   }
 }

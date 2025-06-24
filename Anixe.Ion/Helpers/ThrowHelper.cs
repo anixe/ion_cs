@@ -1,18 +1,20 @@
-﻿using Anixe.Ion.Exceptions;
-#if !NETSTANDARD2_0
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
-#endif
 
 namespace Anixe.Ion.Helpers
 {
     internal static class ThrowHelper
     {
-#if !NETSTANDARD2_0
         [DoesNotReturn]
-#endif
-        public static void Throw_InvalidTableCellDataException()
+        public static void Throw_ArgumentException_UndefinedFilePath()
         {
-            throw new InvalidTableCellDataException("Table cell contains prohibited character");
+            throw new ArgumentException("File path must be defined!");
+        }
+
+        [DoesNotReturn]
+        public static void Throw_ArgumentException_FileDoesNotExists(string filePath)
+        {
+            throw new ArgumentException(string.Format("File '{0}' does not exist!", filePath));
         }
     }
 }

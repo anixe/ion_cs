@@ -1,22 +1,27 @@
 ﻿using System;
-using NUnit.Framework;
 using System.Collections.Generic;
-using static NUnit.StaticExpect.Expectations;
+using Xunit;
 
 namespace Anixe.Ion.UnitTests
 {
-    [TestFixture]
-    public class IntegrationTests
+    public sealed class IntegrationTests : IDisposable
     {
-        private IIonReader target = null!;
-        private List<Action> assertions = null!;
+        private readonly IIonReader target;
 
-        [OneTimeSetUp]
-        public void Before_All_Test()
+        public IntegrationTests()
         {
             this.target = IonReaderFactory.Create(FileLoader.GetExamplesIonPath());
+        }
 
-            this.assertions = new List<Action>
+        public void Dispose()
+        {
+            this.target.Dispose();
+        }
+
+        [Fact]
+        public void Verifies_Each_Ion_File_Line()
+        {
+            var assertions = new List<Action>
             {
                 IsSectionHeader_InFirstLine,
                 IsProperty_InSecondLine,
@@ -37,174 +42,159 @@ namespace Anixe.Ion.UnitTests
                 IsTableHeaderSeparatorRow_InSeventeenthLine,
                 IsTableRow_InEighteenthLine,
             };
-        }
 
-        [OneTimeTearDown]
-        public void After_All_Test()
-        {
-            this.target.Dispose();
-        }
-
-        [Test]
-        public void Verifies_Each_Ion_File_Line()
-        {
-            while(target.Read())
+            while (target.Read())
             {
-                this.assertions[this.target.CurrentLineNumber - 1].Invoke();
+                assertions[this.target.CurrentLineNumber - 1].Invoke();
             }
         }
 
-        #region Assertions
-
         private void IsSectionHeader_InFirstLine()
         {
-            Expect(this.target.IsSectionHeader);
-            Expect(this.target.CurrentLine, Is.EqualTo("[CONTRACT.INFO]"));
-            Expect(this.target.CurrentSection, Is.EqualTo("CONTRACT.INFO"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(1));
+            Assert.True(this.target.IsSectionHeader);
+            Assert.Equal("[CONTRACT.INFO]", this.target.CurrentLine);
+            Assert.Equal("CONTRACT.INFO", this.target.CurrentSection);
+            Assert.Equal(1, this.target.CurrentLineNumber);
         }
 
         private void IsProperty_InSecondLine()
         {
-            Expect(this.target.IsProperty);
-            Expect(this.target.CurrentLine, Is.EqualTo("id = \"AAA\""));
-            Expect(this.target.CurrentSection, Is.EqualTo("CONTRACT.INFO"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(2));
+            Assert.True(this.target.IsProperty);
+            Assert.Equal("id = \"AAA\"", this.target.CurrentLine);
+            Assert.Equal("CONTRACT.INFO", this.target.CurrentSection);
+            Assert.Equal(2, this.target.CurrentLineNumber);
         }
 
         private void IsProperty_InThirdLine()
         {
-            Expect(this.target.IsProperty);
-            Expect(this.target.CurrentLine, Is.EqualTo("source = \"XXX\""));
-            Expect(this.target.CurrentSection, Is.EqualTo("CONTRACT.INFO"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(3));
+            Assert.True(this.target.IsProperty);
+            Assert.Equal("source = \"XXX\"", this.target.CurrentLine);
+            Assert.Equal("CONTRACT.INFO", this.target.CurrentSection);
+            Assert.Equal(3, this.target.CurrentLineNumber);
         }
 
         private void IsEmptyLine_InFourthLine()
         {
-            Expect(this.target.IsEmptyLine);
-            Expect(this.target.CurrentLine, Is.EqualTo(string.Empty));
-            Expect(this.target.CurrentSection, Is.EqualTo("CONTRACT.INFO"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(4));
+            Assert.True(this.target.IsEmptyLine);
+            Assert.Equal(string.Empty, this.target.CurrentLine);
+            Assert.Equal("CONTRACT.INFO", this.target.CurrentSection);
+            Assert.Equal(4, this.target.CurrentLineNumber);
         }
 
         private void IsProperty_InFifthLine()
         {
-            Expect(this.target.IsProperty);
-            Expect(this.target.CurrentLine, Is.EqualTo("city = \"YYY\""));
-            Expect(this.target.CurrentSection, Is.EqualTo("CONTRACT.INFO"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(5));
+            Assert.True(this.target.IsProperty);
+            Assert.Equal("city = \"YYY\"", this.target.CurrentLine);
+            Assert.Equal("CONTRACT.INFO", this.target.CurrentSection);
+            Assert.Equal(5, this.target.CurrentLineNumber);
         }
 
         private void IsEmptyLine_InSixthLine()
         {
-            Expect(this.target.IsEmptyLine);
-            Expect(this.target.CurrentLine, Is.EqualTo(string.Empty));
-            Expect(this.target.CurrentSection, Is.EqualTo("CONTRACT.INFO"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(6));
+            Assert.True(this.target.IsEmptyLine);
+            Assert.Equal(string.Empty, this.target.CurrentLine);
+            Assert.Equal("CONTRACT.INFO", this.target.CurrentSection);
+            Assert.Equal(6, this.target.CurrentLineNumber);
         }
 
         private void IsSectionHeader_InSeventhLine()
         {
-            Expect(this.target.IsSectionHeader);
-            Expect(this.target.CurrentLine, Is.EqualTo("[DEF.SECTION]"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(7));
+            Assert.True(this.target.IsSectionHeader);
+            Assert.Equal("[DEF.SECTION]", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION", this.target.CurrentSection);
+            Assert.Equal(7, this.target.CurrentLineNumber);
         }
 
         private void IsTableRow_InEighthLine()
         {
-            Expect(this.target.IsTableRow);
-            Expect(this.target.IsTableHeaderRow);
-            Expect(this.target.CurrentLine, Is.EqualTo("|  id | 1st_column_description | 2nd_column_description |"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(8));
+            Assert.True(this.target.IsTableRow);
+            Assert.True(this.target.IsTableHeaderRow);
+            Assert.Equal("|  id | 1st_column_description | 2nd_column_description |", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION", this.target.CurrentSection);
+            Assert.Equal(8, this.target.CurrentLineNumber);
         }
 
         private void IsTableHeaderSeparatorRow_InNinethLine()
         {
-            Expect(this.target.IsTableHeaderSeparatorRow);
-            Expect(this.target.IsTableHeaderRow, Is.False);
-            Expect(this.target.CurrentLine, Is.EqualTo("|-----|------------------------|------------------------|"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(9));
+            Assert.True(this.target.IsTableHeaderSeparatorRow);
+            Assert.False(this.target.IsTableHeaderRow);
+            Assert.Equal("|-----|------------------------|------------------------|", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION", this.target.CurrentSection);
+            Assert.Equal(9, this.target.CurrentLineNumber);
         }
 
         private void IsTableRow_InTenthLine()
         {
-            Expect(this.target.IsTableRow);
-            Expect(this.target.IsTableDataRow);
-            Expect(this.target.CurrentLine, Is.EqualTo("| 123 | ZZZ                    | VVV                    |"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(10));
+            Assert.True(this.target.IsTableRow);
+            Assert.True(this.target.IsTableDataRow);
+            Assert.Equal("| 123 | ZZZ                    | VVV                    |", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION", this.target.CurrentSection);
+            Assert.Equal(10, this.target.CurrentLineNumber);
         }
 
         private void IsTableRow_InEleventhLine()
         {
-            Expect(this.target.IsTableRow);
-            Expect(this.target.CurrentLine, Is.EqualTo("| abc | XXX                    | UUU                    |"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(11));
+            Assert.True(this.target.IsTableRow);
+            Assert.Equal("| abc | XXX                    | UUU                    |", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION", this.target.CurrentSection);
+            Assert.Equal(11, this.target.CurrentLineNumber);
         }
 
         private void IsEmptyLine_InTwelfthLine()
         {
-            Expect(this.target.IsEmptyLine);
-            Expect(this.target.CurrentLine, Is.EqualTo(string.Empty));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(12));
+            Assert.True(this.target.IsEmptyLine);
+            Assert.Equal(string.Empty, this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION", this.target.CurrentSection);
+            Assert.Equal(12, this.target.CurrentLineNumber);
         }
 
         private void IsEmptyLine_InThirteenthLine()
         {
-            Expect(this.target.IsEmptyLine);
-            Expect(this.target.CurrentLine, Is.EqualTo(string.Empty));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(13));
+            Assert.True(this.target.IsEmptyLine);
+            Assert.Equal(string.Empty, this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION", this.target.CurrentSection);
+            Assert.Equal(13, this.target.CurrentLineNumber);
         }
 
         private void IsEmptyLine_InFourteenthLine()
         {
-            Expect(this.target.IsEmptyLine);
-            Expect(this.target.CurrentLine, Is.EqualTo(string.Empty));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(14));
+            Assert.True(this.target.IsEmptyLine);
+            Assert.Equal(string.Empty, this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION", this.target.CurrentSection);
+            Assert.Equal(14, this.target.CurrentLineNumber);
         }
 
         private void IsTableRow_InEighteenthLine()
         {
-            Expect(this.target.IsTableRow);
-            Expect(this.target.CurrentLine, Is.EqualTo("| 123 | ZZZ                    | VVV                    |"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(18));
+            Assert.True(this.target.IsTableRow);
+            Assert.Equal("| 123 | ZZZ                    | VVV                    |", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION2", this.target.CurrentSection);
+            Assert.Equal(18, this.target.CurrentLineNumber);
         }
 
         private void IsTableHeaderSeparatorRow_InSeventeenthLine()
         {
-            Expect(this.target.IsTableHeaderSeparatorRow);
-            Expect(this.target.IsTableHeaderRow, Is.False);
-            Expect(this.target.CurrentLine, Is.EqualTo("|-----|------------------------|------------------------|"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(17));
+            Assert.True(this.target.IsTableHeaderSeparatorRow);
+            Assert.False(this.target.IsTableHeaderRow);
+            Assert.Equal("|-----|------------------------|------------------------|", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION2", this.target.CurrentSection);
+            Assert.Equal(17, this.target.CurrentLineNumber);
         }
 
         private void IsTableRow_InSixteenthLine()
         {
-            Expect(this.target.IsTableRow);
-            Expect(this.target.CurrentLine, Is.EqualTo("|  id | 1st_column_description | 2nd_column_description |"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(16));
+            Assert.True(this.target.IsTableRow);
+            Assert.Equal("|  id | 1st_column_description | 2nd_column_description |", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION2", this.target.CurrentSection);
+            Assert.Equal(16, this.target.CurrentLineNumber);
         }
 
         private void IsSectionHeader_InFiftheenthLine()
         {
-            Expect(this.target.IsSectionHeader);
-            Expect(this.target.CurrentLine, Is.EqualTo("[DEF.SECTION2]"));
-            Expect(this.target.CurrentSection, Is.EqualTo("DEF.SECTION2"));
-            Expect(this.target.CurrentLineNumber, Is.EqualTo(15));
+            Assert.True(this.target.IsSectionHeader);
+            Assert.Equal("[DEF.SECTION2]", this.target.CurrentLine);
+            Assert.Equal("DEF.SECTION2", this.target.CurrentSection);
+            Assert.Equal(15, this.target.CurrentLineNumber);
         }
-
-        #endregion
     }
 }
-

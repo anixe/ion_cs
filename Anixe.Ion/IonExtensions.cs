@@ -15,5 +15,22 @@ namespace Anixe.Ion
     {
       return new IonProperty(reader, propertySeparator);
     }
+
+    /// <summary>
+    /// Creates ref-struct that allows reading table row cells in an efficient way.
+    /// It does not advance the reader to the next line.
+    /// </summary>
+    /// <param name="reader">Instance of <see cref="IIonReader"/>.</param>
+    /// <returns>A new instance of <see cref="TableRowReader"/>.</returns>
+    /// <exception cref="InvalidOperationException">Current line is not a table row.</exception>
+    public static TableRowReader ReadTableRow(this IIonReader reader)
+    {
+      if (!reader.IsTableRow)
+      {
+        throw new InvalidOperationException("Cannot read table row when reader is not on table row line.");
+      }
+
+      return new TableRowReader(reader.CurrentRawLine);
+    }
   }
 }

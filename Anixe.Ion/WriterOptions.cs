@@ -9,13 +9,13 @@ namespace Anixe.Ion
 
         /// <summary>
         /// Use this option if <see cref="IIonWriter"/> serializes ion content as a part of other document in different format.
-        /// Eg. ion formatted value is a part of json's property value.
+        /// E.g. ion formatted value is a part of json's property value.
         /// </summary>
         public bool EscapeQuotes { get; set; }
 
         /// <summary>
         /// Use this option if <see cref="IIonWriter"/> serializes ion content as a part of other document in different format.
-        /// Eg. ion formatted value is a part of json's property value.
+        /// E.g. ion formatted value is a part of json's property value.
         /// </summary>
         public bool EscapeNewLineChars { get; set; }
     }
