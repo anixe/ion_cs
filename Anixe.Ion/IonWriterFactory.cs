@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Anixe.Ion.Helpers;
+using System;
 using System.IO;
 
 namespace Anixe.Ion
@@ -67,18 +68,17 @@ namespace Anixe.Ion
 
         private static void ValidateFilePath(string filePath)
         {
-            if(string.IsNullOrWhiteSpace(filePath))
+            if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new ArgumentException(Consts.ErrorMessages.UndefinedFilePath);
+                ThrowHelper.Throw_ArgumentException_UndefinedFilePath();
             }
 
-            if(!File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
-                throw new ArgumentException(string.Format(Consts.ErrorMessages.FileDoesNotExist, filePath));
+                ThrowHelper.Throw_ArgumentException_FileDoesNotExists(filePath);
             }
         }
 
         #endregion
     }
 }
-

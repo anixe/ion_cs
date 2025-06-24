@@ -1,13 +1,13 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
+using Xunit;
 
 namespace Anixe.Ion.UnitTests
 {
   public class IonExtensionsTest
   {
-    [Test]
+    [Fact]
     public void ReadProperty_Test()
     {
       var reader = CreateReaderForInput("\"some_key\" = \"some_value\"");
@@ -16,28 +16,27 @@ namespace Anixe.Ion.UnitTests
       ReadOnlySpan<char> key = ionProperty.Key;
       ReadOnlySpan<char> value = ionProperty.Value;
 
-      Assert.AreEqual("some_key", key.ToString());
-      Assert.AreEqual("some_value", value.ToString());
+      Assert.Equal("some_key", key.ToString());
+      Assert.Equal("some_value", value.ToString());
 
       // getting more than one time
-      Assert.AreEqual("some_key", ionProperty.Key.ToString());
+      Assert.Equal("some_key", ionProperty.Key.ToString());
 
       // reading property one more time
       var newIonProperty = reader.ReadProperty();
-      Assert.AreEqual("some_key", newIonProperty.Key.ToString());
+      Assert.Equal("some_key", newIonProperty.Key.ToString());
     }
 
-    [Test]
-    public void ReadProperty_Empty_Property_Test()
+    [Theory]
+    [InlineData(" = ")]
+    [InlineData("\"\" = \"\"")]
+    public void ReadProperty_Empty_Property_Test(string input)
     {
-      var reader = CreateReaderForInput("\"\" = \"\"");
+      var reader = CreateReaderForInput(input);
       var ionProperty = reader.ReadProperty();
-      Assert.AreEqual("", ionProperty.Key.ToString());
-      Assert.AreEqual("", ionProperty.Value.ToString());
 
-      var secondReader = CreateReaderForInput(" = ");
-      Assert.AreEqual("", ionProperty.Key.ToString());
-      Assert.AreEqual("", ionProperty.Value.ToString());
+      Assert.Equal(string.Empty, ionProperty.Key.ToString());
+      Assert.Equal(string.Empty, ionProperty.Value.ToString());
     }
 
     private static IIonReader CreateReaderForInput(string input)

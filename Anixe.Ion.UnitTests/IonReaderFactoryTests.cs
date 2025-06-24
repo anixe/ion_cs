@@ -1,51 +1,54 @@
 using System;
-using NUnit.Framework;
 using System.IO;
 using System.Text;
-using static NUnit.StaticExpect.Expectations;
+using Xunit;
 
 namespace Anixe.Ion.UnitTests
 {
-    internal class IonReaderFactoryTests
+    public class IonReaderFactoryTests
     {
-        [TestCase(null,                             "File path must be defined!",                                TestName = "Throws exception when file path is null")]
-        [TestCase("",                               "File path must be defined!",                                TestName = "Throws exception when file path is empty text")]
-        [TestCase(" ",                              "File path must be defined!",                                TestName = "Throws exception when file path is whitespace")]
-        [TestCase("Examples/not_existing_file.ion", "File '\"Examples/not_existing_file.ion\"' does not exist!", TestName = "Throws exception when file does not exist")]
-        public void Throws_Exception_When_FilePath_Does_Not_Exists(string filePath, string expectedExceptionMessage)
+        [Theory]
+        [InlineData(null,                             "File path must be defined!")] // Throws exception when file path is null
+        [InlineData("",                               "File path must be defined!")] // Throws exception when file path is empty text
+        [InlineData(" ",                              "File path must be defined!")] // Throws exception when file path is whitespace
+        [InlineData("Examples/not_existing_file.ion", "File 'Examples/not_existing_file.ion' does not exist!")] // Throws exception when file does not exist
+        public void Throws_Exception_When_FilePath_Does_Not_Exists(string? filePath, string expectedExceptionMessage)
         {
+#pragma warning disable CS8604 // Possible null reference argument. - intended!
             void subject() => IonReaderFactory.Create(filePath);
+#pragma warning restore CS8604
 
-            Assert.Throws<ArgumentException>(subject, expectedExceptionMessage);
+            var ex = Assert.Throws<ArgumentException>(subject);
+            Assert.Equal(expectedExceptionMessage, ex.Message);
         }
 
-        [Test]
+        [Fact]
         public void Creates_IonReader_For_Existing_File_Path()
         {
             var actual = IonReaderFactory.Create(FileLoader.GetExamplesIonPath());
 
-            Expect(actual, Is.Not.Null);
-            Expect(actual, Is.TypeOf<IonReader>());
+            Assert.NotNull(actual);
+            Assert.IsType<IonReader>(actual);
         }
 
-        [Test]
+        [Fact]
         public void Creates_IonReader_For_FileStream()
         {
             using FileStream fileStream = new FileStream(FileLoader.GetExamplesIonPath(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var ionReader = IonReaderFactory.Create(fileStream);
-            Expect(ionReader, Is.Not.Null);
-            Expect(ionReader, Is.TypeOf<IonReader>());
+            Assert.NotNull(ionReader);
+            Assert.IsType<IonReader>(ionReader);
         }
 
-        [Test]
+        [Fact]
         public void Creates_IonReader_For_MemoryStream()
         {
             var rawFileContent = Encoding.UTF8.GetBytes(File.ReadAllText(FileLoader.GetExamplesIonPath()));
 
             using MemoryStream fileStream = new MemoryStream(rawFileContent);
             using var ionReader = IonReaderFactory.Create(fileStream);
-            Expect(ionReader, Is.Not.Null);
-            Expect(ionReader, Is.TypeOf<IonReader>());
+            Assert.NotNull(ionReader);
+            Assert.IsType<IonReader>(ionReader);
         }
     }
 }
