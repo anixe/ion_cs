@@ -128,12 +128,12 @@ namespace Anixe.Ion.UnitTests
         [Fact]
         public void Should_Read_Table_Cell()
         {
-            //Assert.Equal("", ReadTableCell(""));
-            //Assert.Equal("x", ReadTableCell("x"));
-            //Assert.Equal("\\a", ReadTableCell("\\a"));
-            //Assert.Equal("\n", ReadTableCell("\\n"));
+            Assert.Equal("", ReadTableCell(""));
+            Assert.Equal("x", ReadTableCell("x"));
+            Assert.Equal("\\a", ReadTableCell("\\a"));
+            Assert.Equal("\n", ReadTableCell("\\n"));
             Assert.Equal("|", ReadTableCell("\\|"));
-            //Assert.Equal("Berlin Mitte Kronenstraße", ReadTableCell("Berlin Mitte Kronenstraße"));
+            Assert.Equal("Berlin Mitte Kronenstraße", ReadTableCell("Berlin Mitte Kronenstraße"));
             static string ReadTableCell(string ionCellContent)
             {
                 var ion = $"""
@@ -151,7 +151,7 @@ namespace Anixe.Ion.UnitTests
                         if (reader.IsTableDataRow)
                         {
                             var rowReader = reader.ReadTableRow();
-                            return rowReader.ReadNext().ToString();
+                            return rowReader.ReadNextString();
                         }
                     }
                 }
@@ -163,7 +163,7 @@ namespace Anixe.Ion.UnitTests
         [Fact]
         public void ReadTableCellTest()
         {
-            var ion = """
+            const string ion = """
                 [TABLE]
                 | col1 | col2 | col3 | col4|
                 |--------|-|-----|----|
@@ -178,13 +178,13 @@ namespace Anixe.Ion.UnitTests
                     if (reader.IsTableDataRow)
                     {
                         var rowReader = reader.ReadTableRow();
-                        Assert.Equal("a", rowReader.ReadNext().ToString());
-                        Assert.Equal("b", rowReader.ReadNext().ToString());
-                        Assert.Equal("\ntext| separated", rowReader.ReadNext().ToString());
-                        Assert.Equal("", rowReader.ReadNext().ToString());
+                        Assert.Equal("a", rowReader.ReadNextString());
+                        Assert.Equal("b", rowReader.ReadNextSpan().ToString());
+                        Assert.Equal("\ntext| separated", rowReader.ReadNextString());
+                        Assert.Equal("", rowReader.ReadNextString());
                         try
                         {
-                            rowReader.ReadNext();
+                            rowReader.ReadNextSpan();
                             Assert.Fail("Should not be reached because an exception should be thrown.");
                         }
                         catch (InvalidOperationException)

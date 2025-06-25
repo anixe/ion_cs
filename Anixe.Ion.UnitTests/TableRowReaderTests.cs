@@ -24,22 +24,23 @@ public class TableRowReaderTests
         { "| \\|\\ ||", ["|\\", ""] },
         { "| \\n |", ["\n"] },
         { "| \\\\n |", ["\\\n"] },
+        { "|\t a\t |", ["a"] },
     };
 
     [Theory]
     [MemberData(nameof(GetTableRowReaderData))]
-    public void ReadNext_ShouldReturnExpectedValues(string input, string[] expectedValues)
+    public void ReadNextSpan_ShouldReturnExpectedValues(string input, string[] expectedValues)
     {
         var reader = new TableRowReader(input.AsSpan());
         foreach (var expectedValue in expectedValues)
         {
-            var actualValue = reader.ReadNext();
+            var actualValue = reader.ReadNextSpan();
             Assert.Equal(expectedValue, actualValue);
         }
 
         try
         {
-            reader.ReadNext();
+            reader.ReadNextSpan();
             Assert.Fail("Expected InvalidOperationException was not thrown.");
         }
         catch (InvalidOperationException)
@@ -54,7 +55,7 @@ public class TableRowReaderTests
     [InlineData("x|")]
     [InlineData("")]
     [InlineData("[XXX]")]
-    public void ReadNext_ShouldThrow_WhenRowHasIncorrectFormat(string rowLine)
+    public void Constructor_ShouldThrow_WhenRowHasIncorrectFormat(string rowLine)
     {
         try
         {
@@ -65,5 +66,33 @@ public class TableRowReaderTests
         {
             // Expected exception, do nothing
         }
+    }
+
+    [Fact]
+    public void CanReadNext_ShouldReturnFalse_WhenNoMoreCellsToRead()
+    {
+        var reader = new TableRowReader("|Value1|Value2|");
+
+        // read Value1
+        Assert.True(reader.CanReadNext);
+        reader.ReadNextSpan();
+
+        // read Value2
+        Assert.True(reader.CanReadNext);
+        reader.ReadNextSpan();
+
+        // no more cells to read
+        Assert.False(reader.CanReadNext);
+    }
+
+    [Theory]
+    [InlineData("||")]
+    [InlineData("| |")]
+    [InlineData("|\t|")]
+    [InlineData("|Value1|")]
+    public void CanReadNext_ShouldReturnTrue_ForCellsWithProvidedContent(string input)
+    {
+        var reader = new TableRowReader(input);
+        Assert.True(reader.CanReadNext);
     }
 }

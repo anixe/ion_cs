@@ -27,6 +27,7 @@ namespace Anixe.Ion
         : this(tw, new WriterOptions())
         {
         }
+
         internal WriterState State => this.state;
 
         #region IIonWriter Members
@@ -241,7 +242,7 @@ namespace Anixe.Ion
         public void WriteTableCell(int value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value);
+            tw.Write(value.ToString(CultureInfo.InvariantCulture));
             WriteTableCellAfter(lastCellInRow);
         }
 
@@ -262,21 +263,21 @@ namespace Anixe.Ion
         public void WriteTableCell(double value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value);
+            tw.Write(value.ToString(CultureInfo.InvariantCulture));
             WriteTableCellAfter(lastCellInRow);
         }
 
         public void WriteTableCell(decimal value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value);
+            tw.Write(value.ToString(CultureInfo.InvariantCulture));
             WriteTableCellAfter(lastCellInRow);
         }
 
         public void WriteTableCell(long value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value);
+            tw.Write(value.ToString(CultureInfo.InvariantCulture));
             WriteTableCellAfter(lastCellInRow);
         }
 

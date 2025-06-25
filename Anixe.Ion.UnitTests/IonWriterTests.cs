@@ -242,6 +242,40 @@ namespace Anixe.Ion.UnitTests
         }
 
         [Fact]
+        public void IIonWriter_WriteTableCell()
+        {
+            // string overload
+            Assert.Equal("| x |", WriteTableCell(tw => tw.WriteTableCell("x")));
+
+            // bool overload
+            Assert.Equal("| True |", WriteTableCell(tw => tw.WriteTableCell(true)));
+
+            // int overload
+            Assert.Equal("| 1 |", WriteTableCell(tw => tw.WriteTableCell(1)));
+
+            // long overload
+            Assert.Equal("| 1 |", WriteTableCell(tw => tw.WriteTableCell(1L)));
+
+            // double overload
+            Assert.Equal("| 1.1 |", WriteTableCell(tw => tw.WriteTableCell(1.1)));
+            Assert.Equal("| 1 |", WriteTableCell(tw => tw.WriteTableCell(1.0)));
+
+            // decimal overload
+            Assert.Equal("| 1.1 |", WriteTableCell(tw => tw.WriteTableCell(1.1m)));
+            Assert.Equal("| 1.0 |", WriteTableCell(tw => tw.WriteTableCell(1.0m)));
+
+            static string WriteTableCell(Action<IIonWriter> action)
+            {
+                var sb = new StringBuilder();
+                using (var subject = new IonWriter(new StringWriter(sb)))
+                {
+                    action(subject);
+                }
+                return sb.ToString();
+            }
+        }
+
+        [Fact]
         public void IIonWriter_WriteTableRow_Escapes()
         {
             var sb = new StringBuilder();
