@@ -3,6 +3,14 @@ using System.Buffers;
 
 namespace Anixe.Ion;
 
+/// <summary>
+/// Provides functionality to parse and read individual cell values from a table row represented as a delimited string.
+/// </summary>
+/// <remarks>The <see cref="TableRowReader"/> is designed to process table rows formatted with pipe ('|')
+/// delimiters. It trims leading and trailing whitespace, handles escaped characters (e.g., <c>\n</c> for newlines and
+/// <c>\|</c> for literal pipes), and allows sequential reading of cell values.
+/// <para>See that this is ref struct</para>
+/// </remarks>
 public ref struct TableRowReader
 {
     private static readonly SearchValues<string> EscapedCharacters = SearchValues.Create(["\\n", "\\|"], StringComparison.Ordinal);
@@ -21,11 +29,18 @@ public ref struct TableRowReader
         // trim pipes from start and end
         trimmedLine = trimmedLine[1..^1];
 
-        this.span = trimmedLine.Trim(' ');
+        this.span = trimmedLine.Trim([' ', '\t']);
 
         static void Throw_FormatException() =>
             throw new FormatException("Table row must start and end with a pipe character '|'.");
     }
+
+#pragma warning disable CA2265 // Do not compare Span<T> to 'null' or 'default'
+    /// <summary>
+    /// Gets a value indicating whether there is a next cell can be read from the table row.
+    /// </summary>
+    public readonly bool CanReadNext => this.span != default;
+#pragma warning restore CA2265
 
     private ReadOnlySpan<char> CurrentRawValue { get; set; }
 
@@ -33,21 +48,34 @@ public ref struct TableRowReader
     /// Reads the next table cell value from the current line.
     /// It unescapes escaped characters `\n` and `\|`.
     /// </summary>
+    /// <returns>A string that represents value from cell.</returns>
+    /// <exception cref="InvalidOperationException">No more elements to read.</exception>
+    public string ReadNextString()
+    {
+        return ReadNextSpan().ToString();
+    }
+
+    /// <summary>
+    /// Reads the next table cell value from the current line.
+    /// It unescapes escaped characters `\n` and `\|`.
+    /// </summary>
     /// <returns>A span that represents value from cell.</returns>
     /// <exception cref="InvalidOperationException">No more elements to read.</exception>
-    public ReadOnlySpan<char> ReadNext()
+    public ReadOnlySpan<char> ReadNextSpan()
     {
         if (!MoveNext())
         {
             Throw_NoMoreElementsToRead();
         }
 
-        if (NeedsUnescape(this.CurrentRawValue))
+        var trimmedRawValue = this.CurrentRawValue.Trim([' ', '\t']);
+
+        if (NeedsUnescape(trimmedRawValue))
         {
-            return Unescape(this.CurrentRawValue).Trim(' ');
+            return Unescape(trimmedRawValue);
         }
 
-        return this.CurrentRawValue.Trim(' ');
+        return trimmedRawValue;
 
         static bool NeedsUnescape(ReadOnlySpan<char> rawValue) =>
             rawValue.ContainsAny(EscapedCharacters);
@@ -95,12 +123,10 @@ public ref struct TableRowReader
     {
         if (this.span.IsEmpty)
         {
-#pragma warning disable CA2265 // Do not compare Span<T> to 'null' or 'default'
-            if (this.span == default)
+            if (!this.CanReadNext)
             {
                 return false;
             }
-#pragma warning restore CA2265
 
             this.CurrentRawValue = this.span;
             this.span = default;

@@ -1,9 +1,16 @@
 # Anixe.Ion CHANGELOG
 
+## 3.0.1
+- Rename TableRowReader.ReadNext() to ReadNextSpan()
+- Add ReadNextString() method to TableRowReader
+- Trim tab characters when reading table row cells
+- Use always InvariantCulture for writing numbers into table cells
+- Add property CanReadNext to TableRowReader to check if there are more cells in the row to be read
+
 ## 3.0.0
 - Drop support of .NET below .NET 9
 - Add method ReadTableRow() that returns reader for row cells and unescapes them if needed
-- Change behavior of WriteTableRow() that previously thrown exception for '|' and newline charcter. Now it escapes them with \| and \n.
+- Change behavior of WriteTableRow() that previously thrown exception for '|' and newline character. Now it escapes them with \| and \n.
 - Add metadata to the Nuget package
 - various small performance improvements
 - add missing nullable annotations MemberNotNullWhen
