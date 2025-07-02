@@ -1,5 +1,9 @@
 # Anixe.Ion CHANGELOG
 
+## 3.0.2
+- Fix escaping in some cases; now all "\" in table cells are escaped with "\"
+- Fix WriteTableCell was not escaping when TextWriter action was provided
+
 ## 3.0.1
 - Rename TableRowReader.ReadNext() to ReadNextSpan()
 - Add ReadNextString() method to TableRowReader
