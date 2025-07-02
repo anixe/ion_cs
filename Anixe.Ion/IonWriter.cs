@@ -227,6 +227,14 @@ namespace Anixe.Ion
         {
             ArgumentNullException.ThrowIfNull(writeCellAction);
             WriteTableCellBefore();
+            var sb = new System.Text.StringBuilder();
+
+            using (var textWriter = new StringWriter(sb, CultureInfo.InvariantCulture))
+            {
+                writeCellAction(textWriter, context);
+            }
+
+            WriteCol(sb.ToString().AsSpan());
             writeCellAction(this.tw, context);
             WriteTableCellAfter(lastCellInRow);
         }
@@ -235,7 +243,14 @@ namespace Anixe.Ion
         {
             ArgumentNullException.ThrowIfNull(writeCellAction);
             WriteTableCellBefore();
-            writeCellAction(this.tw);
+            var sb = new System.Text.StringBuilder();
+
+            using (var textWriter = new StringWriter(sb, CultureInfo.InvariantCulture))
+            {
+                writeCellAction(textWriter);
+            }
+
+            WriteCol(sb.ToString().AsSpan());
             WriteTableCellAfter(lastCellInRow);
         }
 
@@ -356,6 +371,11 @@ namespace Anixe.Ion
                         this.tw.Write('\\');
                         this.tw.Write('n');
                         continue;
+                    }
+
+                    if (c is '\\')
+                    {
+                        this.tw.Write('\\');
                     }
 
                     if (c is '|')

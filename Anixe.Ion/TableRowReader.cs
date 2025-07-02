@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers;
 
 namespace Anixe.Ion;
 
@@ -13,7 +12,6 @@ namespace Anixe.Ion;
 /// </remarks>
 public ref struct TableRowReader
 {
-    private static readonly SearchValues<string> EscapedCharacters = SearchValues.Create(["\\n", "\\|"], StringComparison.Ordinal);
     private ReadOnlySpan<char> span;
 
     internal TableRowReader(ReadOnlySpan<char> rawTableLine)
@@ -78,7 +76,7 @@ public ref struct TableRowReader
         return trimmedRawValue;
 
         static bool NeedsUnescape(ReadOnlySpan<char> rawValue) =>
-            rawValue.ContainsAny(EscapedCharacters);
+            rawValue.Contains('\\');
 
         static void Throw_NoMoreElementsToRead() =>
             throw new InvalidOperationException("No more elements to read.");
@@ -104,8 +102,14 @@ public ref struct TableRowReader
                     i += 2;
                     continue;
                 }
-                else if (next == 'n')
+                else if (next == '\\')
                 {
+                    buffer[outIdx++] = '\\';
+                    i += 2;
+                    continue;
+                }
+                else if (next == 'n')
+                        {
                     // Replace '\n' with newline character
                     buffer[outIdx++] = '\n';
                     i += 2;
