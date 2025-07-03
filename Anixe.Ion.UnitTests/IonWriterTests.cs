@@ -231,6 +231,8 @@ namespace Anixe.Ion.UnitTests
             Assert.Equal("""| \| |""", WriteTableCell(tw => tw.WriteTableCell("|".AsSpan())));
             Assert.Equal("""| \| |""", WriteTableCell(tw => tw.WriteTableCell(_tw => _tw.Write("|"))));
             Assert.Equal("""| \n |""", WriteTableCell(tw => tw.WriteTableCell(_tw => _tw.Write("\n"))));
+            Assert.Equal("""| \| |""", WriteTableCell(tw => tw.WriteTableCell(new object(), (_tw, _) => _tw.Write("|"))));
+            Assert.Equal("""| \n |""", WriteTableCell(tw => tw.WriteTableCell(new object(), (_tw, _) => _tw.Write("\n"))));
 
             // escaped escape character does not escape the next character
             Assert.Equal("""| \\\| |""", WriteTableCell(tw => tw.WriteTableCell("\\|")));
