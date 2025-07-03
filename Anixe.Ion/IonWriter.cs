@@ -235,7 +235,6 @@ namespace Anixe.Ion
             }
 
             WriteCol(sb.ToString().AsSpan());
-            writeCellAction(this.tw, context);
             WriteTableCellAfter(lastCellInRow);
         }
 
