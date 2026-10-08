@@ -28,11 +28,11 @@ namespace Anixe.Ion.UnitTests
         private static string GetSlnDir()
         {
             var currDir = Environment.CurrentDirectory;
-            if (Directory.EnumerateFiles(currDir, "*.sln").Any())
+            if (Directory.EnumerateFiles(currDir, "*.slnx").Any())
             {
                 return currDir;
             }
-            while (Directory.GetParent(currDir) != null && !Directory.EnumerateFiles(currDir, "*.sln").Any())
+            while (Directory.GetParent(currDir) != null && !Directory.EnumerateFiles(currDir, "*.slnx").Any())
             {
                 currDir = Directory.GetParent(currDir)!.FullName;
             }
@@ -56,7 +56,15 @@ namespace Anixe.Ion.UnitTests
 
         public static string GetIonWithWindowsLineEndings()
         {
-            return "[DEFAULTS]\r\ncurrency = \"EUR\"\r\nlanguage = \"de\"\r\nsales_market = \"DE\"\r\ntimeout = 5000\r\nsipp = \"ECAR\"\r\nprice_margin = %5\r\ndisabled_log_urls = [ \"/G\", \"/cars\", \"/cars_group_by\" ]\r\nenabled_log_urls = [ ]";
+            return "[DEFAULTS]\r\n" +
+                "currency = \"EUR\"\r\n" +
+                "language = \"de\"\r\n" +
+                "sales_market = \"DE\"\r\n" +
+                "timeout = 5000\r\n" +
+                "sipp = \"ECAR\"\r\n" +
+                "price_margin = %5\r\n" +
+                "disabled_log_urls = [ \"/G\", \"/cars\", \"/cars_group_by\" ]\r\n" +
+                "enabled_log_urls = [ ]";
         }
     }
 }
