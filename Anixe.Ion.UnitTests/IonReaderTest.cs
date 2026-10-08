@@ -119,7 +119,9 @@ namespace Anixe.Ion.UnitTests
         [Fact]
         public void CurrentSection_Returns_Null_Before_First_Read()
         {
-            using var reader = IonReaderFactory.Create(Stream.Null);
+            // Provide a stream that contains a section header so that Read() sets CurrentSection
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes("[DEFAULTS]\n"));
+            using var reader = IonReaderFactory.Create(ms);
             Assert.Null(reader.CurrentSection);
             reader.Read();
             Assert.NotNull(reader.CurrentSection);

@@ -4,6 +4,8 @@ namespace Anixe.Ion
 {
     internal sealed class SectionHeaderReader
     {
+        public static readonly SectionHeaderReader Instance = new();
+
         public ArraySegment<char> Read(ArraySegment<char> currentLine)
         {
             var array = currentLine.Array!;
@@ -12,10 +14,15 @@ namespace Anixe.Ion
 
             if (indexOfOpeningCharacter < 0 || indexOfClosingCharacter < 0)
             {
-                throw new InvalidOperationException("Invalid section header format.");
+                Throw_FormatException_InvalidHeaderFormat();
             }
 
             return new ArraySegment<char>(array, indexOfOpeningCharacter + 1, indexOfClosingCharacter - indexOfOpeningCharacter - 1);
+
+            static void Throw_FormatException_InvalidHeaderFormat()
+            {
+                throw new FormatException("Invalid section header format.");
+            }
         }
     }
 }
