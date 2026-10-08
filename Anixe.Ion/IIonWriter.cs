@@ -68,6 +68,11 @@ namespace Anixe.Ion
         /// <param name="lastCellInRow">True if this is the last cell in the row.</param>
         void WriteTableCell<TContext>(TContext context, Action<TextWriter, TContext> writeCellAction, bool lastCellInRow = false);
 
+        /// <summary>Writes a Guid table cell; adds separator or newline if last in row.</summary>
+        /// <param name="value">Value to write.</param>
+        /// <param name="lastCellInRow">True to end the row after writing.</param>
+        void WriteTableCell(Guid value, bool lastCellInRow = false);
+
         /// <summary>Writes an int table cell; adds separator or newline if last in row.</summary>
         /// <param name="value">Value to write.</param>
         /// <param name="lastCellInRow">True to end the row after writing.</param>

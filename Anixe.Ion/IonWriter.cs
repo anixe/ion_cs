@@ -246,6 +246,14 @@ namespace Anixe.Ion
             WriteTableCellAfter(lastCellInRow);
         }
 
+        public void WriteTableCell(Guid value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            Span<char> buffer = stackalloc char[36]; // enough for GUID string
+            WriteFormattable(value, buffer);
+            WriteTableCellAfter(lastCellInRow);
+        }
+
         public void WriteTableCell(int value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();

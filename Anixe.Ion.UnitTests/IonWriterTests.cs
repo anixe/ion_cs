@@ -273,6 +273,9 @@ namespace Anixe.Ion.UnitTests
             Assert.Equal("| 1.1 |", WriteTableCell(tw => tw.WriteTableCell(1.1m)));
             Assert.Equal("| 1.0 |", WriteTableCell(tw => tw.WriteTableCell(1.0m)));
 
+            var guid = Guid.NewGuid();
+            Assert.Equal($"| {guid} |", WriteTableCell(tw => tw.WriteTableCell(guid)));
+
             static string WriteTableCell(Action<IIonWriter> action)
             {
                 var sb = new StringBuilder();
