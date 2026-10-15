@@ -27,16 +27,27 @@ namespace Anixe.Ion.Benchmark
 
     private static string GetSlnDir()
     {
-      var currDir = Environment.CurrentDirectory;
-      if (Directory.EnumerateFiles(currDir, "*.sln").Any())
-      {
-        return currDir;
-      }
-      while (Directory.GetParent(currDir) != null && !Directory.EnumerateFiles(currDir, "*.sln").Any())
-      {
-        currDir = Directory.GetParent(currDir).FullName;
-      }
-      return currDir;
+        var dir = new DirectoryInfo(Environment.CurrentDirectory ?? ".");
+        while (dir != null)
+        {
+            try
+            {
+                if (dir.EnumerateFiles("*.sln", SearchOption.TopDirectoryOnly).Any())
+                    return dir.FullName;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Skip directories we can't access and continue searching upward.
+            }
+            catch (IOException)
+            {
+                // Ignore IO errors and continue searching upward.
+            }
+            dir = dir.Parent;
+        }
+
+        // If no solution file was found, fall back to the original current directory.
+        return Environment.CurrentDirectory ?? Directory.GetCurrentDirectory();
     }
 
     public static string GetExamplesIonPath()

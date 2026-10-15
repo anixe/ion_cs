@@ -2,6 +2,10 @@
 
 namespace Anixe.Ion
 {
+  /// <summary>
+  /// The class provides extension methods for <see cref="IIonReader"/>
+  /// to read properties and table rows in an efficient way.
+  /// </summary>
   public static class IonExtensions
   {
     /// <summary>

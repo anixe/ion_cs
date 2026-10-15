@@ -30,13 +30,17 @@ namespace Anixe.Ion.UnitTests.Helpers
         [Fact]
         public void BufferWriter_Writing_text()
         {
-            var writer = new BufferWriter(ArrayPool<char>.Shared);
+            using var writer = new BufferWriter(ArrayPool<char>.Shared);
+
+            // write "text1"
             writer.Write("text1".ToCharArray(), 0, "text1".Length);
+
+            // write "met"
             writer.Write("something".ToCharArray(), 2, 3);
+
             Assert.Equal(8, writer.Count);
             Assert.NotNull(writer.WrittenSegment.Array);
-            Assert.Equal("text1met", new string(writer.WrittenSegment.Array!, writer.WrittenSegment.Offset, writer.WrittenSegment.Count));
-            writer.Dispose();
+            Assert.Equal("text1met", new string(writer.WrittenSegment.Array, writer.WrittenSegment.Offset, writer.WrittenSegment.Count));
         }
 
         private class TestPool : ArrayPool<char>

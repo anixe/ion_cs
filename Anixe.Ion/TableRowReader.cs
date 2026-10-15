@@ -159,7 +159,7 @@ public ref struct TableRowReader
 
         static bool HasAnyBackslash(ReadOnlySpan<char> span)
         {
-            return span.IndexOf('\\') >= 0;
+            return span.Contains('\\');
         }
     }
 

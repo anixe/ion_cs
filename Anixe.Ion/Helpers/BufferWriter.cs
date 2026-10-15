@@ -10,6 +10,7 @@ namespace Anixe.Ion.Helpers
         private char[]? buffer;
 
         public int Count { get; private set; }
+
         public readonly ArraySegment<char> WrittenSegment => this.Count == 0
             ? ArraySegment<char>.Empty
             : new ArraySegment<char>(this.buffer ?? [], 0, this.Count);
@@ -21,6 +22,13 @@ namespace Anixe.Ion.Helpers
           this.pool = pool;
         }
 
+        public void Write(ReadOnlySpan<char> chars)
+        {
+            EnsureCapacity(this.Count + chars.Length);
+            chars.CopyTo(this.buffer.AsSpan(this.Count));
+            this.Count += chars.Length;
+        }
+
         public void Write(char[] value, int startIndex, int charCount)
         {
           EnsureCapacity(this.Count + charCount);
@@ -28,7 +36,7 @@ namespace Anixe.Ion.Helpers
           this.Count += charCount;
         }
 
-        [MemberNotNull(nameof(this.buffer))]
+        [MemberNotNull(nameof(buffer))]
         private void EnsureCapacity(int length)
         {
             if (this.buffer != null)
@@ -53,7 +61,7 @@ namespace Anixe.Ion.Helpers
           this.Count = 0;
         }
 
-        public void Dispose()
+        public readonly void Dispose()
         {
             if (this.buffer != null)
             {

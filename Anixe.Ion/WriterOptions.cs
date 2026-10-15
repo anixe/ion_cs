@@ -1,5 +1,8 @@
 namespace Anixe.Ion
 {
+    /// <summary>
+    /// Represents options for configuring the behavior of an <see cref="IIonWriter"/> instance.
+    /// </summary>
     public class WriterOptions
     {
         /// <summary>

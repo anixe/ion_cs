@@ -5,9 +5,11 @@ namespace Anixe.Ion
 {
     internal sealed class CurrentLineVerifier
     {
+        public static readonly CurrentLineVerifier Instance = new();
+
         public bool IsSectionHeader(ArraySegment<char> currentLine)
         {
-            return currentLine.Count != 0
+            return currentLine.Count > 0
                 && currentLine[0] == Consts.IonSpecialChars.SectionHeaderOpening;
         }
 
@@ -43,13 +45,13 @@ namespace Anixe.Ion
 
         public bool IsComment(ArraySegment<char> currentLine)
         {
-            return currentLine.Count != 0
+            return currentLine.Count > 0
                 && currentLine[0] == Consts.IonSpecialChars.BeginCommentLine;
         }
 
         public bool IsTableRow(ArraySegment<char> currentLine)
         {
-            return currentLine.Count != 0
+            return currentLine.Count > 0
                 && currentLine[0] == Consts.IonSpecialChars.TableColumnSeparator;
         }
 

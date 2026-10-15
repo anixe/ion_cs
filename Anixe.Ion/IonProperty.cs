@@ -5,10 +5,30 @@ namespace Anixe.Ion
   /// <summary>
   /// Represents a ref-struct that accesses key and value of property of <see cref="IIonReader"/>.
   /// </summary>
-  public ref struct IonProperty
+  public readonly ref struct IonProperty
   {
+    /// <summary>
+    /// Gets the key of the property. It is a read-only span of characters
+    /// that represents the key part of the property line in the ion file.
+    /// </summary>
     public readonly ReadOnlySpan<char> Key;
+
+    /// <summary>
+    /// Gets the value of the property. It is a read-only span of characters
+    /// that represents the value part of the property line in the ion file.
+    /// </summary>
     public readonly ReadOnlySpan<char> Value;
+
+    /// <summary>
+    /// Deconstructs the <see cref="IonProperty"/> into its key and value components.
+    /// </summary>
+    /// <param name="Key">The key component.</param>
+    /// <param name="Value">The value component.</param>
+    public void Deconstruct(out ReadOnlySpan<char> Key, out ReadOnlySpan<char> Value)
+    {
+        Key = this.Key;
+        Value = this.Value;
+    }
 
     /// <summary>
     /// Creates a new instance of <see cref="IonProperty"/>.
@@ -33,7 +53,7 @@ namespace Anixe.Ion
       }
 
       this.Key = span.Slice(0, sepIdx).Trim().Trim('"');
-      this.Value = span.Slice(sepIdx + 1, span.Length - sepIdx - 1).Trim().Trim('"');
+      this.Value = span.Slice(sepIdx + 1).Trim().Trim('"');
     }
   }
 }

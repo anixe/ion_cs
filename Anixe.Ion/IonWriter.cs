@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace Anixe.Ion
 {
@@ -227,14 +228,10 @@ namespace Anixe.Ion
         {
             ArgumentNullException.ThrowIfNull(writeCellAction);
             WriteTableCellBefore();
-            var sb = new System.Text.StringBuilder();
-
-            using (var textWriter = new StringWriter(sb, CultureInfo.InvariantCulture))
+            using (var etw = new EscapingTextWriter(this))
             {
-                writeCellAction(textWriter, context);
+                writeCellAction(etw, context);
             }
-
-            WriteCol(sb.ToString().AsSpan());
             WriteTableCellAfter(lastCellInRow);
         }
 
@@ -242,21 +239,26 @@ namespace Anixe.Ion
         {
             ArgumentNullException.ThrowIfNull(writeCellAction);
             WriteTableCellBefore();
-            var sb = new System.Text.StringBuilder();
-
-            using (var textWriter = new StringWriter(sb, CultureInfo.InvariantCulture))
+            using (var etw = new EscapingTextWriter(this))
             {
-                writeCellAction(textWriter);
+                writeCellAction(etw);
             }
+            WriteTableCellAfter(lastCellInRow);
+        }
 
-            WriteCol(sb.ToString().AsSpan());
+        public void WriteTableCell(Guid value, bool lastCellInRow = false)
+        {
+            WriteTableCellBefore();
+            Span<char> buffer = stackalloc char[36]; // enough for GUID string
+            WriteFormattable(value, buffer);
             WriteTableCellAfter(lastCellInRow);
         }
 
         public void WriteTableCell(int value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value.ToString(CultureInfo.InvariantCulture));
+            Span<char> buffer = stackalloc char[12]; // enough for 32-bit int
+            WriteFormattable(value, buffer);
             WriteTableCellAfter(lastCellInRow);
         }
 
@@ -277,28 +279,31 @@ namespace Anixe.Ion
         public void WriteTableCell(double value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value.ToString(CultureInfo.InvariantCulture));
+            Span<char> buffer = stackalloc char[100]; // enough for double
+            WriteFormattable(value, buffer);
             WriteTableCellAfter(lastCellInRow);
         }
 
         public void WriteTableCell(decimal value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value.ToString(CultureInfo.InvariantCulture));
+            Span<char> buffer = stackalloc char[100]; // enough for decimal
+            WriteFormattable(value, buffer);
             WriteTableCellAfter(lastCellInRow);
         }
 
         public void WriteTableCell(long value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value.ToString(CultureInfo.InvariantCulture));
+            Span<char> buffer = stackalloc char[20]; // enough for 64-bit int
+            WriteFormattable(value, buffer);
             WriteTableCellAfter(lastCellInRow);
         }
 
         public void WriteTableCell(bool value, bool lastCellInRow = false)
         {
             WriteTableCellBefore();
-            tw.Write(value);
+            this.tw.Write(value);
             WriteTableCellAfter(lastCellInRow);
         }
 
@@ -365,21 +370,16 @@ namespace Anixe.Ion
                 for (var i = idx; i < span.Length; i++)
                 {
                     var c = span[i];
-                    if (c == '\n')
+                    switch (c)
                     {
-                        this.tw.Write('\\');
-                        this.tw.Write('n');
-                        continue;
-                    }
-
-                    if (c is '\\')
-                    {
-                        this.tw.Write('\\');
-                    }
-
-                    if (c is '|')
-                    {
-                        this.tw.Write('\\');
+                        case '\n':
+                            this.tw.Write('\\');
+                            this.tw.Write('n');
+                            continue; // continue the for loop
+                        case '\\':
+                        case '|':
+                            this.tw.Write('\\');
+                            break;
                     }
 
                     this.tw.Write(c);
@@ -411,6 +411,18 @@ namespace Anixe.Ion
             WriteLine();
         }
 
+        private void WriteFormattable(ISpanFormattable value, Span<char> buffer)
+        {
+            if (value.TryFormat(buffer, out var written, null, provider: CultureInfo.InvariantCulture))
+            {
+                this.tw.Write(buffer.Slice(0, written));
+            }
+            else
+            {
+                this.tw.Write(value.ToString(null, CultureInfo.InvariantCulture));
+            }
+        }
+
         public void WriteEmptyLine()
         {
             ClearState();
@@ -422,7 +434,7 @@ namespace Anixe.Ion
             this.tw.Flush();
         }
 
-        #endregion
+#endregion
 
         #region IDisposable Members
 
@@ -452,13 +464,12 @@ namespace Anixe.Ion
             {
                 this.tw.Write(Consts.IonSpecialChars.EscapeCharacter);
             }
+
+            this.tw.Write(Consts.IonSpecialChars.PropertyQuotation);
+
             if (newLine)
             {
-                WriteLine(Consts.IonSpecialChars.PropertyQuotation);
-            }
-            else
-            {
-                this.tw.Write(Consts.IonSpecialChars.PropertyQuotation);
+                WriteLine();
             }
         }
 
@@ -490,6 +501,33 @@ namespace Anixe.Ion
         {
             this.tw.Write(val);
             WriteLine();
+        }
+
+        private sealed class EscapingTextWriter : TextWriter
+        {
+            private readonly IonWriter parent;
+            public EscapingTextWriter(IonWriter parent) => this.parent = parent;
+            public override Encoding Encoding => Encoding.UTF8;
+            public override void Write(char value)
+            {
+                // write escaped/passthrough char directly to parent.tw, replicating WriteCol escaping rules
+                switch (value)
+                {
+                    case '\n':
+                        parent.tw.Write('\\');
+                        parent.tw.Write('n');
+                        return;
+                    case '\\':
+                    case '|':
+                        parent.tw.Write('\\');
+                        break;
+                    default:
+                        parent.tw.Write(value);
+                        break;
+                }
+            }
+            public override void Write(char[] buffer, int index, int count) => parent.WriteCol(buffer.AsSpan(index, count));
+            public override void Write(ReadOnlySpan<char> buffer) => parent.WriteCol(buffer);
         }
     }
 }

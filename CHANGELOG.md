@@ -1,5 +1,12 @@
 # Anixe.Ion CHANGELOG
 
+## 3.1.0
+- Improve ION reader and writer performance with span-based buffering and formatting.
+- Make `IonProperty` a readonly ref struct and add `Deconstruct` to expose its key and value spans.
+- Add WriteTableCell overload for Guid.
+- Add documentation comments to public APIs and an ION format specification to the README.
+- Migrate the repository solution to the `.slnx` format.
+
 ## 3.0.2
 - Fix WriteTableCell was writing text two times in some cases
 

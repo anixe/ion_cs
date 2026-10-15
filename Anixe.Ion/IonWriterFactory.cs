@@ -4,6 +4,9 @@ using System.IO;
 
 namespace Anixe.Ion
 {
+    /// <summary>
+    /// The factory class for creating instances of <see cref="IIonWriter"/>.
+    /// </summary>
     public static class IonWriterFactory
     {
         /// <summary>
@@ -48,6 +51,7 @@ namespace Anixe.Ion
         /// Creates the instance of <see cref="IIonWriter"/> from specified stream.
         /// </summary>
         /// <param name="stream"><see cref="Stream"/> to write to.</param>
+        /// <param name="options">Writing options.</param>
         public static IIonWriter Create(Stream stream, WriterOptions options)
         {
             var writer = new StreamWriter(stream);

@@ -5,6 +5,9 @@ using System.IO;
 
 namespace Anixe.Ion
 {
+    /// <summary>
+    /// The factory class for creating instances of <see cref="IIonReader"/>.
+    /// </summary>
     public static class IonReaderFactory
     {
         /// <summary>
@@ -41,7 +44,7 @@ namespace Anixe.Ion
         /// <param name="charPool">Provide own <see cref="ArrayPool{T}.Shared"/> instance. If <see langword="null"/> then <see cref="ArrayPool{T}.Shared"/> will is used.</param>
         public static IIonReader Create(Stream stream, bool leaveOpen = false, ArrayPool<char>? charPool = null)
         {
-            return new IonReader(stream, new CurrentLineVerifier(), new SectionHeaderReader(), leaveOpen, charPool);
+            return new IonReader(stream, CurrentLineVerifier.Instance, SectionHeaderReader.Instance, leaveOpen, charPool);
         }
 
         #region Private methods

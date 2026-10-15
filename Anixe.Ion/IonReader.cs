@@ -21,8 +21,7 @@ namespace Anixe.Ion
         private BufferWriter lineBufferWriter;
         private readonly byte[] byteBuff;
         private readonly char[] charBuff;
-        private readonly byte[] preamble;
-        private int buffIndex = 0;
+        private int buffIndex = 0; // index into charBuff (not byteBuff) for remaining chars
         private int charsRead = 0;
         private readonly Encoding enc = Encoding.UTF8;
         private bool checkBOM;
@@ -45,8 +44,7 @@ namespace Anixe.Ion
             this.leaveOpen = leaveOpen;
             this.lineBufferWriter = new BufferWriter(charPool ?? ArrayPool<char>.Shared);
             this.byteBuff = ArrayPool<byte>.Shared.Rent(1024);
-            this.charBuff = ArrayPool<char>.Shared.Rent(enc.GetMaxByteCount(byteBuff.Length));
-            this.preamble = enc.GetPreamble();
+            this.charBuff = ArrayPool<char>.Shared.Rent(enc.GetMaxCharCount(byteBuff.Length));
             this.checkBOM = this.stream.CanSeek ? this.stream.Position == 0 : true;
         }
 
@@ -149,8 +147,8 @@ namespace Anixe.Ion
                     endOfFile = true;
                     break;
                 }
-                var offset = GetIndex();
-                this.charsRead = enc.GetChars(byteBuff, offset, bytesRead - offset, charBuff, 0);
+                var offset = GetIndex(bytesRead);
+                this.charsRead = enc.GetChars(byteBuff.AsSpan(offset, bytesRead - offset), charBuff);
                 if(CopyTillEOL())
                 {
                     return !endOfFile;
@@ -159,44 +157,64 @@ namespace Anixe.Ion
             return !endOfFile;
         }
 
-        private int GetIndex()
+        private int GetIndex(int bytesRead)
         {
-            var retval = 0;
-            if(!this.checkBOM)
+            if (!this.checkBOM)
             {
-                retval = 0;
+                return 0;
             }
-            else
-            {
-                if(this.byteBuff[0] == this.preamble[0] &&
-                this.byteBuff[1] == this.preamble[1] &&
-                this.byteBuff[2] == this.preamble[2])
-                {
-                    retval = this.preamble.Length;
-                }
-            }
+
             this.checkBOM = false;
-            return retval;
+
+            ReadOnlySpan<byte> preamble = this.enc.Preamble;
+
+            if (!this.byteBuff.AsSpan(0, bytesRead).StartsWith(preamble))
+            {
+                return 0;
+            }
+
+            return preamble.Length;
         }
+
+        /// <summary>
+        /// Copies characters from the internal buffer to the line buffer writer until a newline character is
+        /// encountered.
+        /// </summary>
+        /// <remarks>If no newline character is found, all available characters are written to the line
+        /// buffer writer and the buffer index remains unchanged for the caller to manage. The method handles both '\n'
+        /// and '\r\n' line endings, ensuring that carriage return characters are excluded from the written line when
+        /// present. Callers should update the buffer index based on the return value to maintain correct buffer
+        /// state.</remarks>
+        /// <returns>true if a newline character is found and the line is successfully written; otherwise, false.</returns>
 
         private bool CopyTillEOL()
         {
-            var startIdx = buffIndex;
-            for (int i = buffIndex; i < this.charsRead; i++)
+            int available = this.charsRead - this.buffIndex;
+            if (available <= 0)
             {
-                var character = charBuff[i];
+                return false;
+            }
+
+            var buffSlice = this.charBuff.AsSpan(this.buffIndex, available);
+            for (int i = 0; i < buffSlice.Length; i++)
+            {
+                var character = buffSlice[i];
                 if (character == '\n')
                 {
-                    if (i > buffIndex)
+                    if (i > 0)
                     {
-                        int carriageReturnLength = charBuff[i - 1] == '\r' ? 1 : 0;
-                        this.lineBufferWriter.Write(charBuff, buffIndex, i - buffIndex - carriageReturnLength);
+                        int carriageReturnLength = buffSlice[i - 1] == '\r' ? 1 : 0;
+                        // Write from the current buffIndex up to the character before newline (excluding CR if present)
+                        this.lineBufferWriter.Write(this.charBuff.AsSpan(this.buffIndex, i - carriageReturnLength));
                     }
-                    buffIndex = i + 1;
+                    // Advance buffIndex to the position after the newline in the underlying char buffer
+                    this.buffIndex = this.buffIndex + i + 1;
                     return true;
                 }
             }
-            this.lineBufferWriter.Write(this.charBuff, startIdx, this.charsRead - startIdx);
+
+            // No newline found: write all remaining chars and leave buffIndex for caller to reset (or for next pass)
+            this.lineBufferWriter.Write(this.charBuff, this.buffIndex, available);
             return false;
         }
 
@@ -236,6 +254,7 @@ namespace Anixe.Ion
         {
             CurrentRawLine = default(ArraySegment<char>);
             CurrentSection = string.Empty;
+            CurrentSection = null;
         }
 
         #endregion
